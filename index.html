@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kuis Ujian</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --ink: #0e0e0e;
+    --paper: #f5f0e8;
+    --accent1: #e8441a;
+    --accent2: #1a5ce8;
+    --mid: #c8bfaa;
+  }
+
+  body {
+    background: var(--paper);
+    color: var(--ink);
+    font-family: 'DM Sans', sans-serif;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+  }
+
+  /* background grid */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image:
+      linear-gradient(var(--mid) 1px, transparent 1px),
+      linear-gradient(90deg, var(--mid) 1px, transparent 1px);
+    background-size: 48px 48px;
+    opacity: 0.35;
+    z-index: 0;
+  }
+
+  .container {
+    position: relative;
+    z-index: 1;
+    text-align: center;
+    padding: 2rem;
+    max-width: 600px;
+  }
+
+  .badge {
+    display: inline-block;
+    font-family: 'Syne', sans-serif;
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: var(--accent1);
+    border: 1.5px solid var(--accent1);
+    padding: 0.3em 0.8em;
+    border-radius: 2px;
+    margin-bottom: 1.8rem;
+    animation: fadeUp 0.5s ease both;
+  }
+
+  h1 {
+    font-family: 'Syne', sans-serif;
+    font-size: clamp(2.2rem, 6vw, 3.8rem);
+    font-weight: 800;
+    line-height: 1.1;
+    letter-spacing: -0.02em;
+    margin-bottom: 1rem;
+    animation: fadeUp 0.6s 0.1s ease both;
+  }
+
+  h1 span { color: var(--accent1); }
+  h1 em { color: var(--accent2); font-style: normal; }
+
+  .subtitle {
+    font-size: 1rem;
+    font-weight: 300;
+    color: #555;
+    line-height: 1.6;
+    margin-bottom: 3rem;
+    animation: fadeUp 0.6s 0.2s ease both;
+  }
+
+  .label {
+    font-family: 'Syne', sans-serif;
+    font-size: 0.68rem;
+    font-weight: 700;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: #888;
+    margin-bottom: 1rem;
+    animation: fadeUp 0.6s 0.3s ease both;
+  }
+
+  .btn-group {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+    flex-wrap: wrap;
+    animation: fadeUp 0.6s 0.35s ease both;
+  }
+
+  .btn {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6rem;
+    padding: 1rem 2.2rem;
+    font-family: 'Syne', sans-serif;
+    font-size: 1rem;
+    font-weight: 700;
+    text-decoration: none;
+    border: 2.5px solid var(--ink);
+    border-radius: 4px;
+    transition: all 0.18s ease;
+    overflow: hidden;
+  }
+
+  .btn::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: var(--ink);
+    transform: scaleY(0);
+    transform-origin: bottom;
+    transition: transform 0.18s ease;
+    z-index: 0;
+  }
+
+  .btn:hover::after { transform: scaleY(1); }
+  .btn:hover { color: var(--paper); }
+  .btn span, .btn svg { position: relative; z-index: 1; }
+
+  .btn-info { background: var(--ink); color: var(--paper); }
+  .btn-info::after { background: var(--accent2); }
+
+  .btn-agama { background: transparent; color: var(--ink); }
+  .btn-agama::after { background: var(--accent1); }
+  .btn-agama:hover { color: var(--paper); border-color: var(--accent1); }
+
+  .divider {
+    width: 60px;
+    height: 3px;
+    background: var(--ink);
+    margin: 2.5rem auto;
+    animation: fadeUp 0.6s 0.28s ease both;
+  }
+
+  .corner {
+    position: fixed;
+    font-family: 'Syne', sans-serif;
+    font-size: 0.65rem;
+    font-weight: 700;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--mid);
+  }
+  .corner.tl { top: 1.5rem; left: 1.5rem; }
+  .corner.br { bottom: 1.5rem; right: 1.5rem; text-align: right; }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(18px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+</style>
+</head>
+<body>
+
+<span class="corner tl">Kuis Semester</span>
+<span class="corner br">Pilih Mata Pelajaran<br>di Bawah</span>
+
+<div class="container">
+  <div class="badge">📋 Ujian Interaktif</div>
+
+  <h1>Selanjutnya adalah<br><span>Informatika</span> dan <em>Agama</em></h1>
+
+  <div class="divider"></div>
+
+  <p class="subtitle">Klik tombol di bawah ini untuk memulai kuis<br>mata pelajaran yang kamu inginkan.</p>
+
+  <p class="label">Pilih kuis</p>
+
+  <div class="btn-group">
+    <a href="informatika.html" class="btn btn-info">
+      <svg width="16" height="16" fill="currentColor" viewBox="0 0 16 16"><path d="M8 1a2 2 0 0 1 2 2v4H6V3a2 2 0 0 1 2-2zm3 6V3a3 3 0 0 0-6 0v4a2 2 0 0 0-2 2v5a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2z"/></svg>
+      <span>Informatika</span>
+    </a>
+    <a href="agama.html" class="btn btn-agama">
+      <svg width="16" height="16" fill="currentColor" viewBox="0 0 16 16"><path d="M8 1a2 2 0 0 1 2 2v4H6V3a2 2 0 0 1 2-2zm3 6V3a3 3 0 0 0-6 0v4a2 2 0 0 0-2 2v5a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2z"/></svg>
+      <span>Agama</span>
+    </a>
+  </div>
+</div>
+
+</body>
+</html>
