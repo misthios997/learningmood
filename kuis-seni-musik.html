@@ -1,0 +1,768 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kuis Seni Musik SMP 3 - Dokumentasi & Membuat Lagu</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0a0f;
+    --card: #13131a;
+    --card2: #1a1a26;
+    --accent: #f5c842;
+    --accent2: #e8884a;
+    --accent3: #7c6af0;
+    --text: #f0ede6;
+    --muted: #7a7898;
+    --correct: #4ecf8a;
+    --wrong: #e85555;
+    --border: rgba(245,200,66,0.15);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  body::before {
+    content: '';
+    position: fixed;
+    top: -30%;
+    left: -20%;
+    width: 60vw;
+    height: 60vw;
+    background: radial-gradient(circle, rgba(124,106,240,0.08) 0%, transparent 70%);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  body::after {
+    content: '';
+    position: fixed;
+    bottom: -20%;
+    right: -10%;
+    width: 50vw;
+    height: 50vw;
+    background: radial-gradient(circle, rgba(245,200,66,0.06) 0%, transparent 70%);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .container {
+    max-width: 760px;
+    margin: 0 auto;
+    padding: 20px 16px 60px;
+    position: relative;
+    z-index: 1;
+  }
+
+  /* ---- HEADER ---- */
+  header {
+    text-align: center;
+    padding: 48px 0 36px;
+    animation: fadeDown 0.7s ease both;
+  }
+
+  .tag {
+    display: inline-block;
+    background: rgba(245,200,66,0.12);
+    border: 1px solid rgba(245,200,66,0.3);
+    color: var(--accent);
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    padding: 5px 14px;
+    border-radius: 100px;
+    margin-bottom: 18px;
+  }
+
+  h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(2rem, 6vw, 3.2rem);
+    font-weight: 900;
+    line-height: 1.1;
+    margin-bottom: 12px;
+    background: linear-gradient(135deg, var(--text) 40%, var(--accent));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .subtitle {
+    color: var(--muted);
+    font-size: 14px;
+    font-weight: 400;
+  }
+
+  /* ---- PROGRESS ---- */
+  .progress-wrap {
+    margin-bottom: 28px;
+    animation: fadeUp 0.5s 0.2s ease both;
+  }
+
+  .progress-info {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
+    font-size: 13px;
+    color: var(--muted);
+  }
+
+  .progress-info span:last-child {
+    color: var(--accent);
+    font-weight: 600;
+  }
+
+  .progress-bar {
+    height: 4px;
+    background: rgba(255,255,255,0.07);
+    border-radius: 10px;
+    overflow: hidden;
+  }
+
+  .progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--accent3), var(--accent));
+    border-radius: 10px;
+    transition: width 0.5s cubic-bezier(0.4,0,0.2,1);
+  }
+
+  /* ---- QUESTION CARD ---- */
+  .question-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 32px 28px 24px;
+    margin-bottom: 20px;
+    animation: slideIn 0.4s ease both;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .question-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, var(--accent3), var(--accent));
+    border-radius: 20px 20px 0 0;
+  }
+
+  .q-number {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--accent3);
+    margin-bottom: 12px;
+  }
+
+  .q-text {
+    font-size: 17px;
+    font-weight: 500;
+    line-height: 1.55;
+    color: var(--text);
+    margin-bottom: 4px;
+  }
+
+  /* ---- OPTIONS ---- */
+  .options {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    animation: fadeUp 0.4s 0.1s ease both;
+  }
+
+  .option-btn {
+    background: var(--card2);
+    border: 1.5px solid rgba(255,255,255,0.07);
+    color: var(--text);
+    border-radius: 12px;
+    padding: 14px 18px;
+    text-align: left;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 15px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .option-btn:hover:not(:disabled) {
+    border-color: rgba(245,200,66,0.4);
+    background: rgba(245,200,66,0.06);
+    transform: translateX(4px);
+  }
+
+  .option-letter {
+    width: 28px; height: 28px;
+    border-radius: 8px;
+    background: rgba(255,255,255,0.06);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--muted);
+    flex-shrink: 0;
+    transition: all 0.2s;
+  }
+
+  .option-btn.correct {
+    border-color: var(--correct);
+    background: rgba(78,207,138,0.1);
+    animation: pulse-green 0.4s ease;
+  }
+  .option-btn.correct .option-letter {
+    background: var(--correct);
+    color: #0a0a0f;
+  }
+
+  .option-btn.wrong {
+    border-color: var(--wrong);
+    background: rgba(232,85,85,0.1);
+    animation: shake 0.4s ease;
+  }
+  .option-btn.wrong .option-letter {
+    background: var(--wrong);
+    color: white;
+  }
+
+  .option-btn:disabled { cursor: default; }
+
+  /* ---- FEEDBACK ---- */
+  .feedback {
+    margin-top: 14px;
+    padding: 12px 16px;
+    border-radius: 10px;
+    font-size: 13px;
+    line-height: 1.5;
+    display: none;
+    animation: fadeUp 0.3s ease both;
+  }
+
+  .feedback.correct-fb {
+    background: rgba(78,207,138,0.1);
+    border: 1px solid rgba(78,207,138,0.25);
+    color: #7eedb3;
+    display: block;
+  }
+
+  .feedback.wrong-fb {
+    background: rgba(232,85,85,0.1);
+    border: 1px solid rgba(232,85,85,0.2);
+    color: #f0907a;
+    display: block;
+  }
+
+  .feedback strong { display: block; margin-bottom: 2px; }
+
+  /* ---- NAVIGATION ---- */
+  .nav-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 20px;
+    gap: 12px;
+  }
+
+  .btn {
+    border: none;
+    border-radius: 12px;
+    padding: 13px 24px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .btn-primary {
+    background: var(--accent);
+    color: #0a0a0f;
+    flex: 1;
+  }
+
+  .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(245,200,66,0.25); }
+  .btn-primary:disabled { opacity: 0.35; cursor: default; transform: none; }
+
+  .btn-secondary {
+    background: var(--card2);
+    color: var(--muted);
+    border: 1px solid rgba(255,255,255,0.07);
+    flex: 1;
+  }
+  .btn-secondary:hover { color: var(--text); border-color: rgba(255,255,255,0.2); }
+
+  /* ---- SCORE SCREEN ---- */
+  #result-screen {
+    display: none;
+    text-align: center;
+    animation: zoomIn 0.5s ease both;
+  }
+
+  .score-ring {
+    width: 140px; height: 140px;
+    margin: 0 auto 28px;
+    position: relative;
+  }
+
+  .score-ring svg { transform: rotate(-90deg); }
+
+  .score-ring-text {
+    position: absolute;
+    inset: 0;
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+  }
+
+  .score-number {
+    font-family: 'Playfair Display', serif;
+    font-size: 38px;
+    font-weight: 900;
+    color: var(--accent);
+    line-height: 1;
+  }
+
+  .score-label { font-size: 11px; color: var(--muted); margin-top: 2px; }
+
+  .result-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 26px;
+    font-weight: 700;
+    margin-bottom: 8px;
+  }
+
+  .result-desc {
+    color: var(--muted);
+    font-size: 14px;
+    margin-bottom: 28px;
+    line-height: 1.6;
+  }
+
+  .stats-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+    margin-bottom: 28px;
+  }
+
+  .stat-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 16px 12px;
+  }
+
+  .stat-val {
+    font-family: 'Playfair Display', serif;
+    font-size: 24px;
+    font-weight: 700;
+    margin-bottom: 4px;
+  }
+
+  .stat-val.green { color: var(--correct); }
+  .stat-val.red { color: var(--wrong); }
+  .stat-val.yellow { color: var(--accent); }
+
+  .stat-label { font-size: 11px; color: var(--muted); }
+
+  /* ---- REVIEW ---- */
+  #review-section { display: none; margin-top: 32px; }
+
+  .review-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 20px;
+    margin-bottom: 16px;
+    text-align: left;
+  }
+
+  .review-item {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 16px 18px;
+    margin-bottom: 12px;
+    border-left: 3px solid;
+  }
+
+  .review-item.r-correct { border-left-color: var(--correct); }
+  .review-item.r-wrong { border-left-color: var(--wrong); }
+
+  .review-q { font-size: 14px; margin-bottom: 6px; line-height: 1.4; }
+  .review-answer { font-size: 13px; color: var(--muted); }
+  .review-answer span { font-weight: 600; }
+  .review-answer .ans-correct { color: var(--correct); }
+  .review-answer .ans-wrong { color: var(--wrong); }
+
+  /* ---- LOADING / START SCREEN ---- */
+  #start-screen {
+    text-align: center;
+    padding: 20px 0;
+    animation: fadeUp 0.6s ease both;
+  }
+
+  .info-cards {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+    margin: 28px 0 32px;
+  }
+
+  .info-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 18px 14px;
+  }
+
+  .info-icon { font-size: 24px; margin-bottom: 8px; }
+  .info-val { font-size: 20px; font-weight: 700; color: var(--accent); font-family: 'Playfair Display', serif; }
+  .info-lbl { font-size: 11px; color: var(--muted); margin-top: 2px; }
+
+  #quiz-screen { display: none; }
+
+  /* ---- ANIMATIONS ---- */
+  @keyframes fadeDown { from { opacity: 0; transform: translateY(-20px); } to { opacity: 1; transform: translateY(0); } }
+  @keyframes fadeUp { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: translateY(0); } }
+  @keyframes slideIn { from { opacity: 0; transform: translateX(-12px); } to { opacity: 1; transform: translateX(0); } }
+  @keyframes zoomIn { from { opacity: 0; transform: scale(0.94); } to { opacity: 1; transform: scale(1); } }
+  @keyframes shake {
+    0%,100% { transform: translateX(0); }
+    25% { transform: translateX(-6px); }
+    75% { transform: translateX(6px); }
+  }
+  @keyframes pulse-green {
+    0% { box-shadow: 0 0 0 0 rgba(78,207,138,0.4); }
+    100% { box-shadow: 0 0 0 10px transparent; }
+  }
+</style>
+</head>
+<body>
+<div class="container">
+  <header>
+    <div class="tag">🎵 Seni Musik SMP Kelas 3</div>
+    <h1>Kuis Musik Interaktif</h1>
+    <p class="subtitle">Dokumentasi Musik &amp; Membuat Lagu Sederhana</p>
+  </header>
+
+  <!-- START SCREEN -->
+  <div id="start-screen">
+    <div class="info-cards">
+      <div class="info-card">
+        <div class="info-icon">📝</div>
+        <div class="info-val">45</div>
+        <div class="info-lbl">Total Soal</div>
+      </div>
+      <div class="info-card">
+        <div class="info-icon">📚</div>
+        <div class="info-val">2</div>
+        <div class="info-lbl">Bab Materi</div>
+      </div>
+      <div class="info-card">
+        <div class="info-icon">⏱</div>
+        <div class="info-val">~20</div>
+        <div class="info-lbl">Menit Est.</div>
+      </div>
+    </div>
+    <button class="btn btn-primary" onclick="startQuiz()" style="width:100%;padding:16px;font-size:16px;">Mulai Kuis 🚀</button>
+  </div>
+
+  <!-- QUIZ SCREEN -->
+  <div id="quiz-screen">
+    <div class="progress-wrap">
+      <div class="progress-info">
+        <span id="q-counter">Soal 1 dari 45</span>
+        <span id="score-live">0 benar</span>
+      </div>
+      <div class="progress-bar"><div class="progress-fill" id="prog" style="width:0%"></div></div>
+    </div>
+
+    <div class="question-card" id="q-card">
+      <div class="q-number" id="q-num">SOAL 01</div>
+      <div class="q-text" id="q-text"></div>
+    </div>
+
+    <div class="options" id="options-container"></div>
+    <div class="feedback" id="feedback-box"></div>
+
+    <div class="nav-row">
+      <button class="btn btn-secondary" id="btn-prev" onclick="prevQ()">← Kembali</button>
+      <button class="btn btn-primary" id="btn-next" onclick="nextQ()">Lanjut →</button>
+    </div>
+  </div>
+
+  <!-- RESULT SCREEN -->
+  <div id="result-screen">
+    <div class="score-ring">
+      <svg width="140" height="140" viewBox="0 0 140 140">
+        <circle cx="70" cy="70" r="58" fill="none" stroke="rgba(255,255,255,0.06)" stroke-width="10"/>
+        <circle cx="70" cy="70" r="58" fill="none" stroke="url(#grad)" stroke-width="10"
+          stroke-linecap="round" stroke-dasharray="364" id="ring-fill" stroke-dashoffset="364"/>
+        <defs>
+          <linearGradient id="grad" x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%" stop-color="#7c6af0"/>
+            <stop offset="100%" stop-color="#f5c842"/>
+          </linearGradient>
+        </defs>
+      </svg>
+      <div class="score-ring-text">
+        <div class="score-number" id="final-score">0</div>
+        <div class="score-label">/ 100</div>
+      </div>
+    </div>
+    <div class="result-title" id="result-title">Hasil Kuis</div>
+    <div class="result-desc" id="result-desc"></div>
+    <div class="stats-grid">
+      <div class="stat-card">
+        <div class="stat-val green" id="stat-benar">0</div>
+        <div class="stat-label">✅ Benar</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-val red" id="stat-salah">0</div>
+        <div class="stat-label">❌ Salah</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-val yellow" id="stat-skor">0</div>
+        <div class="stat-label">🎯 Nilai</div>
+      </div>
+    </div>
+    <button class="btn btn-primary" onclick="restartQuiz()" style="width:100%;margin-bottom:12px;">Ulangi Kuis 🔄</button>
+    <button class="btn btn-secondary" onclick="showReview()" style="width:100%;">Lihat Pembahasan 📖</button>
+    <div id="review-section">
+      <div class="review-title">Pembahasan Jawaban</div>
+      <div id="review-list"></div>
+    </div>
+  </div>
+</div>
+
+<script>
+const questions = [
+  // ===== BAB 4: DOKUMENTASI MUSIK =====
+  {q:"Alat perekam musik pertama yang ditemukan oleh Thomas Alpha Edison yang digunakan untuk mempelajari gelombang suara adalah....", o:["graphophone","telegraphone","phonograph","magnetic recorder"], a:2, ex:"Phonograph ditemukan Thomas Alpha Edison pada tahun 1877 untuk mempelajari gelombang suara."},
+  {q:"File midi merupakan peralatan multimedia yang muncul pada era....", o:["akustik","magnetik","elektrik","digital"], a:3, ex:"File midi adalah multimedia era digital (1990-an ke atas)."},
+  {q:"Teknik perekaman dengan menggunakan stylus untuk menulis pola bunyi pada permukaan rol lilin adalah....", o:["perekaman digital","perekaman magnetik","perekaman elektrik","perekaman akustik"], a:3, ex:"Perekaman akustik (era 1899-1925) menggunakan stylus pada bahan lilin."},
+  {q:"Berikut adalah kelebihan perekaman digital, KECUALI....", o:["lebih mudah diperbanyak oleh siapa saja","dapat merekam banyak instrumen","penyimpanan data lebih mudah","kualitas audio lebih baik"], a:0, ex:"Kemudahan diperbanyak siapa saja justru merupakan kelemahan digital karena memperbanyak pembajakan."},
+  {q:"Compact cassette merupakan alat untuk merekam yang muncul pada era....", o:["digital","magnetik","akustik","elektrik"], a:1, ex:"Compact cassette ditemukan oleh Philips, perusahaan elektronik Belanda, dan termasuk era magnetik (1945-1975)."},
+  {q:"Proses menggabungkan track rekaman yang telah dibuat dan menyeimbangkan semua track yang sudah direkam dikenal dengan istilah....", o:["tracking","equalizing","overdub","mixing"], a:3, ex:"Mixing adalah proses menggabungkan dan menyeimbangkan semua track rekaman."},
+  {q:"Memotong bagian track dapat dilakukan melalui fitur....", o:["equalizer","audio recorder","trimmer","mixing"], a:2, ex:"Fitur trimmer (pemangkasan) digunakan untuk memotong/trim bagian track audio."},
+  {q:"Di bawah ini yang TIDAK termasuk dalam proses perencanaan produksi musik adalah....", o:["menentukan konsep dan musik yang akan direkam","menata mikrofon agar memiliki jarak yang pas dengan penyanyi","mengatur rencana anggaran","menentukan pihak-pihak yang terlibat dalam proses produksi"], a:1, ex:"Menata mikrofon termasuk proses produksi/perekaman, bukan perencanaan."},
+  {q:"Di bawah ini yang TIDAK termasuk dalam kerja pascaproduksi adalah....", o:["penyuntingan audio","mixing","perekaman","mastering"], a:2, ex:"Perekaman termasuk proses produksi, bukan pascaproduksi. Pascaproduksi meliputi editing, mixing, mastering."},
+  {q:"Proses rekaman berbagai instrumen yang dilakukan secara terpisah disebut....", o:["live recording","track recording","perekaman langsung","perekaman multitrack"], a:3, ex:"Perekaman multitrack adalah perekaman instrumen secara terpisah satu per satu."},
+  {q:"Dokumentasi musik disebut juga dengan istilah....", o:["recording","editing","mixing","mastering"], a:0, ex:"Dokumentasi musik dikenal dengan istilah recording (rekaman)."},
+  {q:"Phonograph diperkenalkan oleh Thomas Alpha Edison pada tahun....", o:["1870","1877","1894","1898"], a:1, ex:"Thomas Alpha Edison menyelesaikan fonograf pada 21 November 1877."},
+  {q:"Pada tahun 1894, Emir Berliner mengembangkan graphophone menjadi....", o:["telegraphone","phonograph","gramophone","magnetic recorder"], a:2, ex:"Emir Berliner mengembangkan phonograph menjadi gramophone pada tahun 1894."},
+  {q:"Magnetic recording diperkenalkan oleh Valdemar Poulsen dengan menggunakan....", o:["piringan hitam","pita magnetik","compact disc","telegraphone"], a:3, ex:"Valdemar Poulsen memperkenalkan magnetic recording dengan menggunakan telegraphone pada 1898."},
+  {q:"Perekaman magnetik bermula saat ditemukan magnetic tape pada tahun....", o:["1928","1932","1940","1945"], a:0, ex:"Magnetic tape ditemukan oleh Fritz Pfleumer di Jerman pada tahun 1928."},
+  {q:"Penambahan track rekaman baru pada track rekaman yang sudah ada disebut....", o:["tracking","overdub","editing","mixing"], a:1, ex:"Overdub adalah penambahan track rekaman baru pada track yang sudah ada, misalnya men-double suara gitar."},
+  {q:"Proses memindahkan, memotong, atau menyempurnakan bagian-bagian tertentu dalam rekaman disebut....", o:["tracking","overdub","editing","mixing"], a:2, ex:"Editing adalah proses memindahkan, memotong, atau menyempurnakan bagian rekaman."},
+  {q:"Proses menciptakan karakter suara dengan penggunaan atenuasi terhadap frekuensi tertentu disebut....", o:["tracking","mixing","mastering","equalizing"], a:3, ex:"Equalizing menciptakan karakter suara dengan mengatur frekuensi low, low-mid, high-mid, dan high."},
+  {q:"Perkembangan rekaman musik di Indonesia berawal dari dua tempat yaitu....", o:["Jakarta dan Bandung","Surakarta dan Jakarta","Surakarta dan Bandung","Jakarta dan Surabaya"], a:1, ex:"Perkembangan rekaman musik di Indonesia berawal dari Lokananta di Surakarta dan Irama di Menteng (Jakarta)."},
+  {q:"Aplikasi AudioLab tersedia untuk perangkat berbasis....", o:["iOS","Windows","Android","BlackBerry"], a:2, ex:"AudioLab tersedia di Play Store untuk gawai berbasis Android."},
+  {q:"Fitur pada AudioLab yang digunakan untuk mencampurkan atau mix beberapa audio disebut....", o:["pemangkas audio","campuran audio","menggabungkan audio","merekam audio"], a:1, ex:"Campuran audio pada AudioLab digunakan untuk mencampurkan atau mix beberapa audio."},
+  {q:"Format audio yang TIDAK tersedia di AudioLab adalah....", o:["MP3","WAV","MIDI","FLAC"], a:2, ex:"Format yang tersedia di AudioLab adalah MP3, WAV, AAC, MP4, FLAC, OGG, dan OPUS — bukan MIDI."},
+  {q:"Rekaman Era Akustik berlangsung pada periode....", o:["1877-1899","1899-1925","1925-1945","1945-1975"], a:1, ex:"Rekaman Era Akustik berlangsung pada periode 1899-1925."},
+  {q:"Peralatan yang digunakan untuk meningkatkan sinyal dari mikrofon adalah....", o:["soundcard","software","preamp","komputer"], a:2, ex:"Preamp berfungsi untuk meningkatkan sinyal dari mikrofon."},
+
+  // ===== BAB 5: MEMBUAT LAGU =====
+  {q:"Hasil karya musik yang berupa rangkaian nada dan syair yang disusun untuk mengungkapkan perasaan disebut....", o:["aransemen","vibrato","lagu","register"], a:2, ex:"Lagu adalah hasil karya musik berupa rangkaian nada-nada dan syair yang disusun untuk mengungkapkan pikiran dan perasaan."},
+  {q:"Kemampuan dasar yang dimiliki manusia sejak lahir disebut....", o:["ekspresi","komunikasi","apresiasi","bakat"], a:3, ex:"Bakat adalah kompetensi dasar yang dimiliki manusia sejak lahir."},
+  {q:"Tahap yang menjelaskan proses pemberian notasi musik pada setiap suku kata disebut....", o:["pembuatan judul","pembuatan lirik","pembuatan tema","pembuatan melodi"], a:3, ex:"Pada tahap pembuatan melodi, pencipta lagu memberikan melodi pada setiap suku kata."},
+  {q:"Setelah memperoleh tema lagu, selanjutnya pencipta lagu membuat....", o:["lirik","kalimat","melodi","judul"], a:3, ex:"Langkah kedua setelah menentukan tema adalah menentukan judul lagu."},
+  {q:"Bentuk lagu yang hanya terdiri dari frase tanya (anteseden) dan frase jawab (konsekwen) disebut bentuk lagu....", o:["dua bagian","empat bagian","lima bagian","satu bagian"], a:3, ex:"Bentuk lagu satu bagian hanya terdiri dari frase tanya (anteseden) dan frase jawab (konsekwen)."},
+  {q:"Langkah paling awal dalam mencipta lagu adalah....", o:["menentukan judul","merangkai kata","menyusun lirik lagu","menentukan tema"], a:3, ex:"Langkah pertama dalam mencipta lagu adalah menentukan tema lagu."},
+  {q:"Untuk memudahkan komunikasi antara komponis dengan pendengar digunakan sarana....", o:["interval","ekspresi","tempo","syair lagu"], a:3, ex:"Syair lagu (lirik) digunakan sebagai sarana komunikasi antara komponis dan pendengar."},
+  {q:"Perubahan susunan melodi atau nada pada sebagian atau keseluruhan lagu disebut....", o:["reffrain","chorus","interlude","modulasi"], a:3, ex:"Modulasi adalah perubahan susunan melodi atau nada pada sebagian atau keseluruhan lagu."},
+  {q:"Langkah paling akhir dalam mencipta lagu adalah....", o:["meminta saran","merekam lagu","membuat melodi","menyunting lagu"], a:3, ex:"Langkah terakhir mencipta lagu adalah menyunting lagu — memperbaiki dan menyempurnakan lagu."},
+  {q:"Bagian akhir sebuah lagu yang bertujuan menutup lagu dengan cara mengurangi volume atau menghilangkan bunyi secara perlahan-lahan disebut....", o:["intro","outro","coda","fade out"], a:3, ex:"Fade out adalah bagian akhir yang menutup lagu dengan menghilangkan bunyi secara perlahan."},
+  {q:"Intro adalah bagian awal dari sebuah lagu yang berfungsi sebagai....", o:["klimaks lagu","pengulangan","pengantar","penutup"], a:2, ex:"Intro berfungsi sebagai pengantar dan memberikan waktu bagi penyanyi dan pendengar untuk mempersiapkan diri."},
+  {q:"Verse dalam sebuah lagu adalah....", o:["inti dari cerita lagu","bagian pembuka sebelum chorus","bagian pengulangan","bagian penutup lagu"], a:1, ex:"Verse adalah nyanyian di bagian awal sebelum masuk ke bagian bridge atau chorus."},
+  {q:"Chorus merupakan bagian....", o:["pengantar lagu","pengulangan sederhana","klimaks sebuah lagu","jembatan antar bagian"], a:2, ex:"Chorus adalah intisari dari cerita yang disampaikan dalam lagu dan merupakan bagian klimaks sebuah lagu."},
+  {q:"Bridge dalam sebuah lagu berfungsi sebagai....", o:["pengantar lagu","jembatan untuk menghubungkan bagian-bagian lagu","pengulangan chorus","penutup lagu"], a:1, ex:"Bridge merupakan bagian lagu yang berfungsi sebagai 'jembatan' untuk menghubungkan bagian-bagian lainnya."},
+  {q:"Interlude merupakan bagian kosong pada lagu yang posisinya berada di....", o:["awal lagu","akhir lagu","tengah-tengah lagu","sebelum chorus"], a:2, ex:"Interlude berada di tengah-tengah lagu, berfungsi menyambungkan verse dengan verse berikutnya atau bridge dengan chorus."},
+  {q:"Coda merupakan bagian akhir lagu yang biasanya berisi nada dan lirik sebagai....", o:["klimaks lagu","pengantar lagu","pengulangan chorus","penutup lagu (ekor lagu)"], a:3, ex:"Coda adalah bagian akhir dari sebuah lagu sebagai penutup, biasa disebut 'ekor lagu'."},
+  {q:"Ending dalam sebuah lagu berfungsi untuk....", o:["membuka lagu","mengulang chorus","mengakhiri sebuah lagu","menjembatani bagian lagu"], a:2, ex:"Ending adalah bagian penutup dalam sebuah lagu yang berfungsi mengakhiri lagu."},
+  {q:"Outro dalam sebuah lagu merupakan....", o:["bagian awal lagu yang berisi instrumen","bagian akhir lagu yang hanya berisi instrumen musik","bagian tengah lagu","pengulangan lirik"], a:1, ex:"Outro merupakan bagian akhir lagu yang hanya berisi instrumen musik tanpa lirik."},
+  {q:"Menurut Karl Edmund Prier SJ, bentuk lagu berdasarkan jumlah kalimat terdapat...macam.", o:["dua","tiga","empat","lima"], a:1, ex:"Menurut Karl Edmund Prier SJ (2004:5), bentuk lagu berdasarkan jumlah kalimat ada tiga macam."},
+  {q:"Melodi adalah rangkaian nada berdasarkan....", o:["nilai ritmis","tinggi rendah atau naik turunnya","keras lemahnya","cepat lambatnya"], a:1, ex:"Melodi adalah rangkaian nada berdasarkan tinggi rendah atau naik turunnya."},
+  {q:"Ritme adalah gerak yang teratur mengalir karena....", o:["munculnya melodi yang indah","munculnya aksen secara tetap","perubahan tempo","perubahan nada"], a:1, ex:"Ritme adalah gerak yang teratur mengalir karena munculnya aksen secara tetap."},
+  {q:"Harmoni adalah....", o:["rangkaian nada naik turun","gerak teratur karena aksen tetap","keselarasan paduan bunyi","cara menyanyikan lagu"], a:2, ex:"Harmoni adalah keselarasan paduan bunyi."},
+  {q:"Langkah menyusun lirik lagu dapat diambil dari....", o:["hanya dari puisi saja","hanya dari prosa saja","dari puisi atau disusun sendiri sesuai tema","dari judul lagu saja"], a:2, ex:"Lirik lagu biasanya dapat dibuat dari puisi yang sudah ada atau bisa juga dibuat sendiri sesuai tema dan judul lagu."},
+  {q:"Syarat dasar seorang komponis dalam membuat lagu, antara lain....", o:["hanya membutuhkan bakat saja","bakat, pengetahuan musik, dan pengetahuan bahasa","hanya pengetahuan musik","hanya pengetahuan bahasa"], a:1, ex:"Persyaratan dasar seorang komponis meliputi bakat, pengetahuan musik, dan pengetahuan bahasa yang baik."},
+];
+
+let current = 0;
+let score = 0;
+let userAnswers = new Array(questions.length).fill(null);
+let answered = new Array(questions.length).fill(false);
+
+function startQuiz() {
+  document.getElementById('start-screen').style.display = 'none';
+  document.getElementById('quiz-screen').style.display = 'block';
+  loadQ(0);
+}
+
+function loadQ(idx) {
+  current = idx;
+  const q = questions[idx];
+  const total = questions.length;
+
+  document.getElementById('q-counter').textContent = `Soal ${idx+1} dari ${total}`;
+  document.getElementById('score-live').textContent = `${score} benar`;
+  document.getElementById('prog').style.width = `${((idx)/total)*100}%`;
+  document.getElementById('q-num').textContent = `SOAL ${String(idx+1).padStart(2,'0')}`;
+  document.getElementById('q-text').textContent = q.q;
+
+  const letters = ['A','B','C','D'];
+  const container = document.getElementById('options-container');
+  container.innerHTML = '';
+
+  q.o.forEach((opt, i) => {
+    const btn = document.createElement('button');
+    btn.className = 'option-btn';
+    btn.innerHTML = `<span class="option-letter">${letters[i]}</span>${opt}`;
+    btn.onclick = () => selectAnswer(i);
+    container.appendChild(btn);
+  });
+
+  // If already answered, restore state
+  const fb = document.getElementById('feedback-box');
+  fb.className = 'feedback';
+  fb.style.display = 'none';
+
+  if (answered[idx]) {
+    const ua = userAnswers[idx];
+    const btns = container.querySelectorAll('.option-btn');
+    btns.forEach(b => b.disabled = true);
+    btns[ua].classList.add(ua === q.a ? 'correct' : 'wrong');
+    if (ua !== q.a) btns[q.a].classList.add('correct');
+    showFeedback(ua === q.a, q.ex);
+  }
+
+  document.getElementById('btn-prev').disabled = idx === 0;
+  document.getElementById('btn-next').textContent = idx === total-1 ? 'Selesai 🎉' : 'Lanjut →';
+}
+
+function selectAnswer(i) {
+  if (answered[current]) return;
+  answered[current] = true;
+  userAnswers[current] = i;
+
+  const q = questions[current];
+  const btns = document.querySelectorAll('.option-btn');
+  btns.forEach(b => b.disabled = true);
+
+  if (i === q.a) {
+    btns[i].classList.add('correct');
+    score++;
+  } else {
+    btns[i].classList.add('wrong');
+    btns[q.a].classList.add('correct');
+  }
+  document.getElementById('score-live').textContent = `${score} benar`;
+  showFeedback(i === q.a, q.ex);
+}
+
+function showFeedback(correct, explanation) {
+  const fb = document.getElementById('feedback-box');
+  if (correct) {
+    fb.className = 'feedback correct-fb';
+    fb.innerHTML = `<strong>✅ Benar!</strong>${explanation}`;
+  } else {
+    fb.className = 'feedback wrong-fb';
+    fb.innerHTML = `<strong>❌ Kurang tepat.</strong>${explanation}`;
+  }
+}
+
+function nextQ() {
+  if (current < questions.length - 1) {
+    loadQ(current + 1);
+    window.scrollTo({top:0, behavior:'smooth'});
+  } else {
+    showResult();
+  }
+}
+
+function prevQ() {
+  if (current > 0) {
+    loadQ(current - 1);
+    window.scrollTo({top:0, behavior:'smooth'});
+  }
+}
+
+function showResult() {
+  document.getElementById('quiz-screen').style.display = 'none';
+  const rs = document.getElementById('result-screen');
+  rs.style.display = 'block';
+
+  const total = questions.length;
+  const pct = Math.round((score/total)*100);
+
+  document.getElementById('final-score').textContent = pct;
+  document.getElementById('stat-benar').textContent = score;
+  document.getElementById('stat-salah').textContent = total - score;
+  document.getElementById('stat-skor').textContent = pct;
+
+  // Animate ring
+  setTimeout(() => {
+    const circumference = 364;
+    const offset = circumference - (pct/100)*circumference;
+    document.getElementById('ring-fill').style.transition = 'stroke-dashoffset 1.2s cubic-bezier(0.4,0,0.2,1)';
+    document.getElementById('ring-fill').style.strokeDashoffset = offset;
+  }, 100);
+
+  let title, desc;
+  if (pct >= 90) { title = "🏆 Luar Biasa!"; desc = "Nilai sempurna! Kamu menguasai materi dengan sangat baik. Siap jadi komponis berbakat!"; }
+  else if (pct >= 75) { title = "🌟 Hebat!"; desc = "Nilai yang sangat bagus! Pemahamanmu tentang dokumentasi musik dan cara membuat lagu sudah kuat."; }
+  else if (pct >= 60) { title = "👍 Cukup Baik!"; desc = "Lumayan! Masih ada beberapa materi yang perlu dipelajari lagi. Semangat terus!"; }
+  else { title = "📚 Perlu Belajar Lagi"; desc = "Jangan menyerah! Pelajari kembali materi Bab 4 dan Bab 5, kemudian coba lagi kuis ini."; }
+
+  document.getElementById('result-title').textContent = title;
+  document.getElementById('result-desc').textContent = desc;
+  window.scrollTo({top:0, behavior:'smooth'});
+}
+
+function showReview() {
+  const rs = document.getElementById('review-section');
+  if (rs.style.display === 'block') { rs.style.display = 'none'; return; }
+  rs.style.display = 'block';
+  const list = document.getElementById('review-list');
+  list.innerHTML = '';
+  const letters = ['A','B','C','D'];
+  questions.forEach((q, i) => {
+    const ua = userAnswers[i];
+    const correct = ua === q.a;
+    const div = document.createElement('div');
+    div.className = `review-item ${correct ? 'r-correct' : 'r-wrong'}`;
+    div.innerHTML = `
+      <div class="review-q">${i+1}. ${q.q}</div>
+      <div class="review-answer">
+        Jawabanmu: <span class="${correct ? 'ans-correct' : 'ans-wrong'}">${ua !== null ? letters[ua]+'. '+q.o[ua] : 'Tidak dijawab'}</span>
+        ${!correct ? ` &nbsp;|&nbsp; Kunci: <span class="ans-correct">${letters[q.a]}. ${q.o[q.a]}</span>` : ''}
+      </div>
+    `;
+    list.appendChild(div);
+  });
+  rs.scrollIntoView({behavior:'smooth'});
+}
+
+function restartQuiz() {
+  current = 0; score = 0;
+  userAnswers = new Array(questions.length).fill(null);
+  answered = new Array(questions.length).fill(false);
+  document.getElementById('result-screen').style.display = 'none';
+  document.getElementById('review-section').style.display = 'none';
+  document.getElementById('quiz-screen').style.display = 'block';
+  loadQ(0);
+  window.scrollTo({top:0, behavior:'smooth'});
+}
+</script>
+</body>
+</html>
