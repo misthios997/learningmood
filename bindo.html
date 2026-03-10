@@ -1,0 +1,827 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kuis Bahasa Indonesia</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0f1117;
+    --surface: #1a1d27;
+    --card: #22263a;
+    --accent: #f5c842;
+    --accent2: #ff6b6b;
+    --accent3: #4ecdc4;
+    --text: #ffffff;
+    --muted: #cccccc;
+    --border: #2e3352;
+    --correct: #43e97b;
+    --wrong: #ff6b6b;
+  }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+  }
+
+  /* ── INTRO ── */
+  #intro {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 2rem;
+    background: radial-gradient(ellipse at 30% 20%, #1e2a5a44 0%, transparent 60%),
+                radial-gradient(ellipse at 70% 80%, #3a1a4a44 0%, transparent 60%),
+                var(--bg);
+  }
+  #intro .badge {
+    background: linear-gradient(135deg, var(--accent), #ffaa00);
+    color: #000;
+    font-weight: 700;
+    font-size: .75rem;
+    letter-spacing: .15em;
+    padding: .35rem .9rem;
+    border-radius: 99px;
+    text-transform: uppercase;
+    margin-bottom: 1.5rem;
+    display: inline-block;
+  }
+  #intro h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(2.5rem, 8vw, 5rem);
+    font-weight: 900;
+    line-height: 1.05;
+    margin-bottom: 1rem;
+    background: linear-gradient(135deg, #fff 30%, var(--accent));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  #intro p {
+    color: var(--muted);
+    font-size: 1.05rem;
+    max-width: 480px;
+    line-height: 1.7;
+    margin-bottom: 2.5rem;
+  }
+  .stats-row {
+    display: flex;
+    gap: 2rem;
+    margin-bottom: 2.5rem;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+  .stat {
+    text-align: center;
+  }
+  .stat .num {
+    font-family: 'Playfair Display', serif;
+    font-size: 2.2rem;
+    font-weight: 700;
+    color: var(--accent);
+    display: block;
+  }
+  .stat .lbl {
+    font-size: .8rem;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: .08em;
+  }
+  .btn-start {
+    background: linear-gradient(135deg, var(--accent), #ffaa00);
+    color: #000;
+    border: none;
+    padding: 1rem 3rem;
+    font-size: 1.1rem;
+    font-weight: 700;
+    border-radius: 99px;
+    cursor: pointer;
+    font-family: 'DM Sans', sans-serif;
+    letter-spacing: .04em;
+    transition: transform .2s, box-shadow .2s;
+    box-shadow: 0 8px 32px #f5c84255;
+  }
+  .btn-start:hover { transform: translateY(-2px); box-shadow: 0 12px 40px #f5c84277; }
+
+  /* ── QUIZ ── */
+  #quiz { display: none; min-height: 100vh; padding: 1.5rem; }
+  .quiz-header {
+    max-width: 720px;
+    margin: 0 auto 1.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    flex-wrap: wrap;
+  }
+  .q-counter {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.1rem;
+    color: var(--accent);
+    font-weight: 700;
+  }
+  .progress-wrap {
+    flex: 1;
+    height: 6px;
+    background: var(--border);
+    border-radius: 99px;
+    overflow: hidden;
+    min-width: 120px;
+  }
+  .progress-bar {
+    height: 100%;
+    background: linear-gradient(90deg, var(--accent), #ffaa00);
+    border-radius: 99px;
+    transition: width .4s ease;
+  }
+  .score-live {
+    font-size: .9rem;
+    color: var(--muted);
+    font-weight: 500;
+  }
+
+  .card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 1.2rem;
+    padding: 2rem;
+    max-width: 720px;
+    margin: 0 auto 1.5rem;
+    animation: fadeUp .35s ease both;
+  }
+  @keyframes fadeUp {
+    from { opacity:0; transform:translateY(16px); }
+    to   { opacity:1; transform:translateY(0); }
+  }
+  .topic-tag {
+    display: inline-block;
+    background: #2e3352;
+    color: var(--accent);
+    font-size: .72rem;
+    font-weight: 600;
+    letter-spacing: .1em;
+    text-transform: uppercase;
+    padding: .25rem .75rem;
+    border-radius: 99px;
+    margin-bottom: 1rem;
+  }
+  .question-text {
+    font-size: 1.05rem;
+    line-height: 1.7;
+    font-weight: 500;
+    margin-bottom: 1.5rem;
+  }
+  .options { display: flex; flex-direction: column; gap: .75rem; }
+  .opt {
+    display: flex;
+    align-items: flex-start;
+    gap: .9rem;
+    background: var(--surface);
+    border: 2px solid var(--border);
+    border-radius: .75rem;
+    padding: .9rem 1.1rem;
+    cursor: pointer;
+    transition: border-color .15s, background .15s;
+    font-size: .95rem;
+    line-height: 1.5;
+    text-align: left;
+  }
+  .opt:hover:not(.disabled) { border-color: var(--accent); background: #22263a; }
+  .opt .letter {
+    min-width: 1.6rem;
+    height: 1.6rem;
+    border-radius: 50%;
+    background: var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: .8rem;
+    flex-shrink: 0;
+    color: var(--muted);
+  }
+  .opt.selected { border-color: var(--accent); background: #2e3352; }
+  .opt.selected .letter { background: var(--accent); color: #000; }
+  .opt.correct { border-color: var(--correct); background: #1a3a2a; }
+  .opt.correct .letter { background: var(--correct); color: #000; }
+  .opt.wrong { border-color: var(--wrong); background: #3a1a1a; }
+  .opt.wrong .letter { background: var(--wrong); color: #fff; }
+  .opt.disabled { cursor: default; }
+
+  .feedback {
+    margin-top: 1rem;
+    padding: .85rem 1rem;
+    border-radius: .65rem;
+    font-size: .9rem;
+    line-height: 1.5;
+    display: none;
+  }
+  .feedback.show { display: block; }
+  .feedback.ok { background: #1a3a2a; border-left: 3px solid var(--correct); color: #a0f0c0; }
+  .feedback.bad { background: #3a1a1a; border-left: 3px solid var(--wrong); color: #ffaaaa; }
+
+  .btn-next {
+    display: none;
+    background: linear-gradient(135deg, var(--accent), #ffaa00);
+    color: #000;
+    border: none;
+    padding: .85rem 2.5rem;
+    font-size: 1rem;
+    font-weight: 700;
+    border-radius: 99px;
+    cursor: pointer;
+    font-family: 'DM Sans', sans-serif;
+    margin: 0 auto;
+    display: none;
+    transition: transform .2s;
+  }
+  .btn-next:hover { transform: translateY(-1px); }
+  .btn-next.show { display: block; }
+
+  /* ── RESULT ── */
+  #result {
+    display: none;
+    min-height: 100vh;
+    padding: 2rem 1.5rem;
+    text-align: center;
+    background: radial-gradient(ellipse at 50% 0%, #1e2a5a55 0%, transparent 60%), var(--bg);
+  }
+  #result h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(2rem,7vw,4rem);
+    font-weight: 900;
+    margin-bottom: .5rem;
+    background: linear-gradient(135deg, #fff 30%, var(--accent));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  .grade-badge {
+    font-family: 'Playfair Display', serif;
+    font-size: 5rem;
+    font-weight: 900;
+    display: block;
+    margin: 1rem auto;
+  }
+  .score-big {
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: var(--accent);
+    font-family: 'Playfair Display', serif;
+  }
+  .result-stats {
+    display: flex;
+    gap: 1.5rem;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin: 1.5rem 0;
+  }
+  .r-stat {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 1rem;
+    padding: 1rem 1.5rem;
+    min-width: 120px;
+  }
+  .r-stat .rn { font-family: 'Playfair Display', serif; font-size: 2rem; font-weight: 700; }
+  .r-stat .rl { font-size: .78rem; color: var(--muted); text-transform: uppercase; letter-spacing: .08em; }
+  .review-section {
+    max-width: 720px;
+    margin: 2rem auto 0;
+    text-align: left;
+  }
+  .review-section h3 {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.4rem;
+    margin-bottom: 1rem;
+    color: var(--accent);
+  }
+  .review-item {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: .75rem;
+    padding: 1rem;
+    margin-bottom: .75rem;
+    font-size: .88rem;
+    line-height: 1.6;
+  }
+  .review-item .ri-q { font-weight: 600; margin-bottom: .4rem; }
+  .review-item .ri-correct { color: var(--correct); }
+  .review-item .ri-wrong { color: var(--wrong); }
+  .btn-restart {
+    background: linear-gradient(135deg, var(--accent), #ffaa00);
+    color: #000;
+    border: none;
+    padding: .9rem 2.5rem;
+    font-size: 1rem;
+    font-weight: 700;
+    border-radius: 99px;
+    cursor: pointer;
+    font-family: 'DM Sans', sans-serif;
+    margin-top: 2rem;
+    transition: transform .2s;
+  }
+  .btn-restart:hover { transform: translateY(-2px); }
+</style>
+</head>
+<body>
+
+<!-- INTRO -->
+<div id="intro">
+  <span class="badge">📚 Ulangan Harian</span>
+  <h1>Kuis Bahasa<br>Indonesia</h1>
+  <p>Uji pemahamanmu tentang Teks Ulasan, Teks Eksplanasi, Pidato, Kalimat Efektif, Ejaan, dan Teks Laporan.</p>
+  <div class="stats-row">
+    <div class="stat"><span class="num">51</span><span class="lbl">Soal</span></div>
+    <div class="stat"><span class="num">6</span><span class="lbl">Topik</span></div>
+    <div class="stat"><span class="num">PG</span><span class="lbl">Pilihan Ganda</span></div>
+  </div>
+  <button class="btn-start" onclick="startQuiz()">Mulai Kuis ▶</button>
+</div>
+
+<!-- QUIZ -->
+<div id="quiz">
+  <div class="quiz-header">
+    <span class="q-counter" id="qCounter">1 / 51</span>
+    <div class="progress-wrap"><div class="progress-bar" id="progressBar" style="width:2%"></div></div>
+    <span class="score-live" id="scoreLive">Skor: 0</span>
+  </div>
+  <div class="card" id="questionCard">
+    <span class="topic-tag" id="topicTag"></span>
+    <p class="question-text" id="questionText"></p>
+    <div class="options" id="optionsDiv"></div>
+    <div class="feedback" id="feedbackDiv"></div>
+  </div>
+  <div style="max-width:720px;margin:0 auto;text-align:right;">
+    <button class="btn-next" id="btnNext" onclick="nextQuestion()">Soal Berikutnya →</button>
+  </div>
+</div>
+
+<!-- RESULT -->
+<div id="result">
+  <h2>Hasil Kuis</h2>
+  <div class="score-big" id="scoreFinal"></div>
+  <div class="grade-badge" id="gradeBadge"></div>
+  <div class="result-stats">
+    <div class="r-stat"><div class="rn" id="rCorrect" style="color:var(--correct)"></div><div class="rl">Benar</div></div>
+    <div class="r-stat"><div class="rn" id="rWrong" style="color:var(--wrong)"></div><div class="rl">Salah</div></div>
+    <div class="r-stat"><div class="rn" id="rPct" style="color:var(--accent)"></div><div class="rl">Nilai</div></div>
+  </div>
+  <div class="review-section">
+    <h3>📋 Review Jawaban</h3>
+    <div id="reviewList"></div>
+  </div>
+  <button class="btn-restart" onclick="restartQuiz()">🔄 Ulangi Kuis</button>
+</div>
+
+<script>
+const questions = [
+  // ── TEKS ULASAN (1-10) ──
+  {
+    topic: "Teks Ulasan",
+    q: "Apa yang dimaksud dengan teks ulasan?",
+    opts: ["Teks yang menceritakan pengalaman pribadi", "Teks yang berisi penilaian atau tinjauan terhadap suatu karya", "Teks yang menjelaskan langkah-langkah kegiatan", "Teks yang memaparkan fenomena alam"],
+    ans: 1
+  },
+  {
+    topic: "Teks Ulasan",
+    q: "Struktur teks ulasan yang benar adalah...",
+    opts: ["Orientasi – Tafsiran – Evaluasi – Rangkuman", "Pernyataan umum – Deretan penjelas – Interpretasi", "Pembuka – Isi – Penutup", "Tesis – Argumen – Reiterasi"],
+    ans: 0
+  },
+  {
+    topic: "Teks Ulasan",
+    q: "Bagian teks ulasan yang berisi penilaian kelebihan dan kekurangan karya disebut...",
+    opts: ["Orientasi", "Tafsiran", "Evaluasi", "Rangkuman"],
+    ans: 2
+  },
+  {
+    topic: "Teks Ulasan",
+    q: "Sikap penulis dalam teks ulasan dapat berupa...",
+    opts: ["Setuju, kritik, dan objektif", "Narasi, deskripsi, dan eksposisi", "Denotatif, konotatif, dan stilistika", "Formal, informal, dan semi-formal"],
+    ans: 0
+  },
+  {
+    topic: "Teks Ulasan",
+    q: "Kalimat berikut yang merupakan saran dalam teks ulasan adalah...",
+    opts: ["Film ini tayang pada bulan Maret 2024.", "Sebaiknya, penulis lebih memperhatikan konsistensi alur cerita.", "Novel ini ditulis oleh Tere Liye.", "Buku ini memiliki 320 halaman."],
+    ans: 1
+  },
+  {
+    topic: "Teks Ulasan",
+    q: "Teks ulasan yang baik harus bersifat...",
+    opts: ["Subjektif dan emosional", "Objektif dan berdasarkan bukti", "Fiksi dan imajinatif", "Singkat dan tidak detail"],
+    ans: 1
+  },
+  {
+    topic: "Teks Ulasan",
+    q: "Bagian 'Orientasi' dalam teks ulasan berisi...",
+    opts: ["Penilaian kelebihan dan kekurangan", "Gambaran umum karya yang diulas", "Simpulan dan rekomendasi", "Sinopsis atau ringkasan karya"],
+    ans: 1
+  },
+  {
+    topic: "Teks Ulasan",
+    q: "Manakah kalimat yang menunjukkan sikap setuju dalam teks ulasan?",
+    opts: ["Novel ini terlalu panjang dan membosankan.", "Alur cerita dalam novel ini membingungkan pembaca.", "Penulis berhasil menggambarkan karakter tokoh dengan sangat hidup dan meyakinkan.", "Buku ini tidak cocok untuk remaja."],
+    ans: 2
+  },
+  {
+    topic: "Teks Ulasan",
+    q: "Teks ulasan berbeda dari sinopsis karena teks ulasan...",
+    opts: ["Hanya menceritakan jalan cerita", "Memberikan penilaian dan pendapat terhadap karya", "Ditulis oleh pengarang asli", "Tidak perlu membaca karya yang diulas"],
+    ans: 1
+  },
+  {
+    topic: "Teks Ulasan",
+    q: "Bagian 'Rangkuman' dalam teks ulasan berfungsi untuk...",
+    opts: ["Memperkenalkan karya secara umum", "Memberikan penilaian mendalam", "Menyimpulkan dan memberikan rekomendasi", "Menceritakan pengalaman penulis"],
+    ans: 2
+  },
+
+  // ── TEKS EKSPLANASI (11-20) ──
+  {
+    topic: "Teks Eksplanasi",
+    q: "Teks eksplanasi adalah teks yang bertujuan untuk...",
+    opts: ["Menceritakan pengalaman menarik", "Menjelaskan proses terjadinya suatu fenomena", "Meyakinkan pembaca tentang suatu pendapat", "Mendeskripsikan suatu objek"],
+    ans: 1
+  },
+  {
+    topic: "Teks Eksplanasi",
+    q: "Struktur teks eksplanasi yang benar adalah...",
+    opts: ["Orientasi – Komplikasi – Resolusi", "Identifikasi fenomena – Deretan penjelas – Interpretasi", "Tesis – Argumen – Reiterasi", "Pembuka – Isi – Penutup"],
+    ans: 1
+  },
+  {
+    topic: "Teks Eksplanasi",
+    q: "Sifat bahasa dalam teks eksplanasi adalah...",
+    opts: ["Konotatif dan imajinatif", "Denotatif dan ilmiah", "Informal dan santai", "Figuratif dan ekspresif"],
+    ans: 1
+  },
+  {
+    topic: "Teks Eksplanasi",
+    q: "Kalimat pasif banyak digunakan dalam teks eksplanasi karena...",
+    opts: ["Lebih mudah dipahami", "Menekankan proses atau kejadian, bukan pelaku", "Lebih singkat dari kalimat aktif", "Sesuai dengan aturan tata bahasa baku"],
+    ans: 1
+  },
+  {
+    topic: "Teks Eksplanasi",
+    q: "Struktur 'Deretan Penjelas' dalam teks eksplanasi berisi...",
+    opts: ["Pernyataan umum tentang fenomena", "Urutan sebab-akibat yang menjelaskan fenomena", "Simpulan dan komentar penulis", "Identifikasi masalah"],
+    ans: 1
+  },
+  {
+    topic: "Teks Eksplanasi",
+    q: "Konjungsi kausalitas yang tepat digunakan dalam teks eksplanasi adalah...",
+    opts: ["Dan, atau, tetapi", "Kemudian, lalu, setelah itu", "Karena, sehingga, oleh sebab itu", "Meskipun, walaupun, biarpun"],
+    ans: 2
+  },
+  {
+    topic: "Teks Eksplanasi",
+    q: "Bagian 'Interpretasi' dalam teks eksplanasi berisi...",
+    opts: ["Perkenalan fenomena yang akan dijelaskan", "Rincian penyebab terjadinya fenomena", "Simpulan atau komentar penulis terhadap fenomena", "Data statistik pendukung"],
+    ans: 2
+  },
+  {
+    topic: "Teks Eksplanasi",
+    q: "Teknik refraksi adalah salah satu istilah yang muncul dalam teks eksplanasi bertema...",
+    opts: ["Sosial budaya", "Fisika dan optik", "Ekonomi", "Sejarah"],
+    ans: 1
+  },
+  {
+    topic: "Teks Eksplanasi",
+    q: "Kata 'akibat' termasuk konjungsi jenis apa dalam teks eksplanasi?",
+    opts: ["Konjungsi temporal", "Konjungsi kausalitas", "Konjungsi aditif", "Konjungsi kontrastif"],
+    ans: 1
+  },
+  {
+    topic: "Teks Eksplanasi",
+    q: "Manakah topik yang tepat untuk teks eksplanasi?",
+    opts: ["Pengalaman liburan ke pantai", "Proses terjadinya gempa bumi", "Resensi novel terbaru", "Cara membuat kue ulang tahun"],
+    ans: 1
+  },
+
+  // ── TEKS PIDATO (21-30) ──
+  {
+    topic: "Teks Pidato",
+    q: "Kalimat sapaan yang tepat untuk pidato di lingkungan sekolah adalah...",
+    opts: ["Hei teman-teman sekalian!", "Yang terhormat Bapak/Ibu guru, serta teman-teman yang saya cintai.", "Hai guys, apa kabar semua?", "Saudara-saudara yang saya kenal."],
+    ans: 1
+  },
+  {
+    topic: "Teks Pidato",
+    q: "Bagian pembuka pidato yang santun biasanya diawali dengan...",
+    opts: ["Langsung menyampaikan isi pidato", "Salam pembuka, ucapan syukur, dan salam hormat kepada hadirin", "Menceritakan pengalaman pribadi", "Membacakan puisi"],
+    ans: 1
+  },
+  {
+    topic: "Teks Pidato",
+    q: "Ilustrasi yang tepat untuk isi pidato bertema 'Pentingnya Membaca' adalah...",
+    opts: ["Mengajak hadirin untuk menonton film", "Menjelaskan bahwa membaca dapat meningkatkan wawasan dan kecerdasan", "Menceritakan pengalaman berlibur ke perpustakaan", "Membacakan daftar buku terlaris"],
+    ans: 1
+  },
+  {
+    topic: "Teks Pidato",
+    q: "Perbaikan sapaan yang tepat dari kalimat 'Halo semua!' dalam pidato resmi adalah...",
+    opts: ["Assalamualaikum dan halo!", "Yang terhormat hadirin sekalian.", "Hey, kalian semua!", "Apa kabar teman-teman?"],
+    ans: 1
+  },
+  {
+    topic: "Teks Pidato",
+    q: "Bagian isi pidato yang baik berisi...",
+    opts: ["Ucapan terima kasih kepada pembicara sebelumnya", "Paparan gagasan utama disertai argumen dan contoh yang relevan", "Salam penutup dan doa", "Perkenalan diri pembicara"],
+    ans: 1
+  },
+  {
+    topic: "Teks Pidato",
+    q: "Kalimat penutup pidato yang tepat adalah...",
+    opts: ["Sekian dan terima kasih, wassalamualaikum warahmatullahi wabarakatuh.", "Oke, cukup sekian ya.", "Makasih banyak, bye bye!", "Selesai deh pidatonya."],
+    ans: 0
+  },
+  {
+    topic: "Teks Pidato",
+    q: "Metode pidato yang dilakukan tanpa persiapan teks disebut...",
+    opts: ["Metode naskah", "Metode menghafal", "Metode impromtu", "Metode ekstemporan"],
+    ans: 2
+  },
+  {
+    topic: "Teks Pidato",
+    q: "Bagian pembuka pidato yang berisi ucapan puji syukur kepada Tuhan disebut...",
+    opts: ["Eksordium", "Narasi", "Argumentasi", "Perorasi"],
+    ans: 0
+  },
+  {
+    topic: "Teks Pidato",
+    q: "Diksi yang tepat untuk pidato resmi adalah...",
+    opts: ["Santai dan gaul", "Formal dan sopan", "Slang dan kekinian", "Bebas tanpa aturan"],
+    ans: 1
+  },
+  {
+    topic: "Teks Pidato",
+    q: "Manakah kalimat ajakan yang tepat dalam pidato?",
+    opts: ["Masa kamu ga tau sih?", "Marilah kita bersama-sama menjaga lingkungan sekitar kita.", "Pokoknya harus dilakukan!", "Kalau mau ya lakuin, kalau enggak ya jangan."],
+    ans: 1
+  },
+
+  // ── KALIMAT EFEKTIF (31-40) ──
+  {
+    topic: "Kalimat Efektif",
+    q: "Kalimat berikut yang mengandung pleonasme adalah...",
+    opts: ["Dia pergi ke sekolah setiap hari.", "Para siswa-siswa mengerjakan tugas.", "Ibu memasak nasi di dapur.", "Adik membaca buku cerita."],
+    ans: 1
+  },
+  {
+    topic: "Kalimat Efektif",
+    q: "Perbaikan kalimat 'Para hadirin sekalian dipersilakan duduk.' yang tepat adalah...",
+    opts: ["Para hadirin dipersilakan duduk.", "Hadirin sekalian dipersilakan duduk.", "Hadirin dipersilakan duduk.", "Semua para hadirin dipersilakan duduk."],
+    ans: 2
+  },
+  {
+    topic: "Kalimat Efektif",
+    q: "Kata depan 'di' yang tepat terdapat dalam kalimat...",
+    opts: ["Buku ini di beli kemarin.", "Adik bermain di taman.", "Dia di suruh pergi.", "Laporan ini di buat hari ini."],
+    ans: 1
+  },
+  {
+    topic: "Kalimat Efektif",
+    q: "Kalimat yang rancu (tidak logis) adalah...",
+    opts: ["Anak itu pintar sekali.", "Mobil itu melaju dengan kencang.", "Waktu dan tempat kami persilakan.", "Guru itu mengajar matematika."],
+    ans: 2
+  },
+  {
+    topic: "Kalimat Efektif",
+    q: "Perbaikan kalimat 'Bagi siswa yang terlambat agar melapor ke guru piket.' adalah...",
+    opts: ["Siswa yang terlambat agar melapor ke guru piket.", "Siswa yang terlambat harap melapor ke guru piket.", "Bagi siswa yang terlambat harap melapor ke guru piket.", "Semua siswa yang terlambat agar melapor."],
+    ans: 1
+  },
+  {
+    topic: "Kalimat Efektif",
+    q: "Kalimat efektif ditandai dengan...",
+    opts: ["Menggunakan banyak kata agar lebih jelas", "Hemat kata, jelas, dan tidak ambigu", "Selalu menggunakan kata-kata asing", "Kalimat yang sangat panjang"],
+    ans: 1
+  },
+  {
+    topic: "Kalimat Efektif",
+    q: "Kata gabung yang benar adalah...",
+    opts: ["kerjasama ditulis terpisah: kerja sama", "matahari ditulis terpisah: mata hari", "buah tangan ditulis serangkai: buahtangan", "olahraga ditulis terpisah: olah raga"],
+    ans: 0
+  },
+  {
+    topic: "Kalimat Efektif",
+    q: "Kalimat yang mengandung subjek dan predikat yang jelas adalah...",
+    opts: ["Dengan cara belajar rajin.", "Karena hujan deras.", "Anak itu belajar setiap malam.", "Setelah makan siang."],
+    ans: 2
+  },
+  {
+    topic: "Kalimat Efektif",
+    q: "Manakah penulisan kata depan 'ke' yang benar?",
+    opts: ["ke-sekolah", "Ke Sekolah", "ke sekolah", "kesekolah"],
+    ans: 2
+  },
+  {
+    topic: "Kalimat Efektif",
+    q: "Penggunaan tanda koma yang benar terdapat dalam kalimat...",
+    opts: ["Saya suka nasi goreng, mi goreng dan bakso.", "Saya suka nasi goreng, mi goreng, dan bakso.", "Saya suka, nasi goreng mi goreng dan bakso.", "Saya suka nasi goreng mi goreng, dan bakso."],
+    ans: 1
+  },
+
+  // ── EJAAN / EYD / PUEBI (41-46) ──
+  {
+    topic: "Ejaan (PUEBI/EYD)",
+    q: "Kata serapan yang penulisannya benar adalah...",
+    opts: ["Aktifitas", "Aktivitas", "Aktifiti", "Aktifites"],
+    ans: 1
+  },
+  {
+    topic: "Ejaan (PUEBI/EYD)",
+    q: "Penulisan kata serapan yang baku dari 'system' adalah...",
+    opts: ["Sistem", "Sistim", "Syistem", "System"],
+    ans: 0
+  },
+  {
+    topic: "Ejaan (PUEBI/EYD)",
+    q: "Penulisan kata serapan 'complex' yang baku dalam bahasa Indonesia adalah...",
+    opts: ["Komplek", "Komplex", "Kompleks", "Complex"],
+    ans: 2
+  },
+  {
+    topic: "Ejaan (PUEBI/EYD)",
+    q: "Penulisan tanda koma yang tepat terdapat pada kalimat...",
+    opts: ["Oleh karena itu kita harus rajin belajar.", "Oleh karena itu, kita harus rajin belajar.", "Oleh karena itu; kita harus rajin belajar.", "Oleh karena itu: kita harus rajin belajar."],
+    ans: 1
+  },
+  {
+    topic: "Ejaan (PUEBI/EYD)",
+    q: "Manakah yang merupakan kata serapan tidak baku?",
+    opts: ["Apotek", "Jadwal", "Ijasah", "Karier"],
+    ans: 2
+  },
+  {
+    topic: "Ejaan (PUEBI/EYD)",
+    q: "Penulisan 'di' yang benar sebagai kata depan adalah...",
+    opts: ["diambil", "dibawa", "di rumah", "dipukul"],
+    ans: 2
+  },
+
+  // ── TEKS LAPORAN (47-51) ──
+  {
+    topic: "Teks Laporan",
+    q: "Urutan langkah membuat laporan percobaan yang benar adalah...",
+    opts: [
+      "Hasil – Tujuan – Alat/Bahan – Prosedur – Simpulan",
+      "Tujuan – Alat/Bahan – Prosedur – Hasil – Simpulan",
+      "Simpulan – Hasil – Prosedur – Alat/Bahan – Tujuan",
+      "Prosedur – Alat/Bahan – Tujuan – Hasil – Simpulan"
+    ],
+    ans: 1
+  },
+  {
+    topic: "Teks Laporan",
+    q: "Bagian 'Tujuan' dalam laporan percobaan berfungsi untuk...",
+    opts: ["Menuliskan alat dan bahan yang digunakan", "Menyatakan apa yang ingin dicapai dari percobaan", "Menjelaskan langkah-langkah percobaan", "Mencatat hasil pengamatan"],
+    ans: 1
+  },
+  {
+    topic: "Teks Laporan",
+    q: "Bagian laporan percobaan yang menjelaskan langkah-langkah secara berurutan disebut...",
+    opts: ["Hasil", "Simpulan", "Prosedur/Cara Kerja", "Tujuan"],
+    ans: 2
+  },
+  {
+    topic: "Teks Laporan",
+    q: "Bahasa yang digunakan dalam laporan percobaan harus bersifat...",
+    opts: ["Imajinatif dan kreatif", "Objektif, lugas, dan ilmiah", "Emosional dan persuasif", "Informal dan santai"],
+    ans: 1
+  },
+  {
+    topic: "Teks Laporan",
+    q: "Simpulan dalam laporan percobaan berisi...",
+    opts: ["Daftar alat dan bahan", "Langkah-langkah percobaan", "Rangkuman hasil yang menjawab tujuan percobaan", "Latar belakang percobaan"],
+    ans: 2
+  },
+];
+
+let current = 0;
+let score = 0;
+let answered = [];
+let userAnswers = [];
+
+function startQuiz() {
+  document.getElementById('intro').style.display = 'none';
+  document.getElementById('quiz').style.display = 'block';
+  showQuestion();
+}
+
+function showQuestion() {
+  const q = questions[current];
+  document.getElementById('qCounter').textContent = `${current + 1} / ${questions.length}`;
+  document.getElementById('progressBar').style.width = `${((current + 1) / questions.length) * 100}%`;
+  document.getElementById('scoreLive').textContent = `Skor: ${score}`;
+  document.getElementById('topicTag').textContent = q.topic;
+  document.getElementById('questionText').textContent = `${current + 1}. ${q.q}`;
+
+  const letters = ['A', 'B', 'C', 'D'];
+  const optDiv = document.getElementById('optionsDiv');
+  optDiv.innerHTML = '';
+  q.opts.forEach((opt, i) => {
+    const btn = document.createElement('button');
+    btn.className = 'opt';
+    btn.innerHTML = `<span class="letter">${letters[i]}</span><span>${opt}</span>`;
+    btn.onclick = () => selectAnswer(i);
+    optDiv.appendChild(btn);
+  });
+
+  const fb = document.getElementById('feedbackDiv');
+  fb.className = 'feedback';
+  fb.textContent = '';
+  const btnNext = document.getElementById('btnNext');
+  btnNext.className = 'btn-next';
+  btnNext.textContent = current < questions.length - 1 ? 'Soal Berikutnya →' : 'Lihat Hasil 🏆';
+}
+
+function selectAnswer(idx) {
+  const q = questions[current];
+  const opts = document.querySelectorAll('.opt');
+  opts.forEach(o => { o.classList.add('disabled'); o.onclick = null; });
+
+  const fb = document.getElementById('feedbackDiv');
+  const correct = q.ans;
+  userAnswers[current] = idx;
+
+  if (idx === correct) {
+    score++;
+    opts[idx].classList.add('correct');
+    fb.className = 'feedback ok show';
+    fb.textContent = '✅ Benar! Jawaban kamu tepat.';
+  } else {
+    opts[idx].classList.add('wrong');
+    opts[correct].classList.add('correct');
+    fb.className = 'feedback bad show';
+    fb.textContent = `❌ Salah. Jawaban yang benar: ${['A','B','C','D'][correct]}. ${q.opts[correct]}`;
+  }
+
+  document.getElementById('scoreLive').textContent = `Skor: ${score}`;
+  document.getElementById('btnNext').classList.add('show');
+}
+
+function nextQuestion() {
+  current++;
+  if (current < questions.length) {
+    showQuestion();
+  } else {
+    showResult();
+  }
+}
+
+function showResult() {
+  document.getElementById('quiz').style.display = 'none';
+  const res = document.getElementById('result');
+  res.style.display = 'block';
+
+  const pct = Math.round((score / questions.length) * 100);
+  const nilai = pct;
+
+  document.getElementById('scoreFinal').textContent = `${score} / ${questions.length} benar`;
+  document.getElementById('rCorrect').textContent = score;
+  document.getElementById('rWrong').textContent = questions.length - score;
+  document.getElementById('rPct').textContent = nilai;
+
+  let grade = '';
+  if (pct >= 90) grade = '🥇 A';
+  else if (pct >= 80) grade = '🥈 B';
+  else if (pct >= 70) grade = '🥉 C';
+  else if (pct >= 60) grade = '📘 D';
+  else grade = '📕 E';
+  document.getElementById('gradeBadge').textContent = grade;
+
+  // Review
+  const reviewList = document.getElementById('reviewList');
+  reviewList.innerHTML = '';
+  questions.forEach((q, i) => {
+    const ua = userAnswers[i];
+    const correct = ua === q.ans;
+    const div = document.createElement('div');
+    div.className = 'review-item';
+    div.innerHTML = `
+      <div class="ri-q">${i+1}. ${q.q}</div>
+      <div>Jawabanmu: <span class="${correct ? 'ri-correct' : 'ri-wrong'}">${ua !== undefined ? ['A','B','C','D'][ua] + '. ' + q.opts[ua] : 'Tidak dijawab'}</span></div>
+      ${!correct ? `<div>Jawaban benar: <span class="ri-correct">${['A','B','C','D'][q.ans]}. ${q.opts[q.ans]}</span></div>` : ''}
+    `;
+    reviewList.appendChild(div);
+  });
+}
+
+function restartQuiz() {
+  current = 0; score = 0; answered = []; userAnswers = [];
+  document.getElementById('result').style.display = 'none';
+  document.getElementById('quiz').style.display = 'block';
+  showQuestion();
+}
+</script>
+</body>
+</html>
