@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kuis Teks Pidato</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f0f2f5;
+            color: #333;
+            line-height: 1.6;
+            padding: 20px;
+        }
+        .quiz-container {
+            max-width: 800px;
+            margin: auto;
+            background: #fff;
+            padding: 40px;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+        h1 {
+            text-align: center;
+            color: #1a73e8;
+            margin-bottom: 30px;
+        }
+        .question {
+            margin-bottom: 25px;
+            padding-bottom: 25px;
+            border-bottom: 1px solid #e0e0e0;
+        }
+        .question:last-of-type {
+            border-bottom: none;
+        }
+        .question p {
+            font-weight: 600;
+            font-size: 1.1em;
+        }
+        .context-text {
+            font-weight: normal;
+            background-color: #f8f9fa;
+            padding: 15px;
+            border-left: 4px solid #1a73e8;
+            margin-bottom: 15px;
+            font-size: 0.95em;
+            color: #555;
+        }
+        .options {
+            list-style-type: none;
+            padding: 0;
+        }
+        .options li {
+            margin-bottom: 12px;
+        }
+        label {
+            cursor: pointer;
+            display: flex;
+            align-items: flex-start;
+            padding: 8px;
+            border-radius: 5px;
+            transition: background-color 0.2s;
+        }
+        label:hover {
+            background-color: #f1f3f4;
+        }
+        input[type="radio"] {
+            margin-right: 12px;
+            margin-top: 5px;
+        }
+        button {
+            display: block;
+            width: 100%;
+            padding: 15px;
+            background-color: #1a73e8;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1.1em;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            margin-top: 30px;
+        }
+        button:hover {
+            background-color: #1557b0;
+        }
+        #result {
+            margin-top: 25px;
+            font-size: 1.2em;
+            font-weight: bold;
+            text-align: center;
+            padding: 20px;
+            border-radius: 8px;
+            display: none;
+        }
+        .correct { background-color: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
+        .incorrect { background-color: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
+    </style>
+</head>
+<body>
+
+<div class="quiz-container">
+    <h1>Kuis Bahasa Indonesia: Teks Pidato</h1>
+    <form id="quizForm">
+        
+        <div class="question">
+            <p>1. Bacalah kutipan pidato berikut!</p>
+            <div class="context-text">
+                Sekolah ini layak menjadi teladan dan tempat bertanya tentang suksesnya mewujudkan kebersihan dan keindahan. Semua ini terwujud karena hasil binaan dari para guru, tokoh agama, tokoh masyarakat di lingkungan sekolah kita ini.<br><br>
+                Predikat juara, piagam penghargaan, dan hadiah sudah kita raih. Namun, yang terpenting adalah bagaimana kerja sama dan kekompakan mewujudkan sekolah bersih, berseri, hijau, aman, nyaman, dan menyenangkan ini, kita pertahankan.
+            </div>
+            <p>Bagian penutup untuk teks pidato tersebut adalah ...</p>
+            <ul class="options">
+                <li><label><input type="radio" name="q1" value="A"> A. Demikian sambutan singkat ini, mohon maaf jika ada kekurangan. Akhir kata perlu diingat, "Menjadi juara itu gampang diraih tetapi sulit untuk dipertahankan."</label></li>
+                <li><label><input type="radio" name="q1" value="B"> B. Siswa sekalian, sekian dulu sambutan ini, dengan harapan di kemudian hari sekolah-sekolah di sekitar kita juga memperoleh juara sebagaimana yang kita dapatkan hari ini.</label></li>
+                <li><label><input type="radio" name="q1" value="C"> C. Demikianlah kesan yang saya dapatkan. Semoga lingkungan sekolah kita dapat mencontoh lingkungan sekolah lainnya.</label></li>
+                <li><label><input type="radio" name="q1" value="D"> D. Bapak-ibu yang kami hormati cukup sekian dulu pesan ini kami sampaikan. Mohon maaf hadiah yang kita dapatkan dari kejuaraan ini jauh dari yang kita perkirakan.</label></li>
+            </ul>
+        </div>
+
+        <div class="question">
+            <p>2. Pidato yang bertujuan untuk memberikan nasihat dan petunjuk disebut...</p>
+            <ul class="options">
+                <li><label><input type="radio" name="q2" value="a"> a. Ceramah</label></li>
+                <li><label><input type="radio" name="q2" value="b"> b. Orasi</label></li>
+                <li><label><input type="radio" name="q2" value="c"> c. Gelar wicara</label></li>
+                <li><label><input type="radio" name="q2" value="d"> d. Pengumuman</label></li>
+                <li><label><input type="radio" name="q2" value="e"> e. Dialog interaktif</label></li>
+            </ul>
+        </div>
+
+        <div class="question">
+            <p>3. Pidato seseorang di depan umum dapat dilakukan dengan menggunakan metode di bawah ini, kecuali ....</p>
+            <ul class="options">
+                <li><label><input type="radio" name="q3" value="a"> a. seta-merta (impromptu)</label></li>
+                <li><label><input type="radio" name="q3" value="b"> b. menghafal naskah</label></li>
+                <li><label><input type="radio" name="q3" value="c"> c. ekstemporan</label></li>
+                <li><label><input type="radio" name="q3" value="d"> d. membaca</label></li>
+                <li><label><input type="radio" name="q3" value="e"> e. bertanya</label></li>
+            </ul>
+        </div>
+
+        <div class="question">
+            <p>4. Sebelum membacakan naskah pidato atau berpidato, hal yang terlebih dahulu kita lakukan adalah....</p>
+            <ul class="options">
+                <li><label><input type="radio" name="q4" value="a"> a. mencari buku panduan pidato</label></li>
+                <li><label><input type="radio" name="q4" value="b"> b. menghafalkan naskah pidato</label></li>
+                <li><label><input type="radio" name="q4" value="c"> c. bertanya kepada orang yang sudah biasa pidato</label></li>
+                <li><label><input type="radio" name="q4" value="d"> d. memahami pokok-pokok isi pidato</label></li>
+                <li><label><input type="radio" name="q4" value="e"> e. menentukan topik pidato</label></li>
+            </ul>
+        </div>
+
+        <div class="question">
+            <p>5. Seseorang berpidato dengan cara menuliskan pokok-pokok pikiran yang akan disampaikan. Setelah itu, ia menyampaikan masalah yang telah disiapkannya itu dengan kata-katanya sendiri. Orang tersebut berpidato dengan menggunakan metode ....</p>
+            <ul class="options">
+                <li><label><input type="radio" name="q5" value="a"> a. Serta-merta</label></li>
+                <li><label><input type="radio" name="q5" value="b"> b. menghafal</label></li>
+                <li><label><input type="radio" name="q5" value="c"> c. naskah</label></li>
+                <li><label><input type="radio" name="q5" value="d"> d. ekstemporan</label></li>
+                <li><label><input type="radio" name="q5" value="e"> e. ekstrinsik</label></li>
+            </ul>
+        </div>
+
+        <button type="button" onclick="calculateScore()">Submit Jawaban</button>
+    </form>
+
+    <div id="result"></div>
+</div>
+
+<script>
+    // Kunci Jawaban
+    const correctAnswers = {
+        q1: "A",
+        q2: "a",
+        q3: "e",
+        q4: "d",
+        q5: "d"
+    };
+
+    function calculateScore() {
+        let score = 0;
+        let totalQuestions = Object.keys(correctAnswers).length;
+        let form = document.getElementById('quizForm');
+        let answeredQuestions = 0;
+
+        // Cek dan hitung skor
+        for (let q in correctAnswers) {
+            let selectedOption = form.querySelector(`input[name="${q}"]:checked`);
+            if (selectedOption) {
+                answeredQuestions++;
+                if (selectedOption.value === correctAnswers[q]) {
+                    score++;
+                }
+            }
+        }
+
+        let resultDiv = document.getElementById('result');
+        resultDiv.style.display = 'block';
+        
+        // Peringatan jika belum diisi semua
+        if (answeredQuestions < totalQuestions) {
+            resultDiv.className = 'incorrect';
+            resultDiv.innerHTML = `Anda baru menjawab ${answeredQuestions} dari ${totalQuestions} pertanyaan. Silakan lengkapi dulu.`;
+            return;
+        }
+
+        // Tampilkan hasil akhir
+        if (score === totalQuestions) {
+            resultDiv.className = 'correct';
+            resultDiv.innerHTML = `Luar Biasa! Anda menjawab benar semua (${score}/${totalQuestions}).`;
+        } else {
+            resultDiv.className = 'incorrect';
+            resultDiv.innerHTML = `Skor Anda: ${score} dari ${totalQuestions} jawaban benar. Silakan pelajari lagi!`;
+        }
+    }
+</script>
+
+</body>
+</html>
