@@ -240,7 +240,6 @@
     cursor: pointer;
     font-family: 'DM Sans', sans-serif;
     margin: 0 auto;
-    display: none;
     transition: transform .2s;
   }
   .btn-next:hover { transform: translateY(-1px); }
@@ -909,7 +908,7 @@ function selectAnswer(idx) {
 
 function nextQuestion() {
   current++;
-  if (current < questions.length) {
+  if (current < shuffledQuestions.length) {
     showQuestion();
   } else {
     showResult();
