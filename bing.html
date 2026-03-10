@@ -961,5 +961,137 @@ function restartQuiz() {
   showQuestion();
 }
 </script>
+
+
+  <!-- ── MUSIC PLAYER ── -->
+  <audio id="bgAudio" loop></audio>
+
+  <div id="musicPlayer">
+    <div id="songInfo">
+      <span id="noteAnim">♪</span>
+      <span id="songName">No Music</span>
+    </div>
+    <div id="playerControls">
+      <button class="pBtn" onclick="prevSong()">⏮</button>
+      <button class="pBtn active" id="playBtn" onclick="togglePlay()">▶</button>
+      <button class="pBtn" onclick="nextSong()">⏭</button>
+      <button class="pBtn" id="muteBtn" onclick="toggleMute()">🔊</button>
+    </div>
+  </div>
+
+  <style>
+  #musicPlayer {
+    position: fixed;
+    bottom: 1.2rem;
+    right: 1.2rem;
+    z-index: 99999;
+    background: rgba(26,29,39,0.97);
+    border: 1.5px solid #f5c84266;
+    border-radius: 1rem;
+    padding: .7rem 1.1rem;
+    box-shadow: 0 4px 32px #000a;
+    min-width: 210px;
+    font-family: 'DM Sans', sans-serif;
+  }
+  #songInfo {
+    display: flex;
+    align-items: center;
+    gap: .5rem;
+    font-size: .8rem;
+    color: #f5c842;
+    font-weight: 700;
+    margin-bottom: .5rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 190px;
+  }
+  #noteAnim { font-size: 1rem; display: inline-block; }
+  #noteAnim.playing { animation: notebounce .5s infinite alternate; }
+  @keyframes notebounce { from{transform:translateY(0)} to{transform:translateY(-5px)} }
+  #playerControls { display: flex; gap: .4rem; }
+  .pBtn {
+    flex: 1;
+    background: #2e3352;
+    border: 1px solid #3d4470;
+    color: #fff;
+    border-radius: .5rem;
+    padding: .35rem 0;
+    cursor: pointer;
+    font-size: .9rem;
+    transition: all .15s;
+  }
+  .pBtn:hover { background: #f5c842; color: #000; border-color: #f5c842; }
+  .pBtn.active { background: #f5c84233; border-color: #f5c842; color: #f5c842; }
+  </style>
+
+  <script>
+  const songs = [
+    { name: "— No Music —", src: "" },
+    { name: "🌿 Country Roads", src: "https://raw.githubusercontent.com/misthios997/marketsong/b3654ee4367a0060dcc77621d8ef9bfc2f0c3e3c/John%20Denver%20-%20Take%20Me%20Home%2C%20Country%20Roads%20(Official%20Audio).mp3" },
+    { name: "🍋 Lemon Tree", src: "https://raw.githubusercontent.com/misthios997/marketsong/b3654ee4367a0060dcc77621d8ef9bfc2f0c3e3c/lagu%20%20among%20%20%20us%20%20lemon%20%20tree%20%20(among%20%20us%20%20song).mp3" },
+  ];
+  let songIdx = 0;
+  let isPlaying = false;
+  const audio = document.getElementById('bgAudio');
+  const songName = document.getElementById('songName');
+  const playBtn = document.getElementById('playBtn');
+  const muteBtn = document.getElementById('muteBtn');
+  const noteAnim = document.getElementById('noteAnim');
+
+  function updateUI() {
+    songName.textContent = songs[songIdx].name;
+    if (isPlaying && songs[songIdx].src) {
+      playBtn.textContent = '⏸';
+      playBtn.classList.add('active');
+      noteAnim.classList.add('playing');
+    } else {
+      playBtn.textContent = '▶';
+      playBtn.classList.remove('active');
+      noteAnim.classList.remove('playing');
+    }
+  }
+
+  function loadAndPlay(idx) {
+    songIdx = (idx + songs.length) % songs.length;
+    const s = songs[songIdx];
+    if (!s.src) {
+      audio.pause();
+      audio.src = '';
+      isPlaying = false;
+      updateUI();
+      return;
+    }
+    audio.src = s.src;
+    audio.loop = true;
+    const p = audio.play();
+    if (p !== undefined) {
+      p.then(() => { isPlaying = true; updateUI(); })
+       .catch(e => { console.log('Play blocked:', e); isPlaying = false; updateUI(); });
+    }
+  }
+
+  function togglePlay() {
+    if (songIdx === 0) { loadAndPlay(1); return; }
+    if (audio.paused) {
+      audio.play().then(() => { isPlaying = true; updateUI(); }).catch(()=>{});
+    } else {
+      audio.pause();
+      isPlaying = false;
+      updateUI();
+    }
+  }
+
+  function nextSong() { loadAndPlay(songIdx + 1); }
+  function prevSong() { loadAndPlay(songIdx - 1); }
+
+  function toggleMute() {
+    audio.muted = !audio.muted;
+    muteBtn.textContent = audio.muted ? '🔇' : '🔊';
+  }
+
+  updateUI();
+  </script>
+
 </body>
 </html>
