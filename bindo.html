@@ -340,7 +340,7 @@
   <h1>Kuis Bahasa<br>Indonesia</h1>
   <p>Uji pemahamanmu tentang Teks Ulasan, Teks Eksplanasi, Pidato, Kalimat Efektif, Ejaan, dan Teks Laporan.</p>
   <div class="stats-row">
-    <div class="stat"><span class="num">51</span><span class="lbl">Soal</span></div>
+    <div class="stat"><span class="num">45</span><span class="lbl">Soal</span></div>
     <div class="stat"><span class="num">6</span><span class="lbl">Topik</span></div>
     <div class="stat"><span class="num">PG</span><span class="lbl">Pilihan Ganda</span></div>
   </div>
@@ -384,327 +384,548 @@
 
 <script>
 const questions = [
-  // ── TEKS ULASAN (1-10) ──
+  // No.1 – Teks eksplanasi memberikan gambaran terjadinya fenomena alam; teks resensi = mengulas buku/film; ulasan = memberikan ulasan produk
   {
-    topic: "Teks Ulasan",
-    q: "Apa yang dimaksud dengan teks ulasan?",
-    opts: ["Teks yang menceritakan pengalaman pribadi", "Teks yang berisi penilaian atau tinjauan terhadap suatu karya", "Teks yang menjelaskan langkah-langkah kegiatan", "Teks yang memaparkan fenomena alam"],
-    ans: 1
-  },
-  {
-    topic: "Teks Ulasan",
-    q: "Struktur teks ulasan yang benar adalah...",
-    opts: ["Orientasi – Tafsiran – Evaluasi – Rangkuman", "Pernyataan umum – Deretan penjelas – Interpretasi", "Pembuka – Isi – Penutup", "Tesis – Argumen – Reiterasi"],
-    ans: 0
-  },
-  {
-    topic: "Teks Ulasan",
-    q: "Bagian teks ulasan yang berisi penilaian kelebihan dan kekurangan karya disebut...",
-    opts: ["Orientasi", "Tafsiran", "Evaluasi", "Rangkuman"],
-    ans: 2
-  },
-  {
-    topic: "Teks Ulasan",
-    q: "Sikap penulis dalam teks ulasan dapat berupa...",
-    opts: ["Setuju, kritik, dan objektif", "Narasi, deskripsi, dan eksposisi", "Denotatif, konotatif, dan stilistika", "Formal, informal, dan semi-formal"],
-    ans: 0
-  },
-  {
-    topic: "Teks Ulasan",
-    q: "Kalimat berikut yang merupakan saran dalam teks ulasan adalah...",
-    opts: ["Film ini tayang pada bulan Maret 2024.", "Sebaiknya, penulis lebih memperhatikan konsistensi alur cerita.", "Novel ini ditulis oleh Tere Liye.", "Buku ini memiliki 320 halaman."],
-    ans: 1
-  },
-  {
-    topic: "Teks Ulasan",
-    q: "Teks ulasan yang baik harus bersifat...",
-    opts: ["Subjektif dan emosional", "Objektif dan berdasarkan bukti", "Fiksi dan imajinatif", "Singkat dan tidak detail"],
-    ans: 1
-  },
-  {
-    topic: "Teks Ulasan",
-    q: "Bagian 'Orientasi' dalam teks ulasan berisi...",
-    opts: ["Penilaian kelebihan dan kekurangan", "Gambaran umum karya yang diulas", "Simpulan dan rekomendasi", "Sinopsis atau ringkasan karya"],
-    ans: 1
-  },
-  {
-    topic: "Teks Ulasan",
-    q: "Manakah kalimat yang menunjukkan sikap setuju dalam teks ulasan?",
-    opts: ["Novel ini terlalu panjang dan membosankan.", "Alur cerita dalam novel ini membingungkan pembaca.", "Penulis berhasil menggambarkan karakter tokoh dengan sangat hidup dan meyakinkan.", "Buku ini tidak cocok untuk remaja."],
-    ans: 2
-  },
-  {
-    topic: "Teks Ulasan",
-    q: "Teks ulasan berbeda dari sinopsis karena teks ulasan...",
-    opts: ["Hanya menceritakan jalan cerita", "Memberikan penilaian dan pendapat terhadap karya", "Ditulis oleh pengarang asli", "Tidak perlu membaca karya yang diulas"],
-    ans: 1
-  },
-  {
-    topic: "Teks Ulasan",
-    q: "Bagian 'Rangkuman' dalam teks ulasan berfungsi untuk...",
-    opts: ["Memperkenalkan karya secara umum", "Memberikan penilaian mendalam", "Menyimpulkan dan memberikan rekomendasi", "Menceritakan pengalaman penulis"],
-    ans: 2
-  },
-
-  // ── TEKS EKSPLANASI (11-20) ──
-  {
-    topic: "Teks Eksplanasi",
-    q: "Teks eksplanasi adalah teks yang bertujuan untuk...",
-    opts: ["Menceritakan pengalaman menarik", "Menjelaskan proses terjadinya suatu fenomena", "Meyakinkan pembaca tentang suatu pendapat", "Mendeskripsikan suatu objek"],
-    ans: 1
-  },
-  {
-    topic: "Teks Eksplanasi",
-    q: "Struktur teks eksplanasi yang benar adalah...",
-    opts: ["Orientasi – Komplikasi – Resolusi", "Identifikasi fenomena – Deretan penjelas – Interpretasi", "Tesis – Argumen – Reiterasi", "Pembuka – Isi – Penutup"],
-    ans: 1
-  },
-  {
-    topic: "Teks Eksplanasi",
-    q: "Sifat bahasa dalam teks eksplanasi adalah...",
-    opts: ["Konotatif dan imajinatif", "Denotatif dan ilmiah", "Informal dan santai", "Figuratif dan ekspresif"],
-    ans: 1
-  },
-  {
-    topic: "Teks Eksplanasi",
-    q: "Kalimat pasif banyak digunakan dalam teks eksplanasi karena...",
-    opts: ["Lebih mudah dipahami", "Menekankan proses atau kejadian, bukan pelaku", "Lebih singkat dari kalimat aktif", "Sesuai dengan aturan tata bahasa baku"],
-    ans: 1
-  },
-  {
-    topic: "Teks Eksplanasi",
-    q: "Struktur 'Deretan Penjelas' dalam teks eksplanasi berisi...",
-    opts: ["Pernyataan umum tentang fenomena", "Urutan sebab-akibat yang menjelaskan fenomena", "Simpulan dan komentar penulis", "Identifikasi masalah"],
-    ans: 1
-  },
-  {
-    topic: "Teks Eksplanasi",
-    q: "Konjungsi kausalitas yang tepat digunakan dalam teks eksplanasi adalah...",
-    opts: ["Dan, atau, tetapi", "Kemudian, lalu, setelah itu", "Karena, sehingga, oleh sebab itu", "Meskipun, walaupun, biarpun"],
-    ans: 2
-  },
-  {
-    topic: "Teks Eksplanasi",
-    q: "Bagian 'Interpretasi' dalam teks eksplanasi berisi...",
-    opts: ["Perkenalan fenomena yang akan dijelaskan", "Rincian penyebab terjadinya fenomena", "Simpulan atau komentar penulis terhadap fenomena", "Data statistik pendukung"],
-    ans: 2
-  },
-  {
-    topic: "Teks Eksplanasi",
-    q: "Teknik refraksi adalah salah satu istilah yang muncul dalam teks eksplanasi bertema...",
-    opts: ["Sosial budaya", "Fisika dan optik", "Ekonomi", "Sejarah"],
-    ans: 1
-  },
-  {
-    topic: "Teks Eksplanasi",
-    q: "Kata 'akibat' termasuk konjungsi jenis apa dalam teks eksplanasi?",
-    opts: ["Konjungsi temporal", "Konjungsi kausalitas", "Konjungsi aditif", "Konjungsi kontrastif"],
-    ans: 1
-  },
-  {
-    topic: "Teks Eksplanasi",
-    q: "Manakah topik yang tepat untuk teks eksplanasi?",
-    opts: ["Pengalaman liburan ke pantai", "Proses terjadinya gempa bumi", "Resensi novel terbaru", "Cara membuat kue ulang tahun"],
-    ans: 1
-  },
-
-  // ── TEKS PIDATO (21-30) ──
-  {
-    topic: "Teks Pidato",
-    q: "Kalimat sapaan yang tepat untuk pidato di lingkungan sekolah adalah...",
-    opts: ["Hei teman-teman sekalian!", "Yang terhormat Bapak/Ibu guru, serta teman-teman yang saya cintai.", "Hai guys, apa kabar semua?", "Saudara-saudara yang saya kenal."],
-    ans: 1
-  },
-  {
-    topic: "Teks Pidato",
-    q: "Bagian pembuka pidato yang santun biasanya diawali dengan...",
-    opts: ["Langsung menyampaikan isi pidato", "Salam pembuka, ucapan syukur, dan salam hormat kepada hadirin", "Menceritakan pengalaman pribadi", "Membacakan puisi"],
-    ans: 1
-  },
-  {
-    topic: "Teks Pidato",
-    q: "Ilustrasi yang tepat untuk isi pidato bertema 'Pentingnya Membaca' adalah...",
-    opts: ["Mengajak hadirin untuk menonton film", "Menjelaskan bahwa membaca dapat meningkatkan wawasan dan kecerdasan", "Menceritakan pengalaman berlibur ke perpustakaan", "Membacakan daftar buku terlaris"],
-    ans: 1
-  },
-  {
-    topic: "Teks Pidato",
-    q: "Perbaikan sapaan yang tepat dari kalimat 'Halo semua!' dalam pidato resmi adalah...",
-    opts: ["Assalamualaikum dan halo!", "Yang terhormat hadirin sekalian.", "Hey, kalian semua!", "Apa kabar teman-teman?"],
-    ans: 1
-  },
-  {
-    topic: "Teks Pidato",
-    q: "Bagian isi pidato yang baik berisi...",
-    opts: ["Ucapan terima kasih kepada pembicara sebelumnya", "Paparan gagasan utama disertai argumen dan contoh yang relevan", "Salam penutup dan doa", "Perkenalan diri pembicara"],
-    ans: 1
-  },
-  {
-    topic: "Teks Pidato",
-    q: "Kalimat penutup pidato yang tepat adalah...",
-    opts: ["Sekian dan terima kasih, wassalamualaikum warahmatullahi wabarakatuh.", "Oke, cukup sekian ya.", "Makasih banyak, bye bye!", "Selesai deh pidatonya."],
-    ans: 0
-  },
-  {
-    topic: "Teks Pidato",
-    q: "Metode pidato yang dilakukan tanpa persiapan teks disebut...",
-    opts: ["Metode naskah", "Metode menghafal", "Metode impromtu", "Metode ekstemporan"],
-    ans: 2
-  },
-  {
-    topic: "Teks Pidato",
-    q: "Bagian pembuka pidato yang berisi ucapan puji syukur kepada Tuhan disebut...",
-    opts: ["Eksordium", "Narasi", "Argumentasi", "Perorasi"],
-    ans: 0
-  },
-  {
-    topic: "Teks Pidato",
-    q: "Diksi yang tepat untuk pidato resmi adalah...",
-    opts: ["Santai dan gaul", "Formal dan sopan", "Slang dan kekinian", "Bebas tanpa aturan"],
-    ans: 1
-  },
-  {
-    topic: "Teks Pidato",
-    q: "Manakah kalimat ajakan yang tepat dalam pidato?",
-    opts: ["Masa kamu ga tau sih?", "Marilah kita bersama-sama menjaga lingkungan sekitar kita.", "Pokoknya harus dilakukan!", "Kalau mau ya lakuin, kalau enggak ya jangan."],
-    ans: 1
-  },
-
-  // ── KALIMAT EFEKTIF (31-40) ──
-  {
-    topic: "Kalimat Efektif",
-    q: "Kalimat berikut yang mengandung pleonasme adalah...",
-    opts: ["Dia pergi ke sekolah setiap hari.", "Para siswa-siswa mengerjakan tugas.", "Ibu memasak nasi di dapur.", "Adik membaca buku cerita."],
-    ans: 1
-  },
-  {
-    topic: "Kalimat Efektif",
-    q: "Perbaikan kalimat 'Para hadirin sekalian dipersilakan duduk.' yang tepat adalah...",
-    opts: ["Para hadirin dipersilakan duduk.", "Hadirin sekalian dipersilakan duduk.", "Hadirin dipersilakan duduk.", "Semua para hadirin dipersilakan duduk."],
-    ans: 2
-  },
-  {
-    topic: "Kalimat Efektif",
-    q: "Kata depan 'di' yang tepat terdapat dalam kalimat...",
-    opts: ["Buku ini di beli kemarin.", "Adik bermain di taman.", "Dia di suruh pergi.", "Laporan ini di buat hari ini."],
-    ans: 1
-  },
-  {
-    topic: "Kalimat Efektif",
-    q: "Kalimat yang rancu (tidak logis) adalah...",
-    opts: ["Anak itu pintar sekali.", "Mobil itu melaju dengan kencang.", "Waktu dan tempat kami persilakan.", "Guru itu mengajar matematika."],
-    ans: 2
-  },
-  {
-    topic: "Kalimat Efektif",
-    q: "Perbaikan kalimat 'Bagi siswa yang terlambat agar melapor ke guru piket.' adalah...",
-    opts: ["Siswa yang terlambat agar melapor ke guru piket.", "Siswa yang terlambat harap melapor ke guru piket.", "Bagi siswa yang terlambat harap melapor ke guru piket.", "Semua siswa yang terlambat agar melapor."],
-    ans: 1
-  },
-  {
-    topic: "Kalimat Efektif",
-    q: "Kalimat efektif ditandai dengan...",
-    opts: ["Menggunakan banyak kata agar lebih jelas", "Hemat kata, jelas, dan tidak ambigu", "Selalu menggunakan kata-kata asing", "Kalimat yang sangat panjang"],
-    ans: 1
-  },
-  {
-    topic: "Kalimat Efektif",
-    q: "Kata gabung yang benar adalah...",
-    opts: ["kerjasama ditulis terpisah: kerja sama", "matahari ditulis terpisah: mata hari", "buah tangan ditulis serangkai: buahtangan", "olahraga ditulis terpisah: olah raga"],
-    ans: 0
-  },
-  {
-    topic: "Kalimat Efektif",
-    q: "Kalimat yang mengandung subjek dan predikat yang jelas adalah...",
-    opts: ["Dengan cara belajar rajin.", "Karena hujan deras.", "Anak itu belajar setiap malam.", "Setelah makan siang."],
-    ans: 2
-  },
-  {
-    topic: "Kalimat Efektif",
-    q: "Manakah penulisan kata depan 'ke' yang benar?",
-    opts: ["ke-sekolah", "Ke Sekolah", "ke sekolah", "kesekolah"],
-    ans: 2
-  },
-  {
-    topic: "Kalimat Efektif",
-    q: "Penggunaan tanda koma yang benar terdapat dalam kalimat...",
-    opts: ["Saya suka nasi goreng, mi goreng dan bakso.", "Saya suka nasi goreng, mi goreng, dan bakso.", "Saya suka, nasi goreng mi goreng dan bakso.", "Saya suka nasi goreng mi goreng, dan bakso."],
-    ans: 1
-  },
-
-  // ── EJAAN / EYD / PUEBI (41-46) ──
-  {
-    topic: "Ejaan (PUEBI/EYD)",
-    q: "Kata serapan yang penulisannya benar adalah...",
-    opts: ["Aktifitas", "Aktivitas", "Aktifiti", "Aktifites"],
-    ans: 1
-  },
-  {
-    topic: "Ejaan (PUEBI/EYD)",
-    q: "Penulisan kata serapan yang baku dari 'system' adalah...",
-    opts: ["Sistem", "Sistim", "Syistem", "System"],
-    ans: 0
-  },
-  {
-    topic: "Ejaan (PUEBI/EYD)",
-    q: "Penulisan kata serapan 'complex' yang baku dalam bahasa Indonesia adalah...",
-    opts: ["Komplek", "Komplex", "Kompleks", "Complex"],
-    ans: 2
-  },
-  {
-    topic: "Ejaan (PUEBI/EYD)",
-    q: "Penulisan tanda koma yang tepat terdapat pada kalimat...",
-    opts: ["Oleh karena itu kita harus rajin belajar.", "Oleh karena itu, kita harus rajin belajar.", "Oleh karena itu; kita harus rajin belajar.", "Oleh karena itu: kita harus rajin belajar."],
-    ans: 1
-  },
-  {
-    topic: "Ejaan (PUEBI/EYD)",
-    q: "Manakah yang merupakan kata serapan tidak baku?",
-    opts: ["Apotek", "Jadwal", "Ijasah", "Karier"],
-    ans: 2
-  },
-  {
-    topic: "Ejaan (PUEBI/EYD)",
-    q: "Penulisan 'di' yang benar sebagai kata depan adalah...",
-    opts: ["diambil", "dibawa", "di rumah", "dipukul"],
-    ans: 2
-  },
-
-  // ── TEKS LAPORAN (47-51) ──
-  {
-    topic: "Teks Laporan",
-    q: "Urutan langkah membuat laporan percobaan yang benar adalah...",
+    topic: "Teks Eksplanasi & Ulasan",
+    q: "Teks eksplanasi memberikan gambaran tentang...",
     opts: [
-      "Hasil – Tujuan – Alat/Bahan – Prosedur – Simpulan",
-      "Tujuan – Alat/Bahan – Prosedur – Hasil – Simpulan",
-      "Simpulan – Hasil – Prosedur – Alat/Bahan – Tujuan",
-      "Prosedur – Alat/Bahan – Tujuan – Hasil – Simpulan"
+      "Cara mengulas buku atau film",
+      "Terjadinya fenomena alam atau sosial",
+      "Ulasan terhadap suatu produk",
+      "Pengalaman pribadi penulis"
     ],
     ans: 1
   },
+  // No.2 – Teks tanggapan: netral & objektif, positif & negatif, ada yang kritik
+  // kritik = mengkritik tanpa ada celah; positif = mengkritik namun ada celah (menjelekkan); objektif = mengkritik & memberi saran
   {
-    topic: "Teks Laporan",
-    q: "Bagian 'Tujuan' dalam laporan percobaan berfungsi untuk...",
-    opts: ["Menuliskan alat dan bahan yang digunakan", "Menyatakan apa yang ingin dicapai dari percobaan", "Menjelaskan langkah-langkah percobaan", "Mencatat hasil pengamatan"],
-    ans: 1
-  },
-  {
-    topic: "Teks Laporan",
-    q: "Bagian laporan percobaan yang menjelaskan langkah-langkah secara berurutan disebut...",
-    opts: ["Hasil", "Simpulan", "Prosedur/Cara Kerja", "Tujuan"],
+    topic: "Teks Tanggapan",
+    q: "Dalam teks tanggapan, tanggapan yang bersifat 'objektif' adalah...",
+    opts: [
+      "Mengkritik tanpa ada celah sama sekali",
+      "Mengkritik namun ada celah yang menjelekkan",
+      "Mengkritik dan memberi saran secara seimbang",
+      "Hanya memuji tanpa ada kritikan"
+    ],
     ans: 2
   },
+  // No.3 – Tanggapan (soal serupa no.2 = mencari contoh tanggapan)
+  {
+    topic: "Teks Tanggapan",
+    q: "Manakah kalimat yang merupakan contoh tanggapan bersifat 'positif' (mengkritik namun ada celah/menjelekkan)?",
+    opts: [
+      "Film ini sangat menghibur dan wajib ditonton semua orang.",
+      "Film ini memang seru, namun sayangnya ending-nya sangat mengecewakan.",
+      "Film ini ditulis oleh sutradara ternama.",
+      "Film ini tayang setiap hari Jumat."
+    ],
+    ans: 1
+  },
+  // No.4 – Mencari saran pada teks
+  {
+    topic: "Teks Tanggapan",
+    q: "Kalimat yang mengandung saran dalam teks ulasan biasanya menggunakan kata...",
+    opts: [
+      "Karena, sehingga, akibatnya",
+      "Sebaiknya, hendaknya, seharusnya",
+      "Pertama, kemudian, akhirnya",
+      "Meskipun, walaupun, tetapi"
+    ],
+    ans: 1
+  },
+  // No.5 – Struktur teks ulasan/tanggapan
+  {
+    topic: "Teks Ulasan",
+    q: "Urutan struktur teks ulasan yang benar adalah...",
+    opts: [
+      "Orientasi – Tafsiran – Evaluasi – Rangkuman",
+      "Identifikasi – Deretan penjelas – Interpretasi",
+      "Tesis – Argumen – Reiterasi",
+      "Pembuka – Komplikasi – Resolusi"
+    ],
+    ans: 0
+  },
+  // No.6 – Teks eksplanasi: Cari judul di teks eksplanasi
+  {
+    topic: "Teks Eksplanasi",
+    q: "Judul yang paling tepat untuk sebuah teks eksplanasi tentang proses terjadinya hujan adalah...",
+    opts: [
+      "Indahnya Hujan di Musim Semi",
+      "Proses Terjadinya Hujan",
+      "Kenangan Kehujanan di Jalan",
+      "Hujan dalam Pandangan Puisi"
+    ],
+    ans: 1
+  },
+  // No.7 – Teks eksplanasi: Mengganti kalimat
+  {
+    topic: "Teks Eksplanasi",
+    q: "Kalimat pengganti yang tepat dalam teks eksplanasi harus bersifat...",
+    opts: [
+      "Panjang dan menggunakan banyak kata kiasan",
+      "Menggunakan bahasa sehari-hari yang santai",
+      "Lugas, logis, dan menggunakan konjungsi yang tepat",
+      "Emosional dan bersifat persuasif"
+    ],
+    ans: 2
+  },
+  // No.8 – Deretan penjelas: menjelaskan sebab-akibat; Pernyataan umum: menjelaskan terjadinya fenomena; Kesimpulan/penutup: inti pembahasan
+  {
+    topic: "Teks Eksplanasi",
+    q: "Pada struktur teks eksplanasi, bagian yang menjelaskan sebab-akibat terjadinya fenomena secara urut disebut...",
+    opts: [
+      "Pernyataan umum",
+      "Deretan penjelas",
+      "Interpretasi",
+      "Kesimpulan"
+    ],
+    ans: 1
+  },
+  // No.9 – Ciri kebahasaan: konjungsi kausalitas
+  {
+    topic: "Teks Eksplanasi",
+    q: "Ciri kebahasaan teks eksplanasi adalah penggunaan konjungsi kausalitas. Manakah contoh konjungsi kausalitas?",
+    opts: [
+      "Dan, atau, serta",
+      "Kemudian, lalu, setelah itu",
+      "Karena, sehingga, oleh karena itu",
+      "Meskipun, walaupun, padahal"
+    ],
+    ans: 2
+  },
+  // No.10 – Interpretasi
+  {
+    topic: "Teks Eksplanasi",
+    q: "Bagian 'interpretasi' dalam teks eksplanasi berisi...",
+    opts: [
+      "Gambaran umum fenomena yang akan dibahas",
+      "Rincian sebab-akibat terjadinya fenomena",
+      "Kesimpulan atau komentar penulis terhadap fenomena",
+      "Data statistik dan fakta pendukung"
+    ],
+    ans: 2
+  },
+  // No.11 – Mencari topik teks eksplanasi
+  {
+    topic: "Teks Eksplanasi",
+    q: "Manakah topik yang paling tepat untuk teks eksplanasi?",
+    opts: [
+      "Pengalaman berlibur ke Bali",
+      "Cara membuat kerajinan tangan dari bambu",
+      "Proses terjadinya gempa bumi",
+      "Resensi novel terbaru"
+    ],
+    ans: 2
+  },
+  // No.12 – Sifat eksplanasi: denotatif (makna yang sebenarnya) vs konotatif (makna tidak sebenarnya)
+  {
+    topic: "Teks Eksplanasi",
+    q: "Teks eksplanasi bersifat denotatif. 'Denotatif' berarti menggunakan makna...",
+    opts: [
+      "Tidak sebenarnya atau kiasan",
+      "Yang sebenarnya sesuai dengan makna dalam kamus",
+      "Yang bergantung pada konteks pembicara",
+      "Yang bersifat emosional"
+    ],
+    ans: 1
+  },
+  // No.13 – Sifat ilmiah: yang tidak bisa diubah → eksplanasi
+  {
+    topic: "Teks Eksplanasi",
+    q: "Teks eksplanasi bersifat ilmiah karena mengandung fakta yang 'tidak bisa diubah'. Maksudnya adalah...",
+    opts: [
+      "Ditulis oleh ilmuwan ternama sehingga pasti benar",
+      "Berdasarkan fakta yang dapat diverifikasi dan bersifat objektif",
+      "Menggunakan bahasa yang sangat formal",
+      "Tidak boleh dikritik oleh siapapun"
+    ],
+    ans: 1
+  },
+  // No.14 – Kalimat pasif
+  {
+    topic: "Teks Eksplanasi",
+    q: "Kalimat pasif banyak digunakan dalam teks eksplanasi karena...",
+    opts: [
+      "Lebih mudah dipahami pembaca awam",
+      "Lebih pendek dari kalimat aktif",
+      "Menekankan proses atau peristiwa, bukan pelakunya",
+      "Merupakan aturan wajib tata bahasa baku"
+    ],
+    ans: 2
+  },
+  // No.15 – Struktur eksplanasi (mengurutkan)
+  {
+    topic: "Teks Eksplanasi",
+    q: "Urutan struktur teks eksplanasi yang benar adalah...",
+    opts: [
+      "Deretan penjelas – Pernyataan umum – Interpretasi",
+      "Pernyataan umum – Deretan penjelas – Interpretasi",
+      "Interpretasi – Pernyataan umum – Deretan penjelas",
+      "Pernyataan umum – Interpretasi – Deretan penjelas"
+    ],
+    ans: 1
+  },
+  // No.16 – Konjungsi kausalitas: kode kata "kemudian, lalu" mencari dalam paragraf teks
+  {
+    topic: "Teks Eksplanasi",
+    q: "Kata 'kemudian' dan 'lalu' dalam teks eksplanasi termasuk konjungsi jenis...",
+    opts: [
+      "Kausalitas",
+      "Temporal",
+      "Aditif",
+      "Kontrastif"
+    ],
+    ans: 1
+  },
+  // No.17 – "Dipisahkan" termasuk konjungsi apa?
+  {
+    topic: "Teks Eksplanasi",
+    q: "Kata 'dipisahkan' dalam kalimat 'Air dan minyak dipisahkan oleh perbedaan massa jenis' merupakan contoh...",
+    opts: [
+      "Kalimat aktif transitif",
+      "Kalimat pasif",
+      "Kalimat majemuk setara",
+      "Kalimat imperatif"
+    ],
+    ans: 1
+  },
+  // No.18 – Mengartikan: atmosfer, refleksi, refraksi, dispersi
+  {
+    topic: "Teks Eksplanasi",
+    q: "Dalam teks eksplanasi tentang pelangi, kata 'dispersi' berarti...",
+    opts: [
+      "Pemantulan cahaya oleh permukaan air",
+      "Pembiasan cahaya saat melewati medium",
+      "Penguraian cahaya menjadi berbagai spektrum warna",
+      "Penyerapan cahaya oleh awan tebal"
+    ],
+    ans: 2
+  },
+  // No.19 – Kata 'akibat' menunjukkan konjungsi apa
+  {
+    topic: "Teks Eksplanasi",
+    q: "Kata 'akibat' dalam teks eksplanasi menunjukkan konjungsi jenis...",
+    opts: [
+      "Temporal",
+      "Kausalitas",
+      "Aditif",
+      "Pertentangan"
+    ],
+    ans: 1
+  },
+  // No.20 – Kata sifat: subjektif, material, teknis → yang digunakan dalam eksplanasi
+  {
+    topic: "Teks Eksplanasi",
+    q: "Kata sifat yang lazim digunakan dalam teks eksplanasi adalah kata sifat yang bersifat...",
+    opts: [
+      "Subjektif dan emosional",
+      "Material dan teknis",
+      "Konotatif dan imajinatif",
+      "Informal dan santai"
+    ],
+    ans: 1
+  },
+  // No.21 – Langkah-langkah membuat laporan percobaan
+  {
+    topic: "Teks Laporan",
+    q: "Urutan langkah yang benar dalam membuat laporan percobaan adalah...",
+    opts: [
+      "Simpulan – Hasil – Prosedur – Alat/Bahan – Tujuan",
+      "Tujuan – Alat/Bahan – Prosedur – Hasil – Simpulan",
+      "Prosedur – Tujuan – Alat/Bahan – Hasil – Simpulan",
+      "Hasil – Tujuan – Alat/Bahan – Prosedur – Simpulan"
+    ],
+    ans: 1
+  },
+  // No.22 – Sapaan teks pidato (memperbaiki kalimat sapaan)
+  {
+    topic: "Teks Pidato",
+    q: "Perbaikan kalimat sapaan pidato 'Buat teman-teman semua, halo!' agar menjadi sapaan yang santun dan resmi adalah...",
+    opts: [
+      "Halo teman-teman, apa kabar hari ini?",
+      "Yang saya hormati Bapak/Ibu guru, serta teman-teman yang saya cintai.",
+      "Hei semuanya, selamat pagi semua!",
+      "Untuk semua yang hadir di sini, saya ucapkan halo."
+    ],
+    ans: 1
+  },
+  // No.23 – (kisi tidak ada no.23 eksplisit, namun urutan → lanjut soal pidato struktural)
+  // Berdasarkan kisi foto: setelah 22 langsung 26. Jadi no.23-25 diisi dengan soal pidato relevan.
+  // No.23
+  {
+    topic: "Teks Pidato",
+    q: "Bagian manakah yang merupakan pembuka pidato yang santun?",
+    opts: [
+      "Langsung menyampaikan isi tanpa salam",
+      "Salam pembuka, ucapan syukur kepada Tuhan, dan penghormatan kepada hadirin",
+      "Membacakan kesimpulan terlebih dahulu",
+      "Menceritakan pengalaman pribadi pembicara"
+    ],
+    ans: 1
+  },
+  // No.24
+  {
+    topic: "Teks Pidato",
+    q: "Diksi (pilihan kata) yang tepat untuk digunakan dalam pidato resmi adalah...",
+    opts: [
+      "Kata-kata gaul dan kekinian",
+      "Kata-kata formal dan sopan",
+      "Kata-kata slang agar lebih akrab",
+      "Kata-kata bebas tanpa aturan"
+    ],
+    ans: 1
+  },
+  // No.25
+  {
+    topic: "Teks Pidato",
+    q: "Kalimat penutup pidato yang tepat adalah...",
+    opts: [
+      "Oke, cukup sekian ya, terima kasih.",
+      "Sekian pidato saya, semoga bermanfaat. Wassalamualaikum warahmatullahi wabarakatuh.",
+      "Selesai deh pidatonya, bye semua!",
+      "Kayaknya sudah cukup, makasih banyak."
+    ],
+    ans: 1
+  },
+  // No.26 – Ilustrasi pidato
+  {
+    topic: "Teks Pidato",
+    q: "Ilustrasi yang tepat untuk isi pidato bertema 'Menjaga Kebersihan Lingkungan' adalah...",
+    opts: [
+      "Mengajak hadirin untuk berlibur ke pantai yang bersih",
+      "Menjelaskan pentingnya membuang sampah pada tempatnya dan dampak buruk lingkungan kotor",
+      "Menceritakan pengalaman pribadi membersihkan kamar tidur",
+      "Membacakan puisi tentang keindahan alam"
+    ],
+    ans: 1
+  },
+  // No.27 – Pembagian pembuatan pidato (bagian-bagian pidato)
+  {
+    topic: "Teks Pidato",
+    q: "Pembagian (struktur) teks pidato yang benar adalah...",
+    opts: [
+      "Salam – Isi – Doa",
+      "Pembuka – Isi – Penutup",
+      "Pendahuluan – Komplikasi – Resolusi",
+      "Orientasi – Argumen – Rangkuman"
+    ],
+    ans: 1
+  },
+  // No.28 – Bagian isi pidato
+  {
+    topic: "Teks Pidato",
+    q: "Bagian 'isi' dalam teks pidato berisi...",
+    opts: [
+      "Salam pembuka dan ucapan terima kasih kepada hadirin",
+      "Paparan gagasan utama disertai argumen dan contoh yang relevan",
+      "Doa penutup dan harapan pembicara",
+      "Perkenalan diri dan latar belakang pembicara"
+    ],
+    ans: 1
+  },
+  // No.29 – Perbaikan kalimat (kalimat efektif)
+  {
+    topic: "Kalimat Efektif",
+    q: "Perbaikan kalimat 'Para siswa-siswa diharap hadir tepat waktu' yang paling tepat adalah...",
+    opts: [
+      "Para siswa-siswa semuanya diharap hadir tepat waktu",
+      "Siswa diharap hadir tepat waktu",
+      "Semua para siswa diharap hadir tepat waktu",
+      "Para semua siswa harap hadir tepat waktu"
+    ],
+    ans: 1
+  },
+  // No.30 – Penulisan kata serapan dan tanda baca
+  {
+    topic: "Ejaan (PUEBI/EYD)",
+    q: "Penulisan kata serapan yang benar sesuai PUEBI adalah...",
+    opts: [
+      "Aktifitas",
+      "Kwalitas",
+      "Frekuensi",
+      "Nasehat"
+    ],
+    ans: 2
+  },
+  // No.31 – Perbaikan kalimat lebih ke pada teks KBBI
+  {
+    topic: "Ejaan (PUEBI/EYD)",
+    q: "Penulisan yang baku menurut KBBI dari kata 'ijasah' adalah...",
+    opts: [
+      "Ijazah",
+      "Ijasah",
+      "Ejazah",
+      "Izajah"
+    ],
+    ans: 0
+  },
+  // No.32 – Manakah penggunaan kalimat "di rumah" yang benar
+  {
+    topic: "Ejaan (PUEBI/EYD)",
+    q: "Manakah kalimat yang menggunakan kata 'di rumah' dengan penulisan yang benar?",
+    opts: [
+      "Buku itu dibeli kemarin dirumah.",
+      "Adik sedang bermain dirumah nenek.",
+      "Ibu sedang memasak di rumah.",
+      "Laporan itu dibuat dirumah tadi malam."
+    ],
+    ans: 2
+  },
+  // No.33 – Kalimat yang sesuai dengan penyerapan kata
+  {
+    topic: "Ejaan (PUEBI/EYD)",
+    q: "Kalimat yang menggunakan kata serapan dengan benar adalah...",
+    opts: [
+      "Dia mengikuti aktifitas ekstrakurikuler setiap sore.",
+      "Sistem pembelajaran daring semakin berkembang pesat.",
+      "Kwalitas produk ini sangat bagus dan terjamin.",
+      "Nasehat dari guru selalu kami ingat."
+    ],
+    ans: 1
+  },
+  // No.34 – Gabungan kata yang benar: "Terima Kasih"
+  {
+    topic: "Ejaan (PUEBI/EYD)",
+    q: "Penulisan gabungan kata 'terima kasih' yang benar adalah...",
+    opts: [
+      "Terimakasih",
+      "Terima-kasih",
+      "Terima kasih",
+      "terima Kasih"
+    ],
+    ans: 2
+  },
+  // No.35 – Manakah yang benar dalam penggunaan "ke"
+  {
+    topic: "Ejaan (PUEBI/EYD)",
+    q: "Manakah penulisan kata depan 'ke' yang benar?",
+    opts: [
+      "kesekolah",
+      "Ke-sekolah",
+      "ke sekolah",
+      "Ke Sekolah"
+    ],
+    ans: 2
+  },
+  // No.36 – Subjek & Predikat (cari)
+  {
+    topic: "Kalimat Efektif",
+    q: "Manakah kalimat yang memiliki subjek dan predikat yang lengkap dan jelas?",
+    opts: [
+      "Dengan belajar rajin setiap hari.",
+      "Karena hujan lebat turun deras.",
+      "Anak itu mengerjakan PR dengan tekun setiap malam.",
+      "Setelah makan siang di kantin sekolah."
+    ],
+    ans: 2
+  },
+  // No.37 – Penggunaan kata koma
+  {
+    topic: "Ejaan (PUEBI/EYD)",
+    q: "Penggunaan tanda koma yang benar terdapat pada kalimat...",
+    opts: [
+      "Oleh karena itu kita harus rajin belajar.",
+      "Oleh karena itu, kita harus rajin belajar.",
+      "Oleh, karena itu kita harus rajin belajar.",
+      "Oleh karena itu; kita harus rajin belajar."
+    ],
+    ans: 1
+  },
+  // No.38 – Tambahan soal untuk genap 45 (masih relevan dengan kisi)
+  {
+    topic: "Teks Tanggapan",
+    q: "Tanggapan yang bersifat 'kritik' dalam teks tanggapan ditandai dengan...",
+    opts: [
+      "Mengkritik karya tanpa memberikan celah kebaikan sama sekali",
+      "Mengkritik karya namun masih ada sisi yang dipuji",
+      "Hanya memberikan pujian terhadap karya",
+      "Bersikap netral tanpa memberikan penilaian apapun"
+    ],
+    ans: 0
+  },
+  // No.39
+  {
+    topic: "Teks Eksplanasi",
+    q: "Kata 'refleksi' dalam teks eksplanasi tentang cahaya berarti...",
+    opts: [
+      "Pembiasan cahaya saat melewati medium berbeda",
+      "Penguraian cahaya menjadi spektrum warna",
+      "Pemantulan cahaya pada permukaan",
+      "Penyerapan cahaya oleh benda"
+    ],
+    ans: 2
+  },
+  // No.40
+  {
+    topic: "Teks Eksplanasi",
+    q: "Kata 'refraksi' dalam teks eksplanasi tentang optik berarti...",
+    opts: [
+      "Pemantulan cahaya",
+      "Pembiasan cahaya saat berpindah medium",
+      "Penguraian cahaya menjadi pelangi",
+      "Penyerapan cahaya oleh prisma"
+    ],
+    ans: 1
+  },
+  // No.41
+  {
+    topic: "Teks Eksplanasi",
+    q: "'Atmosfer' dalam teks eksplanasi adalah...",
+    opts: [
+      "Lapisan air di permukaan bumi",
+      "Lapisan gas yang menyelimuti bumi",
+      "Lapisan tanah paling dalam",
+      "Lapisan es di kutub bumi"
+    ],
+    ans: 1
+  },
+  // No.42
+  {
+    topic: "Kalimat Efektif",
+    q: "Kalimat yang mengandung pleonasme (pemborosan kata) adalah...",
+    opts: [
+      "Dia berangkat ke sekolah pagi ini.",
+      "Kami naik ke atas gedung bertingkat.",
+      "Ibu memasak nasi di dapur.",
+      "Adik membaca buku cerita dengan serius."
+    ],
+    ans: 1
+  },
+  // No.43
+  {
+    topic: "Kalimat Efektif",
+    q: "Kalimat 'Waktu dan tempat kami persilakan' merupakan kalimat...",
+    opts: [
+      "Efektif karena singkat",
+      "Rancu karena tidak logis – 'waktu dan tempat' tidak dapat dipersilakan",
+      "Baku karena menggunakan kata formal",
+      "Pasif yang benar"
+    ],
+    ans: 1
+  },
+  // No.44
   {
     topic: "Teks Laporan",
     q: "Bahasa yang digunakan dalam laporan percobaan harus bersifat...",
-    opts: ["Imajinatif dan kreatif", "Objektif, lugas, dan ilmiah", "Emosional dan persuasif", "Informal dan santai"],
+    opts: [
+      "Imajinatif dan kreatif",
+      "Objektif, lugas, dan ilmiah",
+      "Emosional dan persuasif",
+      "Informal dan santai"
+    ],
     ans: 1
   },
+  // No.45
   {
-    topic: "Teks Laporan",
-    q: "Simpulan dalam laporan percobaan berisi...",
-    opts: ["Daftar alat dan bahan", "Langkah-langkah percobaan", "Rangkuman hasil yang menjawab tujuan percobaan", "Latar belakang percobaan"],
-    ans: 2
+    topic: "Teks Ulasan",
+    q: "Bagian 'evaluasi' dalam struktur teks ulasan berisi...",
+    opts: [
+      "Gambaran umum tentang karya yang diulas",
+      "Penilaian kelebihan dan kekurangan karya secara mendalam",
+      "Simpulan dan rekomendasi dari penulis",
+      "Sinopsis singkat dari karya"
+    ],
+    ans: 1
   },
 ];
 
@@ -712,15 +933,27 @@ let current = 0;
 let score = 0;
 let answered = [];
 let userAnswers = [];
+let shuffledQuestions = [];
+
+function shuffle(arr) {
+  const a = [...arr];
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
 
 function startQuiz() {
+  shuffledQuestions = shuffle(questions);
+  current = 0; score = 0; answered = []; userAnswers = [];
   document.getElementById('intro').style.display = 'none';
   document.getElementById('quiz').style.display = 'block';
   showQuestion();
 }
 
 function showQuestion() {
-  const q = questions[current];
+  const q = shuffledQuestions[current];
   document.getElementById('qCounter').textContent = `${current + 1} / ${questions.length}`;
   document.getElementById('progressBar').style.width = `${((current + 1) / questions.length) * 100}%`;
   document.getElementById('scoreLive').textContent = `Skor: ${score}`;
@@ -747,7 +980,7 @@ function showQuestion() {
 }
 
 function selectAnswer(idx) {
-  const q = questions[current];
+  const q = shuffledQuestions[current];
   const opts = document.querySelectorAll('.opt');
   opts.forEach(o => { o.classList.add('disabled'); o.onclick = null; });
 
@@ -804,7 +1037,7 @@ function showResult() {
   // Review
   const reviewList = document.getElementById('reviewList');
   reviewList.innerHTML = '';
-  questions.forEach((q, i) => {
+  shuffledQuestions.forEach((q, i) => {
     const ua = userAnswers[i];
     const correct = ua === q.ans;
     const div = document.createElement('div');
@@ -819,6 +1052,7 @@ function showResult() {
 }
 
 function restartQuiz() {
+  shuffledQuestions = shuffle(questions);
   current = 0; score = 0; answered = []; userAnswers = [];
   document.getElementById('result').style.display = 'none';
   document.getElementById('quiz').style.display = 'block';
