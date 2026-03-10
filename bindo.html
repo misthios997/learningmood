@@ -8,8 +8,8 @@
 <style>
   :root {
     --bg: #0f1117;
-    --surface: #1a1d27;
-    --card: #22263a;
+    --surface: #252940;
+    --card: #1e2238;
     --accent: #f5c842;
     --accent2: #ff6b6b;
     --accent3: #4ecdc4;
@@ -178,6 +178,7 @@
     margin-bottom: 1.5rem;
   }
   .options { display: flex; flex-direction: column; gap: .75rem; }
+  .opt, .opt span, .opt * { color: #ffffff !important; -webkit-text-fill-color: #ffffff !important; }
   .opt {
     display: flex;
     align-items: flex-start;
@@ -191,6 +192,7 @@
     font-size: .95rem;
     line-height: 1.5;
     text-align: left;
+    color: #ffffff !important;
   }
   .opt:hover:not(.disabled) { border-color: var(--accent); background: #22263a; }
   .opt .letter {
