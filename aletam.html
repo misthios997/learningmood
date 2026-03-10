@@ -1,221 +1,935 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Kuis Teks Pidato</title>
-    <style>
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: #f0f2f5;
-            color: #333;
-            line-height: 1.6;
-            padding: 20px;
-        }
-        .quiz-container {
-            max-width: 800px;
-            margin: auto;
-            background: #fff;
-            padding: 40px;
-            border-radius: 10px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-        }
-        h1 {
-            text-align: center;
-            color: #1a73e8;
-            margin-bottom: 30px;
-        }
-        .question {
-            margin-bottom: 25px;
-            padding-bottom: 25px;
-            border-bottom: 1px solid #e0e0e0;
-        }
-        .question:last-of-type {
-            border-bottom: none;
-        }
-        .question p {
-            font-weight: 600;
-            font-size: 1.1em;
-        }
-        .context-text {
-            font-weight: normal;
-            background-color: #f8f9fa;
-            padding: 15px;
-            border-left: 4px solid #1a73e8;
-            margin-bottom: 15px;
-            font-size: 0.95em;
-            color: #555;
-        }
-        .options {
-            list-style-type: none;
-            padding: 0;
-        }
-        .options li {
-            margin-bottom: 12px;
-        }
-        label {
-            cursor: pointer;
-            display: flex;
-            align-items: flex-start;
-            padding: 8px;
-            border-radius: 5px;
-            transition: background-color 0.2s;
-        }
-        label:hover {
-            background-color: #f1f3f4;
-        }
-        input[type="radio"] {
-            margin-right: 12px;
-            margin-top: 5px;
-        }
-        button {
-            display: block;
-            width: 100%;
-            padding: 15px;
-            background-color: #1a73e8;
-            color: white;
-            border: none;
-            border-radius: 8px;
-            font-size: 1.1em;
-            font-weight: bold;
-            cursor: pointer;
-            transition: background-color 0.3s;
-            margin-top: 30px;
-        }
-        button:hover {
-            background-color: #1557b0;
-        }
-        #result {
-            margin-top: 25px;
-            font-size: 1.2em;
-            font-weight: bold;
-            text-align: center;
-            padding: 20px;
-            border-radius: 8px;
-            display: none;
-        }
-        .correct { background-color: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
-        .incorrect { background-color: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kuis Bahasa Indonesia – Pidato</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0f1117;
+    --card: #181c27;
+    --card2: #1e2235;
+    --accent: #e8c36a;
+    --accent2: #c0392b;
+    --correct: #27ae60;
+    --wrong: #e74c3c;
+    --text: #eaf0fb;
+    --muted: #8892aa;
+    --border: #2a3050;
+    --radius: 16px;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 32px 16px 64px;
+  }
+
+  /* Stars background */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image:
+      radial-gradient(circle at 15% 20%, rgba(232,195,106,0.07) 0%, transparent 50%),
+      radial-gradient(circle at 85% 80%, rgba(192,57,43,0.07) 0%, transparent 50%);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  header {
+    text-align: center;
+    margin-bottom: 40px;
+    position: relative;
+    z-index: 1;
+  }
+
+  .badge {
+    display: inline-block;
+    background: linear-gradient(135deg, var(--accent), #d4a843);
+    color: #0f1117;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    padding: 5px 16px;
+    border-radius: 100px;
+    margin-bottom: 18px;
+  }
+
+  h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(2rem, 5vw, 3.2rem);
+    font-weight: 900;
+    line-height: 1.1;
+    color: var(--text);
+  }
+
+  h1 span { color: var(--accent); }
+
+  .subtitle {
+    margin-top: 12px;
+    color: var(--muted);
+    font-size: 15px;
+    font-weight: 300;
+    letter-spacing: 0.5px;
+  }
+
+  /* Progress */
+  #progress-wrap {
+    width: 100%;
+    max-width: 700px;
+    margin-bottom: 28px;
+    position: relative;
+    z-index: 1;
+  }
+
+  #progress-info {
+    display: flex;
+    justify-content: space-between;
+    font-size: 13px;
+    color: var(--muted);
+    margin-bottom: 8px;
+    font-weight: 500;
+  }
+
+  #progress-bar-bg {
+    width: 100%;
+    height: 6px;
+    background: var(--border);
+    border-radius: 100px;
+    overflow: hidden;
+  }
+
+  #progress-bar {
+    height: 100%;
+    background: linear-gradient(90deg, var(--accent), #f0a04a);
+    border-radius: 100px;
+    transition: width 0.5s cubic-bezier(.4,0,.2,1);
+    width: 0%;
+  }
+
+  /* Card */
+  .quiz-card {
+    width: 100%;
+    max-width: 700px;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 36px 36px 28px;
+    position: relative;
+    z-index: 1;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.4);
+  }
+
+  .q-number {
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 14px;
+  }
+
+  .q-text {
+    font-size: 17px;
+    line-height: 1.7;
+    color: var(--text);
+    margin-bottom: 10px;
+    font-weight: 400;
+  }
+
+  .q-passage {
+    background: var(--card2);
+    border-left: 3px solid var(--accent);
+    border-radius: 8px;
+    padding: 14px 18px;
+    font-size: 14px;
+    line-height: 1.75;
+    color: #bbc8e0;
+    margin-bottom: 22px;
+    font-style: italic;
+  }
+
+  .q-question {
+    font-size: 16px;
+    font-weight: 500;
+    margin-bottom: 20px;
+    line-height: 1.6;
+    color: var(--text);
+  }
+
+  /* Options */
+  .options { display: flex; flex-direction: column; gap: 10px; }
+
+  .opt-btn {
+    background: var(--card2);
+    border: 1.5px solid var(--border);
+    border-radius: 10px;
+    padding: 14px 18px;
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14.5px;
+    line-height: 1.55;
+    text-align: left;
+    cursor: pointer;
+    transition: border-color 0.18s, background 0.18s, transform 0.12s;
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+  }
+
+  .opt-btn:hover:not(:disabled) {
+    border-color: var(--accent);
+    background: rgba(232,195,106,0.07);
+    transform: translateX(3px);
+  }
+
+  .opt-letter {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 26px;
+    height: 26px;
+    border-radius: 6px;
+    background: var(--border);
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--muted);
+    letter-spacing: 0;
+    transition: background 0.18s, color 0.18s;
+    flex-shrink: 0;
+    margin-top: 1px;
+  }
+
+  .opt-btn.correct { border-color: var(--correct); background: rgba(39,174,96,0.12); }
+  .opt-btn.correct .opt-letter { background: var(--correct); color: #fff; }
+  .opt-btn.wrong { border-color: var(--wrong); background: rgba(231,76,60,0.10); }
+  .opt-btn.wrong .opt-letter { background: var(--wrong); color: #fff; }
+  .opt-btn:disabled { cursor: default; }
+
+  /* Feedback */
+  #feedback {
+    margin-top: 18px;
+    padding: 13px 16px;
+    border-radius: 10px;
+    font-size: 14px;
+    font-weight: 500;
+    display: none;
+    line-height: 1.5;
+  }
+  #feedback.show { display: block; }
+  #feedback.correct { background: rgba(39,174,96,0.13); color: #5dde8f; border: 1px solid rgba(39,174,96,0.3); }
+  #feedback.wrong { background: rgba(231,76,60,0.12); color: #f08070; border: 1px solid rgba(231,76,60,0.25); }
+
+  /* Nav */
+  #nav {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 24px;
+  }
+
+  .btn-next {
+    background: linear-gradient(135deg, var(--accent), #d4a843);
+    color: #0f1117;
+    border: none;
+    border-radius: 10px;
+    padding: 12px 30px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    font-weight: 700;
+    cursor: pointer;
+    display: none;
+    letter-spacing: 0.5px;
+    transition: opacity 0.15s, transform 0.12s;
+  }
+  .btn-next:hover { opacity: 0.88; transform: translateY(-1px); }
+  .btn-next.show { display: block; }
+
+  /* Result */
+  #result-screen {
+    display: none;
+    width: 100%;
+    max-width: 700px;
+    position: relative;
+    z-index: 1;
+  }
+  #result-screen.show { display: block; }
+
+  .result-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 48px 36px 40px;
+    text-align: center;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.4);
+  }
+
+  .result-emoji { font-size: 56px; margin-bottom: 18px; }
+
+  .result-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 2rem;
+    font-weight: 900;
+    color: var(--accent);
+    margin-bottom: 10px;
+  }
+
+  .result-score {
+    font-size: 4rem;
+    font-weight: 700;
+    color: var(--text);
+    margin: 14px 0;
+    line-height: 1;
+  }
+
+  .result-score span { color: var(--muted); font-size: 2rem; }
+
+  .result-msg {
+    color: var(--muted);
+    font-size: 15px;
+    margin-bottom: 32px;
+    line-height: 1.6;
+  }
+
+  .stat-row {
+    display: flex;
+    justify-content: center;
+    gap: 28px;
+    margin-bottom: 36px;
+  }
+
+  .stat {
+    background: var(--card2);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 16px 24px;
+    min-width: 100px;
+  }
+
+  .stat-val {
+    font-size: 1.8rem;
+    font-weight: 700;
+    display: block;
+    margin-bottom: 4px;
+  }
+
+  .stat-val.green { color: var(--correct); }
+  .stat-val.red { color: var(--wrong); }
+
+  .stat-label { font-size: 12px; color: var(--muted); text-transform: uppercase; letter-spacing: 1px; }
+
+  .btn-restart {
+    background: linear-gradient(135deg, var(--accent), #d4a843);
+    color: #0f1117;
+    border: none;
+    border-radius: 10px;
+    padding: 14px 40px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 15px;
+    font-weight: 700;
+    cursor: pointer;
+    letter-spacing: 0.5px;
+    transition: opacity 0.15s, transform 0.12s;
+  }
+  .btn-restart:hover { opacity: 0.88; transform: translateY(-2px); }
+
+  /* Animations */
+  @keyframes fadeSlideIn {
+    from { opacity: 0; transform: translateY(16px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .quiz-card { animation: fadeSlideIn 0.4s ease both; }
+
+  @media (max-width: 500px) {
+    .quiz-card { padding: 24px 18px 20px; }
+    .result-card { padding: 36px 20px 32px; }
+    .stat-row { gap: 12px; }
+  }
+</style>
 </head>
 <body>
 
-<div class="quiz-container">
-    <h1>Kuis Bahasa Indonesia: Teks Pidato</h1>
-    <form id="quizForm">
-        
-        <div class="question">
-            <p>1. Bacalah kutipan pidato berikut!</p>
-            <div class="context-text">
-                Sekolah ini layak menjadi teladan dan tempat bertanya tentang suksesnya mewujudkan kebersihan dan keindahan. Semua ini terwujud karena hasil binaan dari para guru, tokoh agama, tokoh masyarakat di lingkungan sekolah kita ini.<br><br>
-                Predikat juara, piagam penghargaan, dan hadiah sudah kita raih. Namun, yang terpenting adalah bagaimana kerja sama dan kekompakan mewujudkan sekolah bersih, berseri, hijau, aman, nyaman, dan menyenangkan ini, kita pertahankan.
-            </div>
-            <p>Bagian penutup untuk teks pidato tersebut adalah ...</p>
-            <ul class="options">
-                <li><label><input type="radio" name="q1" value="A"> A. Demikian sambutan singkat ini, mohon maaf jika ada kekurangan. Akhir kata perlu diingat, "Menjadi juara itu gampang diraih tetapi sulit untuk dipertahankan."</label></li>
-                <li><label><input type="radio" name="q1" value="B"> B. Siswa sekalian, sekian dulu sambutan ini, dengan harapan di kemudian hari sekolah-sekolah di sekitar kita juga memperoleh juara sebagaimana yang kita dapatkan hari ini.</label></li>
-                <li><label><input type="radio" name="q1" value="C"> C. Demikianlah kesan yang saya dapatkan. Semoga lingkungan sekolah kita dapat mencontoh lingkungan sekolah lainnya.</label></li>
-                <li><label><input type="radio" name="q1" value="D"> D. Bapak-ibu yang kami hormati cukup sekian dulu pesan ini kami sampaikan. Mohon maaf hadiah yang kita dapatkan dari kejuaraan ini jauh dari yang kita perkirakan.</label></li>
-            </ul>
-        </div>
+<header>
+  <div class="badge">Bahasa Indonesia</div>
+  <h1>Kuis <span>Pidato</span></h1>
+  <p class="subtitle">40 Soal Pilihan Ganda · Kelas 9</p>
+</header>
 
-        <div class="question">
-            <p>2. Pidato yang bertujuan untuk memberikan nasihat dan petunjuk disebut...</p>
-            <ul class="options">
-                <li><label><input type="radio" name="q2" value="a"> a. Ceramah</label></li>
-                <li><label><input type="radio" name="q2" value="b"> b. Orasi</label></li>
-                <li><label><input type="radio" name="q2" value="c"> c. Gelar wicara</label></li>
-                <li><label><input type="radio" name="q2" value="d"> d. Pengumuman</label></li>
-                <li><label><input type="radio" name="q2" value="e"> e. Dialog interaktif</label></li>
-            </ul>
-        </div>
+<div id="progress-wrap">
+  <div id="progress-info">
+    <span id="q-counter">Soal 1 dari 40</span>
+    <span id="score-live">Nilai: 0</span>
+  </div>
+  <div id="progress-bar-bg"><div id="progress-bar"></div></div>
+</div>
 
-        <div class="question">
-            <p>3. Pidato seseorang di depan umum dapat dilakukan dengan menggunakan metode di bawah ini, kecuali ....</p>
-            <ul class="options">
-                <li><label><input type="radio" name="q3" value="a"> a. seta-merta (impromptu)</label></li>
-                <li><label><input type="radio" name="q3" value="b"> b. menghafal naskah</label></li>
-                <li><label><input type="radio" name="q3" value="c"> c. ekstemporan</label></li>
-                <li><label><input type="radio" name="q3" value="d"> d. membaca</label></li>
-                <li><label><input type="radio" name="q3" value="e"> e. bertanya</label></li>
-            </ul>
-        </div>
+<div class="quiz-card" id="quiz-card">
+  <div class="q-number" id="q-number">Soal 1</div>
+  <div id="q-passage" class="q-passage" style="display:none"></div>
+  <div class="q-question" id="q-question"></div>
+  <div class="options" id="options"></div>
+  <div id="feedback"></div>
+  <div id="nav"><button class="btn-next" id="btn-next">Selanjutnya →</button></div>
+</div>
 
-        <div class="question">
-            <p>4. Sebelum membacakan naskah pidato atau berpidato, hal yang terlebih dahulu kita lakukan adalah....</p>
-            <ul class="options">
-                <li><label><input type="radio" name="q4" value="a"> a. mencari buku panduan pidato</label></li>
-                <li><label><input type="radio" name="q4" value="b"> b. menghafalkan naskah pidato</label></li>
-                <li><label><input type="radio" name="q4" value="c"> c. bertanya kepada orang yang sudah biasa pidato</label></li>
-                <li><label><input type="radio" name="q4" value="d"> d. memahami pokok-pokok isi pidato</label></li>
-                <li><label><input type="radio" name="q4" value="e"> e. menentukan topik pidato</label></li>
-            </ul>
-        </div>
-
-        <div class="question">
-            <p>5. Seseorang berpidato dengan cara menuliskan pokok-pokok pikiran yang akan disampaikan. Setelah itu, ia menyampaikan masalah yang telah disiapkannya itu dengan kata-katanya sendiri. Orang tersebut berpidato dengan menggunakan metode ....</p>
-            <ul class="options">
-                <li><label><input type="radio" name="q5" value="a"> a. Serta-merta</label></li>
-                <li><label><input type="radio" name="q5" value="b"> b. menghafal</label></li>
-                <li><label><input type="radio" name="q5" value="c"> c. naskah</label></li>
-                <li><label><input type="radio" name="q5" value="d"> d. ekstemporan</label></li>
-                <li><label><input type="radio" name="q5" value="e"> e. ekstrinsik</label></li>
-            </ul>
-        </div>
-
-        <button type="button" onclick="calculateScore()">Submit Jawaban</button>
-    </form>
-
-    <div id="result"></div>
+<div id="result-screen">
+  <div class="result-card">
+    <div class="result-emoji" id="result-emoji">🎓</div>
+    <div class="result-title">Hasil Kuis</div>
+    <div class="result-score" id="result-score">0 <span>/ 40</span></div>
+    <div class="result-msg" id="result-msg"></div>
+    <div class="stat-row">
+      <div class="stat">
+        <span class="stat-val green" id="stat-benar">0</span>
+        <span class="stat-label">Benar</span>
+      </div>
+      <div class="stat">
+        <span class="stat-val red" id="stat-salah">0</span>
+        <span class="stat-label">Salah</span>
+      </div>
+      <div class="stat">
+        <span class="stat-val" id="stat-pct" style="color:var(--accent)">0%</span>
+        <span class="stat-label">Skor</span>
+      </div>
+    </div>
+    <button class="btn-restart" onclick="restart()">Ulangi Kuis</button>
+  </div>
 </div>
 
 <script>
-    // Kunci Jawaban
-    const correctAnswers = {
-        q1: "A",
-        q2: "a",
-        q3: "e",
-        q4: "d",
-        q5: "d"
-    };
+const questions = [
+  // 1
+  {
+    question: "Pada kesempatan yang baik ini marilah kita memanjatkan rasa syukur kita ke hadirat Tuhan Yang Maha Esa. Hanya Tuhan yang telah memberikan rahmat dan karunia ini kepada kita sehingga pada siang hari ini kita bersama-sama dapat menghadiri undangan teman kita yang akan pindah menuju ke tempat yang baru.\nSelain ungkapan syukur, kutipan di atas menyatakan …",
+    options: ["Tujuan berpidato","Pujian-pujian kepada Tuhan","Undangan kepada para sahabat","Terima kasih kepada tuan rumah"],
+    answer: 1
+  },
+  // 2
+  {
+    passage: "... kepada Bapak Punidi. Semoga Tuhan Yang Maha Esa senantiasa melindungi kita semua. Amin",
+    question: "Cuplikan pidato di atas adalah bagian …",
+    options: ["Salam pembuka","Pendahuluan","Isi","Penutup"],
+    answer: 3
+  },
+  // 3
+  {
+    passage: "Para hadir yang terhormat,\nIzinkan saya mewakili teman-teman menyampaikan kesan selama enam tahun kami bersekolah di sini. Selama berada di sini, Bapak dan Ibu Guru telah membimbing kami dengan penuh kesabaran. Kami tidak hanya diajarkan ilmu pengetahuan, tetapi juga keterampilan dan budi pekerti. Mudah-mudahan semua itu dapat menjadi bekal kami dalam menghadapi kehidupan di masa yang akan datang.",
+    question: "Cuplikan pidato di atas berisi ungkapan …",
+    options: ["Rasa syukur","Terima kasih","Harapan","Permintaan maaf"],
+    answer: 2
+  },
+  // 4
+  {
+    passage: "Bapak dan Ibu yang saya hormati.\nApotek hidup adalah tumbuh-tumbuhan yang berkhasiat obat yang ditanam di halaman rumah. Tumbuhan yang dipelihara ini dapat dijadikan obat penyakit tertentu. Misalnya pepaya, daunnya berguna untuk menyembuhkan malaria.",
+    question: "Isi kutipan pidato di atas adalah …",
+    options: ["Pengertian dan manfaat apotek hidup","Malaria bisa disembuhkan oleh daun papaya","Contoh tumbuhan yang ditanam di apotek hidup","Ajakan membuat apotek hidup"],
+    answer: 0
+  },
+  // 5
+  {
+    passage: "Bapak-bapak dan Ibu-ibu guru yang sangat kami cintai dan kami muliakan.\nPerkenankanlah saya atas nama rekan-rekan sekelas menyampaikan ucapan terima kasih yang sebesar-besarnya kepada Bapak-bapak dan Ibu-ibu guru yang telah berhasil mendidik dan mengajar kami dengan maksimal sehingga kami dapat menamatkan …",
+    question: "Kalimat pembuka pidato yang tepat adalah …",
+    options: [
+      "Pertama-tama marilah kita mengucapkan puji syukur ke hadirat Tuhan karena berkat kesehatan dan karunia-Nya kita dapat berkumpul di aula sekolah ini.",
+      "Bapak-bapak dan Ibu-ibu yang saya banggakan, kita harus bersyukur ke hadirat Tuhan karena hari yang indah ini.",
+      "Sebelum pidato saya awali, marilah kita berdoa dahulu.",
+      "Rekan-rekan yang berbahagia, sebelum pidato ini saya mulai, saya akan mengucapkan sepatah dua patah kata."
+    ],
+    answer: 0
+  },
+  // 6
+  {
+    passage: "…\nTelah kita ketahui bersama bahwa Bapak Sadi akan mengakhiri masa kerjanya di sekolah kita dan beliau akan meninggalkan kita menuju tempat yang baru di luar daerah.\n…",
+    question: "Kalimat pembuka pidato yang tepat adalah …",
+    options: [
+      "Marilah kita panjatkan puji syukur ke hadirat Tuhan Yang Mahakuasa. Berkat rahmat dan kasih-Nya kepada kita sehingga pada hari ini dapat berkumpul di tempat ini dalam keadaan sehat.",
+      "Demikianlah pidato saya. Semoga Bapak Sadi dapat bertugas di tempat yang baru dengan sukses.",
+      "Sungguh merupakan kebahagiaan tersendiri apabila kami mengenang jasa baik Bapak kepada kami semua.",
+      "Marilah kita berdoa untuk kesehatan Bapak Sadi di tempat yang baru."
+    ],
+    answer: 0
+  },
+  // 7
+  {
+    passage: "(1) Dalam kesempatan yang berbahagia ini, kami atas nama panitia pentas seni mengucapkan selamat datang kepada seluruh warga sekolah.\n(2) Semoga dengan kegiatan ini, dapat mempererat tali persaudaraan di antara kita.\n(3) Tidak terasa tiga tahun sudah kita menimba ilmu di sini, dan kini saatnya kita berpisah.\n(4) Kami, panitia, berharap pertunjukkan pentas seni ini bisa memenuhi ekspektasi kita semua.",
+    question: "Kalimat pidato yang cocok diucapkan pada acara perpisahan sekolah adalah …",
+    options: ["(1)","(2)","(3)","(4)"],
+    answer: 2
+  },
+  // 8
+  {
+    passage: "(1) Dalam kesempatan yang berbahagia ini, kami atas nama panitia pentas seni mengucapkan selamat datang kepada seluruh warga sekolah.\n(2) Semoga dengan kegiatan ini, dapat mempererat tali persaudaraan di antara kita.\n(3) Tidak terasa tiga tahun sudah kita menimba ilmu di sini, dan kini saatnya kita berpisah.\n(4) Kami, panitia, berharap pertunjukkan pentas seni ini bisa memenuhi ekspektasi kita semua.",
+    question: "Kalimat pidato yang cocok diucapkan oleh ketua panitia pentas seni adalah …",
+    options: ["(1)","(2)","(3)","(4)"],
+    answer: 0
+  },
+  // 9
+  {
+    passage: "Pertama-tama, marilah kita berdoa semoga pertandingan ini lancar dan sukses. Anak-anak yang kami banggakan, tunjukkanlah ketrampilan, ketangguhan, dan sportivitas kalian sebagai atlit. Di tempat inilah, apa yang kalian miliki dipertaruhkan demi mengejar prestasi. Kalian harus berjuang dengan keras. Hal yang paling penting adalah semangat dan kebersamaan. ……",
+    question: "Kalimat penutup pidato yang tepat untuk isi pidato tersebut adalah …",
+    options: [
+      "Tumbuhkanlah semangat dan sportifitas yang tinggi, semoga membawa kesuksesan.",
+      "Kami percaya dengan usaha keras dan kerja sama yang baik pasti menang.",
+      "Bersyukurlah kalian mempunyai semangat yang tinggi untuk mengejar prestasi.",
+      "Akhirnya, kami ucapkan selamat bertanding semoga kalian berjaya, terima kasih."
+    ],
+    answer: 3
+  },
+  // 10
+  {
+    passage: "…….\nUntuk menghadapi situasi saat ini, kita harus selalu waspada. Sehubungan dengan isu kenakalan remaja di daerah kita ini, diharapkan orang tua khususnya para wali murid serta para anak-anak tidak perlu merasa cemas. Bukankah belum ada bukti yang nyata? Namun, kita harus tetap waspada.",
+    question: "Kalimat pembuka yang tepat untuk melengkapi pidato di atas adalah …",
+    options: [
+      "Bapak-bapak, Ibu-ibu wali murid, serta anak-anak",
+      "Selamat pagi dan salam sejahtera",
+      "Hadirin yang terhormat",
+      "Assalamu'alaikum wr. wb. Salam sejahtera bagi kita semua"
+    ],
+    answer: 3
+  },
+  // 11
+  {
+    question: "Kalimat perbaikan kutipan pidato yang dicetak miring (Sehubungan dengan isu kenakalan remaja di daerah kita ini, diharapkan orang tua khususnya para wali murid serta para anak-anak tidak perlu merasa cemas) adalah …",
+    options: [
+      "Sehubungan dengan isu kenakalan remaja di daerah kita ini, diharapkan orang tua khususnya para wali murid serta para anak-anak, tidak perlu merasa cemas",
+      "Sehubungan dengan isu kenakalan remaja di daerah kita ini, diharapkan orang tua khususnya, para wali murid serta para anak-anak tidak perlu merasa cemas",
+      "Sehubungan dengan isu kenakalan remaja di daerah kita ini, diharapkan orang tua khususnya para wali murid serta para anak tidak perlu merasa cemas",
+      "Sehubungan dengan isu kenakalan remaja di daerah kita ini, diharapkan orang tua khususnya para wali murid-wali murid serta para anak-anak tidak perlu merasa cemas"
+    ],
+    answer: 2
+  },
+  // 12
+  {
+    passage: "Puji syukur kita panjatkan ke hadirat Tuhan Yang Mahakuasa. Pagi ini kita dapat berkumpul dalam acara peringatan hari Kartini yang jatuh setiap tanggal 21 April. R.A. Kartini merupakan salah seorang pejuang wanita sangat gigih dan memiliki semangat juang yang tinggi.\n………",
+    question: "Kalimat yang tepat untuk menutup pidato di atas adalah …",
+    options: [
+      "Terima kasih kepada Bapak/Ibu wali murid.",
+      "Semoga kita dapat meneladani perjuangan R. A. Kartini.",
+      "Semoga acara ini berjalan dengan lancar.",
+      "Terima kasih saya ucapkan."
+    ],
+    answer: 1
+  },
+  // 13
+  {
+    question: "Kata 'dia' pada kalimat 'Dia merupakan salah seorang pejuang wanita sangat gigih dan memiliki semangat juang yang tinggi' dapat diganti dengan …",
+    options: ["Kami","Beliau","Saudara","Mereka"],
+    answer: 1
+  },
+  // 14
+  {
+    passage: "… demikian, segala kegiatan belajar mengajar dapat berjalan lancar.",
+    question: "Kalimat pembuka yang tepat untuk mengawali pidato di atas adalah …",
+    options: [
+      "Pertama-tama sebagai ketua kelas saya merasa kagum karena bisa terpilih menjadi ketua kelas.",
+      "Pertama-tama sebagai ketua kelas menyampaikan kepada teman-teman bahwa kelas kita harus rapi.",
+      "Pertama-tama sebagai ketua kelas saya mengucapkan terima kasih atas kepercayaan teman-teman kepada saya.",
+      "Pertama-tama saya mengucapkan terima kasih dan merasa bangga."
+    ],
+    answer: 2
+  },
+  // 15
+  {
+    question: "Kalimat yang tepat untuk memperbaiki kalimat 'sebagai ketua kelas terpilih saya ingin mengajak semua para teman-teman untuk menjaga kerukunan daripada kita' adalah …",
+    options: [
+      "sebagai ketua kelas yang terpilih, saya ingin mengajak semua teman-teman untuk menjaga kerukunan kita.",
+      "sebagai ketua kelas yang terpilih, saya ingin mengajak para teman untuk menjaga kerukunan dari kita.",
+      "sebagai ketua kelas yang terpilih, saya ingin mengajak teman-teman untuk menjaga kerukunan di antara kita.",
+      "sebagai ketua kelas yang terpilih, saya ingin mengajak semua para teman untuk menjaga kerukunan dari kita."
+    ],
+    answer: 2
+  },
+  // 16
+  {
+    passage: "…….\nMakanan berpengawet berpengaruh buruk bagi kesehatan kita. Jika dikonsumsi terus-menerus akan mengakibatkan kerusakan sistem pernapasan, kanker hati, kanker paru-paru, dan lain-lain\n……",
+    question: "Kalimat pembuka pidato di atas, yang tepat adalah …",
+    options: [
+      "Pada kesempatan ini, saya yakin kalian sering makan makanan berpengawet",
+      "Pada kesempatan ini, saya akan bertanya tentang makanan berpengawet",
+      "Pada kesempatan ini, saya akan menjelaskan bahaya makanan berpengawet",
+      "Pada kesempatan ini, saya bermaksud mendata bahaya makanan berpengawet"
+    ],
+    answer: 2
+  },
+  // 17
+  {
+    question: "Kalimat penutup yang tepat untuk pidato tentang makanan berpengawet adalah …",
+    options: [
+      "Bapak doakan semoga kalian bisa terhindar dari berbagai macam penyakit",
+      "Mudah-mudahan sejak sekarang kalian mengurangi mengkonsumsi makanan berpengawet",
+      "Demikianlah penjelasan saya tentang makanan berpengawet",
+      "Demikianlah bahaya-bahaya yang ditimbulkan oleh makanan berpengawet"
+    ],
+    answer: 3
+  },
+  // 18
+  {
+    question: "Unsur-unsur dari pidato di bawah ini, KECUALI …",
+    options: ["Tema","Pembukaan","Isi","Waktu","Penutup"],
+    answer: 3
+  },
+  // 19
+  {
+    question: "Dalam berpidato, isi harus mencakup tema yang ditentukan karena …",
+    options: [
+      "Pendengar lebih mudah memahami",
+      "Agar tidak susah",
+      "Mengefisiensikan waktu",
+      "Perpengaruh dengan kondisi",
+      "Lebih mudah didengar"
+    ],
+    answer: 0
+  },
+  // 20
+  {
+    question: "Judul yang tepat untuk pidato bertemakan PENDIDIKAN adalah …",
+    options: [
+      "Pentingnya pengaruh globalisasi pada remaja",
+      "Pendidikan wajib untuk usia dini",
+      "Solisasi kesehatan di kalangan usia lanjut",
+      "Prioritas utama untuk anak",
+      "Kesehatan adalah hal yang sangat penting"
+    ],
+    answer: 1
+  },
+  // 21
+  {
+    question: "Tiga bagian utama dalam pidato, yakni …",
+    options: ["Pembuka, isi, akhir","Pembuka, isian, penjelas","Pembuka, akhir, isi","Pembuka, isi, penutup","Pembuka, inti, utama"],
+    answer: 3
+  },
+  // 22
+  {
+    question: "Menyampaikan pidato harus dengan mimik, ekspresi, dan …",
+    options: ["Waktu","Suara","Gerakan","Tulisan","Gerakan anggota badan"],
+    answer: 4
+  },
+  // 23
+  {
+    passage: "Hadirin yang berbahagia,\nSaat ini, intensitas curah hujan sangat tinggi. Sebagaimana kita ketahui, sejak beberapa hari terakhir, hujan deras mengguyur wilayah Jakarta dan sekitarnya. Tak pelak lagi, banjir pun datang tanpa permisi. Menurut data Badan Meteorologi dan Geofisika, curah hujan yang tinggi masih akan berlangsung selama sepekan ke depan.\n\nSeiring datangnya bencana banjir, wabah penyakit pun biasanya akan muncul. Wabah penyakit yang dimaksud adalah leptospirosis dan diare. Leptospirosis merupakan penyakit hewan yang dapat menjangkiti manusia. Penyebabnya adalah bakteri berbentuk spiral bernama leptospira. Sementara itu, diare akan muncul karena wilayah yang tergenang banjir menjadi kotor.\n\nJika terjangkit penyakit leptospirosis, penderita akan mengalami demam tinggi, mual, muntah, sekujur tubuh badan akan terasa sakit, air kencing berwarna merah tua, dan timbul bercak kemerahan di bola mata karena pecahnya pembuluh darah.",
+    question: "Isi pokok naskah pidato tersebut adalah …",
+    options: [
+      "Intensitas curah hujan saat ini sangat tinggi.",
+      "Mewaspadai turunnya curah hujan yang sangat tinggi.",
+      "Bahaya yang timbul akibat curah hujan tinggi.",
+      "Perlunya kewaspadaan terhadap berbagai penyakit pada saat banjir.",
+      "Perlunya meningkatkan kewaspadaan penyakit leptospirosis dan diare tatkala banjir datang."
+    ],
+    answer: 4
+  },
+  // 24
+  {
+    question: "Kalimat pesan yang terdapat dalam naskah pidato (soal 23) tersebut adalah …",
+    options: [
+      "Berhati-hatilah terhadap curah hujan yang tinggi.",
+      "Perlunya kewaspadaan masyarakat terhadap berbagai penyakit.",
+      "Perlunya memakai sepatu boot dan sarung tangan karet.",
+      "Jaga kebersihan lingkungan dengan menggalakan bersih-bersih lingkungan.",
+      "Menghindari bersih-bersih lingkungan jika terdapat bagian tubuh yang terluka."
+    ],
+    answer: 3
+  },
+  // 25
+  {
+    passage: "Perokok atau bukan perokok pada dasarnya sama-sama mengakui bahwa merokok adalah kebiasaan berbahaya (2). Namun, kalangan industri rokok dan pecandu rokok selalu mengajukan alasan klise, bahwa merokok adalah pilihan pribadi dan risikonya ditanggung sendiri (3).\nAlasan tersebut dibatah oleh kelompok anti merokok, bahwa alasan itu tidak ilmiah (4). Untuk mengatasi pertentangan pendapat tersebut hendaknya perokok menyadari tentang apa keuntungan merokok itu (5).",
+    question: "Kalimat yang menyatakan imbuhan dalam penggalan naskah pidato di atas terdapat pada nomor …",
+    options: ["Satu","Dua","Tiga","Empat","Lima"],
+    answer: 4
+  },
+  // 26
+  {
+    question: "Pidato seseorang di depan umum dapat dilakukan dengan menggunakan metode di bawah ini, kecuali …",
+    options: ["Serta-merta (impromptu)","Menghafal naskah","Ekstemporan","Membaca","Bertanya"],
+    answer: 4
+  },
+  // 27
+  {
+    question: "Sebelum membacakan naskah pidato atau berpidato, hal yang terlebih dahulu kita lakukan adalah …",
+    options: [
+      "Mencari buku panduan pidato",
+      "Menghafalkan naskah pidato",
+      "Bertanya kepada orang yang sudah biasa pidato",
+      "Memahami pokok-pokok isi pidato",
+      "Menentukan topik pidato"
+    ],
+    answer: 3
+  },
+  // 28
+  {
+    question: "Pembacaan naskah pidato akan lebih menarik dan berhasil jika pembaca melakukannya dengan disertai …",
+    options: [
+      "Senyum kepada pendengar",
+      "Nada marah kepada pendengar",
+      "Gerak anggota badan",
+      "Tulisan",
+      "Gerakan"
+    ],
+    answer: 2
+  },
+  // 29
+  {
+    question: "Seseorang berpidato dengan cara menuliskan pokok-pokok pikiran yang akan disampaikan. Setelah itu, ia menyampaikan masalah yang telah disiapkannya itu dengan kata-katanya sendiri. Orang tersebut berpidato dengan menggunakan metode …",
+    options: ["Serta-merta","Menghafal","Naskah","Ekstemporan","Ekstrinsik"],
+    answer: 3
+  },
+  // 30
+  {
+    question: "Pernyataan yang salah berkenaan dengan pelaksanaan pidato adalah …",
+    options: [
+      "Berpidato dengan menggunakan tempo berarti menyampaikan atau membacakan naskah pidato dengan memperhatikan cepat lambatnya pengucapan kata-kata dalam teks pidato secara keseluruhan.",
+      "Bahasa tubuh mempunyai efek yang kuat pada penampilan pidato.",
+      "Melihat pendengar secara sekilas sangat penting dilakukan oleh pembaca naskah pidato.",
+      "Untuk dapat membacakan pidato dengan lancar dan berhasil mencapai tujuan, diperlukan pengalaman pidato.",
+      "Kemampuan menafsirkan teks pidato dengan tepat tidak penting bagi pembaca naskah pidato."
+    ],
+    answer: 4
+  },
+  // 31
+  {
+    passage: "OSIS SMP Terbuka melaksanakan program penyuluhan dengan tema 'Kenakalan Remaja'. Kegiatan ini menghadirkan narasumber dari pihak kepolisian. Sebagai ketua OSIS, Naomi menyampaikan pidatonya.",
+    question: "Bagian penutup pidato Naomi yang tepat sesuai dengan ilustrasi tersebut adalah …",
+    options: [
+      "Selamat pagi saya ucapkan kepada sekolah, narasumber, bapak-ibu guru dan teman-teman yang telah hadir pada acara itu.",
+      "Bapak, Ibu dan teman-teman, marilah kita bersyukur kepada Tuhan yang telah memberikan nikmat kepada kita sehingga kita bisa berkumpul di sini.",
+      "Teman-teman yang saya sayangi, kegiatan ini bermaksud agar kita mampu menjaga diri dari perbuatan yang tercela dan berbahaya.",
+      "Demikian teman-teman, sesuai dengan program yang telah kita sepakati bersama, mari kita jaga diri dari kenakalan remaja."
+    ],
+    answer: 3
+  },
+  // 32
+  {
+    passage: "Pemuda tulang punggung bangsa. Masa depan bangsa ada di tangan pemuda [...]. Inilah makna dari Hari Sumpah Pemuda.",
+    question: "Kalimat yang tepat untuk melengkapi teks pidato tersebut adalah …",
+    options: [
+      "Pemuda yang bersekolah tinggi harapan semua bangsa.",
+      "Banyak pemuda yang terlibat pada hal-hal yang bersifat negatif.",
+      "Pemimpin bangsa saat ini berasal dari pemuda-pemuda pada masa lalu.",
+      "Gambaran bangsa di masa depan akan terlihat pada keadaan pemudanya saat ini."
+    ],
+    answer: 3
+  },
+  // 33
+  {
+    passage: "Kegiatan pesantren kilat ini merupakan kegiatan rutin di bulan Ramadhan dalam rangka memotivasi para siswa agar berakhlak dan berkeperibadian baik.\n[ ... ]\nApabila dalam penyelenggaraan kegiatan ini banyak kekurangan, panitia mohon maaf.",
+    question: "Kalimat yang tepat untuk melengkapi teks pidato tersebut adalah …",
+    options: [
+      "Kami atas nama panitia mengucapkan selamat datang untuk melaksanakan pesantren kilat.",
+      "Puji syukur kita panjatkan kepada Tuhan yang senantiasa memberikan kenikmatan kepada kita.",
+      "Demikian sambutan dari saya selaku ketua panitia, sehingga kegiatan ini bermanfaat.",
+      "Saya mengucapkan terima kasih atas kehadirannya dalam kegiatan pesantren kilat ini."
+    ],
+    answer: 0
+  },
+  // 34
+  {
+    passage: "SMP Harapan Mulia melaksanakan pelantikan ketua OSIS yang baru terpilih. Erwan sebagai ketua OSIS SMP Harapan Mulia yang baru terpilih memberikan pidato sambutan.",
+    question: "Bagian pembukan pidato yang tepat sesuai ilustrasi tersebut adalah …",
+    options: [
+      "Pada kesempatan yang baik ini, marilah kita bersyukur kepada Tuhan YME karena kita masih dilimpahkan kesehatan sehingga kita dapat melaksanakan pelantikan OSIS.",
+      "Saya berharap kepemimpinan saya ke depan, saya tetap mohon dukungan. Dengan begitu akan tercipta suasana yang kondusif.",
+      "Saya menyampaikan ribuan kata maaf bila ada kata-kata yang kurang berkenan di hati Bapak dan Ibu serta teman-teman.",
+      "Bapak dan Ibu yang kami hormati, puji syukur kepada Tuhan karena kita dipertemukan."
+    ],
+    answer: 0
+  },
+  // 35
+  {
+    passage: "Setiap tanggal 22 Desember SMP Darma Raya memperingati hari Ibu. Peringatan diisi dengan berbagai perlombaan.",
+    question: "Penutup pidato yang tepat sesuai ilustrasi tersebut adalah …",
+    options: [
+      "Tidak ada bagi kita untuk tidak memperingati hari Ibu. Hari Ibu akan jatuh setiap tanggal 22 Desember. Kami pun akan memperingatinya.",
+      "Perjuangan seorang ibu untuk membersarkan anak-anaknya tidak cukup hanya dibalas dengan peringatan hari ibu.",
+      "Demikian pidato ini. Semoga peringatan Hari Ibu ini dapat dijadikan momen rasa cinta kita kepada Ibu. Jika ada yang kurang berkenan, mohon maaf.",
+      "Tugas seorang ibu memang berat. Dari mengurus kebutuhan sehari-hari keluarga sampai mencuci pakaian. Tiap pagi ibu akan bangun lebih awal dan istirahat tidur terakhir."
+    ],
+    answer: 2
+  },
+  // 36
+  {
+    passage: "Ketua Tim Penggerak PKK Kodya Jakarta Timur menyampaikan perlunya pengolahan sampah rumah tangga agar dapat dimanfaatkan baik sebagai kompos maupun kerajinan rumah tangga.",
+    question: "Pembuka pidato yang tepat sesuai dengan ilustrasi tersebut adalah …",
+    options: [
+      "Kompos rumah tangga adalah sampah atau limbah yang berasal dari taman, halaman maupun meja makan maupun limbah rumah tangga lainnya, tidak selalu harus dibuang.",
+      "Puji syukur kita sampai Tuhan Yang Maha Esa, sehingga dapat berkumpul dalam rangka menyampaikan perlunya pengolahan sampah. Jangan disangka sampah itu tidak ada manfaatnya. Kalau kita jeli justru sampah bisa bermanfaat untuk kehidupan manusia.",
+      "Sebagai masyarakat yang peduli lingkungan, kita dapat mengelola sampah sehingga lebih bermanfaat. Langkah pertama yang dapat kita lakukan ialah memisahkan antara sampah organik dengan sampah non-organik.",
+      "Demikian yang dapat saya sampaikan, bahwa cara pembuatan dan pengolahan kompos cukup sederhana, dengan membuat lubang galian di tanah dan menyimpan sampah organik dari rumah tangga selama kurun waktu tertentu."
+    ],
+    answer: 1
+  },
+  // 37
+  {
+    passage: "Puji syukur senantiasa kita panjatkan kehadirat Tuhan yang telah memberikan kesehatan sehingga bisa menyelenggarakan kegiatan ini.",
+    question: "Kalimat yang tepat untuk melengkapi teks pidato yang rumpang (pameran seni dan kreativitas) adalah …",
+    options: [
+      "Akirnya kami atas nama panitia mengucapkan selamat mengunjungi pameran seni dan kreativitas ini.",
+      "Puji syukur senantiasa kita panjatkan kehadirat Tuhan yang telah memberikan kesehatan sehingga bisa menyelenggarakan kegiatan ini.",
+      "Demikian sambutan dari saya selaku ketua panita, semoga pameran seni dan kreativitas siswa ini bermanfaat bagi semua.",
+      "Pameran buku ini merupakan agenda tahunan osis dalam rangka memotivasi para siswa agar gemar membaca."
+    ],
+    answer: 2
+  },
+  // 38
+  {
+    passage: "Sekolah ini layak menjadi teladan dan tempat bertanya tentang suksesnya mewujudkan kebersihan dan keindahan. Semua ini terwujud karena hasil binaan dari para guru, tokoh agama, tokoh masyarakat di lingkungan sekolah kita ini.\n\nPredikat juara, piagam penghargaan, dan hadiah sudah kita raih. Namun, yang terpenting adalah bagaimana kerja sama dan kekompakan mewujudkan sekolah bersih, berseri, hijau, aman, nyaman, dan menyenangkan ini, kita pertahankan.",
+    question: "Bagian penutup untuk teks pidato tersebut adalah …",
+    options: [
+      "Demikian sambutan singkat ini, mohon maaf jika ada kekurangan. Akhir kata perlu diingat, 'Menjadi juara itu gampang diraih tetapi sulit untuk dipertahankan.'",
+      "Siswa sekalian, sekian dulu sambutan ini, dengan harapan di kemudian hari sekolah-sekolah di sekitar kita juga memperoleh juara sebagaimana yang kita dapatkan hari ini.",
+      "Demikianlah kesan yang saya dapatkan. Semoga lingkungan sekolah kita dapat mencontoh lingkungan sekolah lainnya.",
+      "Bapak-ibu yang kami hormati cukup sekian dulu pesan ini kami sampaikan. Mohon maaf hadiah yang kita dapatkan dari kejuaraan ini jauh dari yang kita perkirakan."
+    ],
+    answer: 0
+  },
+  // 39
+  {
+    question: "Pidato yang bertujuan untuk memberikan nasihat dan petunjuk disebut …",
+    options: ["Ceramah","Orasi","Gelar wicara","Pengumuman","Dialog interaktif"],
+    answer: 0
+  },
+  // 40
+  {
+    passage: "Abdul mewakili siswa kelas X dan XI.",
+    question: "Bagian isi pidato Abdul yang tepat adalah …",
+    options: [
+      "Kami ucapkan selamat, dan sukses untuk kakak. Semoga di jenjang yang lebih tinggi, kakak lebih sukses.",
+      "Pertahankan prestasi kalian, agar orang tua kalian semakin bangga.",
+      "Teman-teman semua, janganlah kita budayakan bolos karena bolos itu tindakan yang sangat merugikan diri sendiri.",
+      "Berjuanglah terus sampai titik darah penghambisan.",
+      "Pada kesempatan yang baik ini, saya ucapkan terima kasih, semoga segala pengorbanan kalian mendapat imbalan dari tuhan."
+    ],
+    answer: 0
+  }
+];
 
-    function calculateScore() {
-        let score = 0;
-        let totalQuestions = Object.keys(correctAnswers).length;
-        let form = document.getElementById('quizForm');
-        let answeredQuestions = 0;
+let current = 0;
+let score = 0;
+let answered = false;
 
-        // Cek dan hitung skor
-        for (let q in correctAnswers) {
-            let selectedOption = form.querySelector(`input[name="${q}"]:checked`);
-            if (selectedOption) {
-                answeredQuestions++;
-                if (selectedOption.value === correctAnswers[q]) {
-                    score++;
-                }
-            }
-        }
+function renderQuestion() {
+  const q = questions[current];
+  answered = false;
 
-        let resultDiv = document.getElementById('result');
-        resultDiv.style.display = 'block';
-        
-        // Peringatan jika belum diisi semua
-        if (answeredQuestions < totalQuestions) {
-            resultDiv.className = 'incorrect';
-            resultDiv.innerHTML = `Anda baru menjawab ${answeredQuestions} dari ${totalQuestions} pertanyaan. Silakan lengkapi dulu.`;
-            return;
-        }
+  document.getElementById('q-number').textContent = `Soal ${current + 1}`;
+  document.getElementById('q-counter').textContent = `Soal ${current + 1} dari ${questions.length}`;
+  document.getElementById('score-live').textContent = `Nilai: ${score}`;
+  document.getElementById('progress-bar').style.width = `${(current / questions.length) * 100}%`;
 
-        // Tampilkan hasil akhir
-        if (score === totalQuestions) {
-            resultDiv.className = 'correct';
-            resultDiv.innerHTML = `Luar Biasa! Anda menjawab benar semua (${score}/${totalQuestions}).`;
-        } else {
-            resultDiv.className = 'incorrect';
-            resultDiv.innerHTML = `Skor Anda: ${score} dari ${totalQuestions} jawaban benar. Silakan pelajari lagi!`;
-        }
-    }
+  const passageEl = document.getElementById('q-passage');
+  if (q.passage) {
+    passageEl.style.display = 'block';
+    passageEl.textContent = q.passage;
+  } else {
+    passageEl.style.display = 'none';
+  }
+
+  document.getElementById('q-question').textContent = q.question;
+
+  const optContainer = document.getElementById('options');
+  optContainer.innerHTML = '';
+
+  const letters = ['A','B','C','D','E'];
+  q.options.forEach((opt, i) => {
+    const btn = document.createElement('button');
+    btn.className = 'opt-btn';
+    btn.innerHTML = `<span class="opt-letter">${letters[i]}</span><span>${opt}</span>`;
+    btn.onclick = () => selectAnswer(i, btn);
+    optContainer.appendChild(btn);
+  });
+
+  const fb = document.getElementById('feedback');
+  fb.className = '';
+  fb.textContent = '';
+
+  document.getElementById('btn-next').classList.remove('show');
+
+  // animate
+  const card = document.getElementById('quiz-card');
+  card.style.animation = 'none';
+  void card.offsetWidth;
+  card.style.animation = 'fadeSlideIn 0.35s ease both';
+}
+
+function selectAnswer(idx, btnEl) {
+  if (answered) return;
+  answered = true;
+
+  const q = questions[current];
+  const buttons = document.querySelectorAll('.opt-btn');
+  buttons.forEach(b => b.disabled = true);
+
+  const fb = document.getElementById('feedback');
+
+  if (idx === q.answer) {
+    score++;
+    btnEl.classList.add('correct');
+    fb.textContent = '✓ Benar! Jawaban tepat.';
+    fb.className = 'correct show';
+  } else {
+    btnEl.classList.add('wrong');
+    buttons[q.answer].classList.add('correct');
+    const letters = ['A','B','C','D','E'];
+    fb.textContent = `✗ Kurang tepat. Jawaban yang benar: ${letters[q.answer]}. ${q.options[q.answer]}`;
+    fb.className = 'wrong show';
+  }
+
+  document.getElementById('score-live').textContent = `Nilai: ${score}`;
+  document.getElementById('btn-next').classList.add('show');
+}
+
+document.getElementById('btn-next').onclick = () => {
+  current++;
+  if (current < questions.length) {
+    renderQuestion();
+  } else {
+    showResult();
+  }
+};
+
+function showResult() {
+  document.getElementById('quiz-card').style.display = 'none';
+  document.getElementById('progress-wrap').style.display = 'none';
+
+  const rs = document.getElementById('result-screen');
+  rs.classList.add('show');
+
+  const pct = Math.round((score / questions.length) * 100);
+  document.getElementById('result-score').innerHTML = `${score} <span>/ ${questions.length}</span>`;
+  document.getElementById('stat-benar').textContent = score;
+  document.getElementById('stat-salah').textContent = questions.length - score;
+  document.getElementById('stat-pct').textContent = pct + '%';
+
+  let emoji, msg;
+  if (pct >= 90) { emoji = '🏆'; msg = 'Luar biasa! Kamu menguasai materi pidato dengan sangat baik!'; }
+  else if (pct >= 75) { emoji = '🎓'; msg = 'Bagus! Pemahaman kamu tentang pidato sudah sangat baik.'; }
+  else if (pct >= 60) { emoji = '📚'; msg = 'Cukup baik! Terus belajar untuk meningkatkan pemahamanmu.'; }
+  else if (pct >= 40) { emoji = '💪'; msg = 'Masih perlu banyak belajar. Ulangi materi pidato dan coba lagi!'; }
+  else { emoji = '📖'; msg = 'Jangan menyerah! Pelajari kembali materi tentang pidato.'; }
+
+  document.getElementById('result-emoji').textContent = emoji;
+  document.getElementById('result-msg').textContent = msg;
+}
+
+function restart() {
+  current = 0;
+  score = 0;
+  answered = false;
+  document.getElementById('quiz-card').style.display = 'block';
+  document.getElementById('progress-wrap').style.display = 'block';
+  document.getElementById('result-screen').classList.remove('show');
+  renderQuestion();
+}
+
+renderQuestion();
 </script>
-
 </body>
 </html>
