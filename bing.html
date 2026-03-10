@@ -1,0 +1,966 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>English Quiz</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0f1117;
+    --surface: #252940;
+    --card: #1e2238;
+    --accent: #f5c842;
+    --accent2: #ff6b6b;
+    --accent3: #4ecdc4;
+    --text: #ffffff;
+    --muted: #cccccc;
+    --border: #2e3352;
+    --correct: #43e97b;
+    --wrong: #ff6b6b;
+  }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+  }
+
+  /* ── INTRO ── */
+  #intro {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 2rem;
+    background: radial-gradient(ellipse at 30% 20%, #1e2a5a44 0%, transparent 60%),
+                radial-gradient(ellipse at 70% 80%, #3a1a4a44 0%, transparent 60%),
+                var(--bg);
+  }
+  #intro .badge {
+    background: linear-gradient(135deg, var(--accent), #ffaa00);
+    color: #000;
+    font-weight: 700;
+    font-size: .75rem;
+    letter-spacing: .15em;
+    padding: .35rem .9rem;
+    border-radius: 99px;
+    text-transform: uppercase;
+    margin-bottom: 1.5rem;
+    display: inline-block;
+  }
+  #intro h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(2.5rem, 8vw, 5rem);
+    font-weight: 900;
+    line-height: 1.05;
+    margin-bottom: 1rem;
+    background: linear-gradient(135deg, #fff 30%, var(--accent));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  #intro p {
+    color: var(--muted);
+    font-size: 1.05rem;
+    max-width: 480px;
+    line-height: 1.7;
+    margin-bottom: 2.5rem;
+  }
+  .stats-row {
+    display: flex;
+    gap: 2rem;
+    margin-bottom: 2.5rem;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+  .stat {
+    text-align: center;
+  }
+  .stat .num {
+    font-family: 'Playfair Display', serif;
+    font-size: 2.2rem;
+    font-weight: 700;
+    color: var(--accent);
+    display: block;
+  }
+  .stat .lbl {
+    font-size: .8rem;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: .08em;
+  }
+  .btn-start {
+    background: linear-gradient(135deg, var(--accent), #ffaa00);
+    color: #000;
+    border: none;
+    padding: 1rem 3rem;
+    font-size: 1.1rem;
+    font-weight: 700;
+    border-radius: 99px;
+    cursor: pointer;
+    font-family: 'DM Sans', sans-serif;
+    letter-spacing: .04em;
+    transition: transform .2s, box-shadow .2s;
+    box-shadow: 0 8px 32px #f5c84255;
+  }
+  .btn-start:hover { transform: translateY(-2px); box-shadow: 0 12px 40px #f5c84277; }
+
+  /* ── QUIZ ── */
+  #quiz { display: none; min-height: 100vh; padding: 1.5rem; }
+  .quiz-header {
+    max-width: 720px;
+    margin: 0 auto 1.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    flex-wrap: wrap;
+  }
+  .q-counter {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.1rem;
+    color: var(--accent);
+    font-weight: 700;
+  }
+  .progress-wrap {
+    flex: 1;
+    height: 6px;
+    background: var(--border);
+    border-radius: 99px;
+    overflow: hidden;
+    min-width: 120px;
+  }
+  .progress-bar {
+    height: 100%;
+    background: linear-gradient(90deg, var(--accent), #ffaa00);
+    border-radius: 99px;
+    transition: width .4s ease;
+  }
+  .score-live {
+    font-size: .9rem;
+    color: var(--muted);
+    font-weight: 500;
+  }
+
+  .card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 1.2rem;
+    padding: 2rem;
+    max-width: 720px;
+    margin: 0 auto 1.5rem;
+    animation: fadeUp .35s ease both;
+  }
+  @keyframes fadeUp {
+    from { opacity:0; transform:translateY(16px); }
+    to   { opacity:1; transform:translateY(0); }
+  }
+  .topic-tag {
+    display: inline-block;
+    background: #2e3352;
+    color: var(--accent);
+    font-size: .72rem;
+    font-weight: 600;
+    letter-spacing: .1em;
+    text-transform: uppercase;
+    padding: .25rem .75rem;
+    border-radius: 99px;
+    margin-bottom: 1rem;
+  }
+  .question-text {
+    font-size: 1.05rem;
+    line-height: 1.7;
+    font-weight: 500;
+    margin-bottom: 1.5rem;
+  }
+  .options { display: flex; flex-direction: column; gap: .75rem; }
+  .opt, .opt span, .opt * { color: #ffffff !important; -webkit-text-fill-color: #ffffff !important; }
+  .opt {
+    display: flex;
+    align-items: flex-start;
+    gap: .9rem;
+    background: var(--surface);
+    border: 2px solid var(--border);
+    border-radius: .75rem;
+    padding: .9rem 1.1rem;
+    cursor: pointer;
+    transition: border-color .15s, background .15s;
+    font-size: .95rem;
+    line-height: 1.5;
+    text-align: left;
+    color: #ffffff !important;
+  }
+  .opt:hover:not(.disabled) { border-color: var(--accent); background: #22263a; }
+  .opt .letter {
+    min-width: 1.6rem;
+    height: 1.6rem;
+    border-radius: 50%;
+    background: var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: .8rem;
+    flex-shrink: 0;
+    color: var(--muted);
+  }
+  .opt.selected { border-color: var(--accent); background: #2e3352; }
+  .opt.selected .letter { background: var(--accent); color: #000; }
+  .opt.correct { border-color: var(--correct); background: #1a3a2a; }
+  .opt.correct .letter { background: var(--correct); color: #000; }
+  .opt.wrong { border-color: var(--wrong); background: #3a1a1a; }
+  .opt.wrong .letter { background: var(--wrong); color: #fff; }
+  .opt.disabled { cursor: default; }
+
+  .feedback {
+    margin-top: 1rem;
+    padding: .85rem 1rem;
+    border-radius: .65rem;
+    font-size: .9rem;
+    line-height: 1.5;
+    display: none;
+  }
+  .feedback.show { display: block; }
+  .feedback.ok { background: #1a3a2a; border-left: 3px solid var(--correct); color: #a0f0c0; }
+  .feedback.bad { background: #3a1a1a; border-left: 3px solid var(--wrong); color: #ffaaaa; }
+
+  .btn-next {
+    display: none;
+    background: linear-gradient(135deg, var(--accent), #ffaa00);
+    color: #000;
+    border: none;
+    padding: .85rem 2.5rem;
+    font-size: 1rem;
+    font-weight: 700;
+    border-radius: 99px;
+    cursor: pointer;
+    font-family: 'DM Sans', sans-serif;
+    margin: 0 auto;
+    display: none;
+    transition: transform .2s;
+  }
+  .btn-next:hover { transform: translateY(-1px); }
+  .btn-next.show { display: block; }
+
+  /* ── RESULT ── */
+  #result {
+    display: none;
+    min-height: 100vh;
+    padding: 2rem 1.5rem;
+    text-align: center;
+    background: radial-gradient(ellipse at 50% 0%, #1e2a5a55 0%, transparent 60%), var(--bg);
+  }
+  #result h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(2rem,7vw,4rem);
+    font-weight: 900;
+    margin-bottom: .5rem;
+    background: linear-gradient(135deg, #fff 30%, var(--accent));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  .grade-badge {
+    font-family: 'Playfair Display', serif;
+    font-size: 5rem;
+    font-weight: 900;
+    display: block;
+    margin: 1rem auto;
+  }
+  .score-big {
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: var(--accent);
+    font-family: 'Playfair Display', serif;
+  }
+  .result-stats {
+    display: flex;
+    gap: 1.5rem;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin: 1.5rem 0;
+  }
+  .r-stat {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 1rem;
+    padding: 1rem 1.5rem;
+    min-width: 120px;
+  }
+  .r-stat .rn { font-family: 'Playfair Display', serif; font-size: 2rem; font-weight: 700; }
+  .r-stat .rl { font-size: .78rem; color: var(--muted); text-transform: uppercase; letter-spacing: .08em; }
+  .review-section {
+    max-width: 720px;
+    margin: 2rem auto 0;
+    text-align: left;
+  }
+  .review-section h3 {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.4rem;
+    margin-bottom: 1rem;
+    color: var(--accent);
+  }
+  .review-item {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: .75rem;
+    padding: 1rem;
+    margin-bottom: .75rem;
+    font-size: .88rem;
+    line-height: 1.6;
+  }
+  .review-item .ri-q { font-weight: 600; margin-bottom: .4rem; }
+  .review-item .ri-correct { color: var(--correct); }
+  .review-item .ri-wrong { color: var(--wrong); }
+  .btn-restart {
+    background: linear-gradient(135deg, var(--accent), #ffaa00);
+    color: #000;
+    border: none;
+    padding: .9rem 2.5rem;
+    font-size: 1rem;
+    font-weight: 700;
+    border-radius: 99px;
+    cursor: pointer;
+    font-family: 'DM Sans', sans-serif;
+    margin-top: 2rem;
+    transition: transform .2s;
+  }
+  .btn-restart:hover { transform: translateY(-2px); }
+</style>
+</head>
+<body>
+
+<!-- INTRO -->
+<div id="intro">
+  <span class="badge">📚 English Quiz</span>
+  <h1>English<br>Quiz</h1>
+  <p>Test your understanding of Giraffe Text, Reduce Reuse Recycle, Present Perfect (Active &amp; Passive), and Direct &amp; Indirect Speech.</p>
+  <div class="stats-row">
+    <div class="stat"><span class="num">45</span><span class="lbl">Questions</span></div>
+    <div class="stat"><span class="num">4</span><span class="lbl">Topics</span></div>
+    <div class="stat"><span class="num">MCQ</span><span class="lbl">Multiple Choice</span></div>
+  </div>
+  <button class="btn-start" onclick="startQuiz()">Start Quiz ▶</button>
+</div>
+
+<!-- QUIZ -->
+<div id="quiz">
+  <div class="quiz-header">
+    <span class="q-counter" id="qCounter">1 / 51</span>
+    <div class="progress-wrap"><div class="progress-bar" id="progressBar" style="width:2%"></div></div>
+    <span class="score-live" id="scoreLive">Skor: 0</span>
+  </div>
+  <div class="card" id="questionCard">
+    <span class="topic-tag" id="topicTag"></span>
+    <p class="question-text" id="questionText"></p>
+    <div class="options" id="optionsDiv"></div>
+    <div class="feedback" id="feedbackDiv"></div>
+  </div>
+  <div style="max-width:720px;margin:0 auto;text-align:right;">
+    <button class="btn-next" id="btnNext" onclick="nextQuestion()">Soal Berikutnya →</button>
+  </div>
+</div>
+
+<!-- RESULT -->
+<div id="result">
+  <h2>Quiz Results</h2>
+  <div class="score-big" id="scoreFinal"></div>
+  <div class="grade-badge" id="gradeBadge"></div>
+  <div class="result-stats">
+    <div class="r-stat"><div class="rn" id="rCorrect" style="color:var(--correct)"></div><div class="rl">Correct</div></div>
+    <div class="r-stat"><div class="rn" id="rWrong" style="color:var(--wrong)"></div><div class="rl">Wrong</div></div>
+    <div class="r-stat"><div class="rn" id="rPct" style="color:var(--accent)"></div><div class="rl">Score</div></div>
+  </div>
+  <div class="review-section">
+    <h3>📋 Answer Review</h3>
+    <div id="reviewList"></div>
+  </div>
+  <button class="btn-restart" onclick="restartQuiz()">🔄 Restart Quiz</button>
+</div>
+
+<script>
+const questions = [
+
+  // ══════════════════════════════════════════
+  // GIRAFFE TEXT – 10 important things (No.1–10)
+  // ══════════════════════════════════════════
+  {
+    topic: "Giraffe Text",
+    q: "According to the text, how tall can a giraffe stand?",
+    opts: ["Up to 15 feet (4.5 meters)", "Up to 19 feet (5.8 meters)", "Up to 22 feet (6.7 meters)", "Up to 17 feet (5.2 meters)"],
+    ans: 1
+  },
+  {
+    topic: "Giraffe Text",
+    q: "How many vertebrae does a giraffe's neck contain?",
+    opts: ["Five", "Nine", "Seven", "Twelve"],
+    ans: 2
+  },
+  {
+    topic: "Giraffe Text",
+    q: "What makes each giraffe's coat unique?",
+    opts: ["Their height is different", "Their spots are unique to each individual, like human fingerprints", "Their fur color changes with age", "Their neck length varies"],
+    ans: 1
+  },
+  {
+    topic: "Giraffe Text",
+    q: "How many pounds of leaves can a giraffe consume daily?",
+    opts: ["Over 50 pounds", "About 60 pounds", "Over 75 pounds", "About 100 pounds"],
+    ans: 2
+  },
+  {
+    topic: "Giraffe Text",
+    q: "How long do giraffes typically sleep each day?",
+    opts: ["About 8 hours", "About 4–5 hours", "About 30 minutes to two hours", "About 6 hours"],
+    ans: 2
+  },
+  {
+    topic: "Giraffe Text",
+    q: "How much pressure (per square inch) can a giraffe's kick deliver?",
+    opts: ["About 500 pounds", "About 1,000 pounds", "About 2,000 pounds", "About 3,500 pounds"],
+    ans: 2
+  },
+  {
+    topic: "Giraffe Text",
+    q: "In which directions can a giraffe kick?",
+    opts: ["Only forward", "Only backward", "Forward and backward only", "Forward, backward, and sideways"],
+    ans: 3
+  },
+  {
+    topic: "Giraffe Text",
+    q: "How much can a male giraffe weigh?",
+    opts: ["Over 1,000 pounds", "Over 1,800 pounds", "Over 2,600 pounds", "About 900 pounds"],
+    ans: 2
+  },
+  {
+    topic: "Giraffe Text",
+    q: "According to the text, when do lions usually hunt giraffes?",
+    opts: [
+      "Whenever they are hungry",
+      "Only when the giraffe is alone at night",
+      "When desperate, when the giraffe is a young calf, or when the pride is large enough",
+      "Only during the dry season"
+    ],
+    ans: 2
+  },
+  {
+    topic: "Giraffe Text",
+    q: "What is a 'necking' behavior in giraffes?",
+    opts: [
+      "When giraffes stretch their necks to reach leaves",
+      "When a giraffe swings its neck, which can toss a lion through the air",
+      "When giraffes rub their necks together to show friendship",
+      "When a giraffe bends its neck to drink water"
+    ],
+    ans: 1
+  },
+
+  // ══════════════════════════════════════════
+  // REDUCE, REUSE, RECYCLE TEXT (No.11–14)
+  // ══════════════════════════════════════════
+  {
+    topic: "Reduce, Reuse, Recycle",
+    q: "Why should we reuse unused materials?",
+    opts: [
+      "Because new materials are too expensive to produce",
+      "To reduce waste, save resources, and protect the environment",
+      "Because recycling is too complicated",
+      "To make our house look cleaner"
+    ],
+    ans: 1
+  },
+  {
+    topic: "Reduce, Reuse, Recycle",
+    q: "Why should we reduce plastic waste?",
+    opts: [
+      "Because plastic is very heavy to carry",
+      "Because plastic takes hundreds of years to decompose and harms the environment and living things",
+      "Because plastic is very expensive",
+      "Because plastic cannot be recycled at all"
+    ],
+    ans: 1
+  },
+  {
+    topic: "Reduce, Reuse, Recycle",
+    q: "How can we reduce plastic waste? Choose the best answer.",
+    opts: [
+      "Buy more plastic products every day",
+      "Use reusable bags, buy in bulk, and choose products with less packaging",
+      "Throw plastic in the river so it flows away",
+      "Burn plastic in the backyard"
+    ],
+    ans: 1
+  },
+  {
+    topic: "Reduce, Reuse, Recycle",
+    q: "Which of the following is an advantage of recycling plastic waste?",
+    opts: [
+      "It increases plastic production",
+      "It conserves natural resources, reduces landfill waste, and lowers energy consumption",
+      "It makes plastic stronger",
+      "It produces more greenhouse gases"
+    ],
+    ans: 1
+  },
+
+  // ══════════════════════════════════════════
+  // PRESENT PERFECT – PASSIVE TO ACTIVE (No.15–22)
+  // ══════════════════════════════════════════
+  {
+    topic: "Present Perfect",
+    q: "Change to ACTIVE: 'The book has been read by Maria.'",
+    opts: [
+      "Maria is reading the book.",
+      "Maria has read the book.",
+      "Maria reads the book.",
+      "Maria had read the book."
+    ],
+    ans: 1
+  },
+  {
+    topic: "Present Perfect",
+    q: "Change to ACTIVE: 'The homework has been finished by the students.'",
+    opts: [
+      "The students finished the homework.",
+      "The students are finishing the homework.",
+      "The students have finished the homework.",
+      "The students had finished the homework."
+    ],
+    ans: 2
+  },
+  {
+    topic: "Present Perfect",
+    q: "Change to ACTIVE: 'The letter has been sent by him.'",
+    opts: [
+      "He sent the letter.",
+      "He has sent the letter.",
+      "He is sending the letter.",
+      "He had sent the letter."
+    ],
+    ans: 1
+  },
+  {
+    topic: "Present Perfect",
+    q: "Change to ACTIVE: 'The windows have been cleaned by the workers.'",
+    opts: [
+      "The workers cleaned the windows.",
+      "The workers are cleaning the windows.",
+      "The workers had cleaned the windows.",
+      "The workers have cleaned the windows."
+    ],
+    ans: 3
+  },
+  {
+    topic: "Present Perfect",
+    q: "Change to PASSIVE: 'She has written a new song.'",
+    opts: [
+      "A new song is written by her.",
+      "A new song was written by her.",
+      "A new song has been written by her.",
+      "A new song had been written by her."
+    ],
+    ans: 2
+  },
+  {
+    topic: "Present Perfect",
+    q: "Change to PASSIVE: 'They have built a new bridge.'",
+    opts: [
+      "A new bridge was built by them.",
+      "A new bridge has been built by them.",
+      "A new bridge is being built by them.",
+      "A new bridge had been built by them."
+    ],
+    ans: 1
+  },
+  {
+    topic: "Present Perfect",
+    q: "Change to PASSIVE: 'He has eaten all the cake.'",
+    opts: [
+      "All the cake was eaten by him.",
+      "All the cake is eaten by him.",
+      "All the cake had been eaten by him.",
+      "All the cake has been eaten by him."
+    ],
+    ans: 3
+  },
+  {
+    topic: "Present Perfect",
+    q: "Which sentence is the correct PASSIVE form of 'The teacher has corrected the tests'?",
+    opts: [
+      "The tests were corrected by the teacher.",
+      "The tests have been corrected by the teacher.",
+      "The tests are corrected by the teacher.",
+      "The tests had been corrected by the teacher."
+    ],
+    ans: 1
+  },
+
+  // ══════════════════════════════════════════
+  // DIRECT AND INDIRECT SPEECH (No.23–30)
+  // ══════════════════════════════════════════
+  {
+    topic: "Direct & Indirect Speech",
+    q: "Change to INDIRECT: She said, 'I am happy.'",
+    opts: [
+      "She said that she is happy.",
+      "She said that she was happy.",
+      "She said that I was happy.",
+      "She said that she has been happy."
+    ],
+    ans: 1
+  },
+  {
+    topic: "Direct & Indirect Speech",
+    q: "Change to INDIRECT: He said, 'I will come tomorrow.'",
+    opts: [
+      "He said that he will come the next day.",
+      "He said that he would come tomorrow.",
+      "He said that he would come the next day.",
+      "He said that he comes the next day."
+    ],
+    ans: 2
+  },
+  {
+    topic: "Direct & Indirect Speech",
+    q: "Change to INDIRECT: 'Don't make noise,' the teacher said to the students.",
+    opts: [
+      "The teacher said the students don't make noise.",
+      "The teacher told the students to not make noise.",
+      "The teacher told the students not to make noise.",
+      "The teacher asked the students if they make noise."
+    ],
+    ans: 2
+  },
+  {
+    topic: "Direct & Indirect Speech",
+    q: "Change to DIRECT: She told me that she had finished her project.",
+    opts: [
+      "She said, 'I have finished my project.'",
+      "She said, 'She had finished her project.'",
+      "She said, 'I finished my project.'",
+      "She said, 'I will finish my project.'"
+    ],
+    ans: 0
+  },
+  {
+    topic: "Direct & Indirect Speech",
+    q: "Change to INDIRECT: Tom asked, 'Are you coming to the party?'",
+    opts: [
+      "Tom asked if I was coming to the party.",
+      "Tom asked if you are coming to the party.",
+      "Tom said are you coming to the party.",
+      "Tom asked that I was coming to the party."
+    ],
+    ans: 0
+  },
+  {
+    topic: "Direct & Indirect Speech",
+    q: "Change to INDIRECT: 'Please sit down,' said the teacher.",
+    opts: [
+      "The teacher said please sit down.",
+      "The teacher asked to sit down.",
+      "The teacher requested that we sit down.",
+      "The teacher told us to sit down."
+    ],
+    ans: 3
+  },
+  {
+    topic: "Direct & Indirect Speech",
+    q: "Change to DIRECT: He told me that he was going to school.",
+    opts: [
+      "He said, 'I am going to school.'",
+      "He said, 'I was going to school.'",
+      "He said, 'He is going to school.'",
+      "He said, 'I will go to school.'"
+    ],
+    ans: 0
+  },
+  {
+    topic: "Direct & Indirect Speech",
+    q: "Which sentence correctly changes 'She said, \"I don't know the answer\"' to indirect speech?",
+    opts: [
+      "She said that she doesn't know the answer.",
+      "She said that she didn't know the answer.",
+      "She said that I didn't know the answer.",
+      "She said that she hasn't known the answer."
+    ],
+    ans: 1
+  },
+
+
+  // ══════════════════════════════════════════
+  {
+    topic: "Giraffe Text",
+    q: "Where do giraffes spend most of their lives?",
+    opts: ["In the rainforests of South America", "In the grasslands of Africa", "In the deserts of Australia", "In the forests of Asia"],
+    ans: 1
+  },
+  {
+    topic: "Giraffe Text",
+    q: "What sounds can giraffes make according to the text?",
+    opts: ["Only roars and growls", "Whistles, bellows, and low-frequency sounds humans can't hear", "Only high-pitched screams", "They are completely silent"],
+    ans: 1
+  },
+  {
+    topic: "Giraffe Text",
+    q: "What happens to a lion if a giraffe lands a solid kick?",
+    opts: ["The lion gets scared and runs away", "The lion will likely die from internal injuries or be unable to hunt", "The lion gets knocked out temporarily", "Nothing serious happens to the lion"],
+    ans: 1
+  },
+  {
+    topic: "Giraffe Text",
+    q: "How much do lions typically weigh according to the text?",
+    opts: ["Between 100 and 200 pounds", "Between 200 and 300 pounds", "Between 330 and 550 pounds", "Between 600 and 800 pounds"],
+    ans: 2
+  },
+  {
+    topic: "Giraffe Text",
+    q: "According to the text, giraffes are naturally...",
+    opts: ["Aggressive and always ready to fight", "Defensive and prefer to run away rather than fight", "Territorial and attack anything nearby", "Friendly toward lions"],
+    ans: 1
+  },
+
+  // ══════════════════════════════════════════
+  // REDUCE, REUSE, RECYCLE – Extra 4 questions
+  // ══════════════════════════════════════════
+  {
+    topic: "Reduce, Reuse, Recycle",
+    q: "Which of the following is an example of REUSE?",
+    opts: ["Throwing old bottles in the bin", "Using a glass jar as a pencil holder instead of buying a new one", "Buying new plastic bags every time you shop", "Burning old newspaper"],
+    ans: 1
+  },
+  {
+    topic: "Reduce, Reuse, Recycle",
+    q: "Which of the following is an example of REDUCE?",
+    opts: ["Buying items with less packaging", "Melting old cans to make new products", "Using an old T-shirt as a cleaning cloth", "Separating waste into different bins"],
+    ans: 0
+  },
+  {
+    topic: "Reduce, Reuse, Recycle",
+    q: "According to the infographic, which item belongs to the RECYCLE category?",
+    opts: ["Reusable grocery bags", "Buying in bulk", "Glass and paper", "Washable dishes"],
+    ans: 2
+  },
+  {
+    topic: "Reduce, Reuse, Recycle",
+    q: "What is the main difference between REUSE and RECYCLE?",
+    opts: [
+      "Reuse means throwing things away; recycle means burning them",
+      "Reuse means using an item again directly; recycle means processing it into new material",
+      "They mean exactly the same thing",
+      "Reuse is only for plastics; recycle is only for paper"
+    ],
+    ans: 1
+  },
+
+  // ══════════════════════════════════════════
+  // PRESENT PERFECT – Extra 3 questions
+  // ══════════════════════════════════════════
+  {
+    topic: "Present Perfect",
+    q: "Which sentence is correctly written in the present perfect PASSIVE?",
+    opts: [
+      "The report writes by the manager.",
+      "The report has been written by the manager.",
+      "The report was written by the manager.",
+      "The report had been written by the manager."
+    ],
+    ans: 1
+  },
+  {
+    topic: "Present Perfect",
+    q: "Change to PASSIVE: 'We have planted many trees in the park.'",
+    opts: [
+      "Many trees are planted in the park by us.",
+      "Many trees were planted in the park by us.",
+      "Many trees have been planted in the park by us.",
+      "Many trees had been planted in the park by us."
+    ],
+    ans: 2
+  },
+  {
+    topic: "Present Perfect",
+    q: "Change to ACTIVE: 'The cake has been baked by my mother.'",
+    opts: [
+      "My mother bakes the cake.",
+      "My mother baked the cake.",
+      "My mother has baked the cake.",
+      "My mother had baked the cake."
+    ],
+    ans: 2
+  },
+
+  // ══════════════════════════════════════════
+  // DIRECT & INDIRECT SPEECH – Extra 3 questions
+  // ══════════════════════════════════════════
+  {
+    topic: "Direct & Indirect Speech",
+    q: "Change to INDIRECT: He said, 'I can swim very well.'",
+    opts: [
+      "He said that he can swim very well.",
+      "He said that he could swim very well.",
+      "He said that I could swim very well.",
+      "He said that he swims very well."
+    ],
+    ans: 1
+  },
+  {
+    topic: "Direct & Indirect Speech",
+    q: "Change to INDIRECT: 'Close the door,' she told her brother.",
+    opts: [
+      "She told her brother close the door.",
+      "She told her brother to close the door.",
+      "She said her brother closed the door.",
+      "She asked her brother if he closed the door."
+    ],
+    ans: 1
+  },
+  {
+    topic: "Direct & Indirect Speech",
+    q: "Change to DIRECT: She told me that she loved reading books.",
+    opts: [
+      "She said, 'She loves reading books.'",
+      "She said, 'I love reading books.'",
+      "She said, 'I loved reading books.'",
+      "She said, 'I have loved reading books.'"
+    ],
+    ans: 1
+  },
+];];
+
+let current = 0;
+let score = 0;
+let answered = [];
+let userAnswers = [];
+let shuffledQuestions = [];
+
+function shuffle(arr) {
+  const a = [...arr];
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
+function startQuiz() {
+  shuffledQuestions = shuffle(questions);
+  current = 0; score = 0; answered = []; userAnswers = [];
+  document.getElementById('intro').style.display = 'none';
+  document.getElementById('quiz').style.display = 'block';
+  showQuestion();
+}
+
+function showQuestion() {
+  const q = shuffledQuestions[current];
+  document.getElementById('qCounter').textContent = `${current + 1} / ${questions.length}`;
+  document.getElementById('progressBar').style.width = `${((current + 1) / questions.length) * 100}%`;
+  document.getElementById('scoreLive').textContent = `Score: ${score}`;
+  document.getElementById('topicTag').textContent = q.topic;
+  document.getElementById('questionText').textContent = `${current + 1}. ${q.q}`;
+
+  const letters = ['A', 'B', 'C', 'D'];
+  const optDiv = document.getElementById('optionsDiv');
+  optDiv.innerHTML = '';
+  q.opts.forEach((opt, i) => {
+    const btn = document.createElement('button');
+    btn.className = 'opt';
+    btn.innerHTML = `<span class="letter">${letters[i]}</span><span>${opt}</span>`;
+    btn.onclick = () => selectAnswer(i);
+    optDiv.appendChild(btn);
+  });
+
+  const fb = document.getElementById('feedbackDiv');
+  fb.className = 'feedback';
+  fb.textContent = '';
+  const btnNext = document.getElementById('btnNext');
+  btnNext.className = 'btn-next';
+  btnNext.textContent = current < shuffledQuestions.length - 1 ? 'Next Question →' : 'See Results 🏆';
+}
+
+function selectAnswer(idx) {
+  const q = shuffledQuestions[current];
+  const opts = document.querySelectorAll('.opt');
+  opts.forEach(o => { o.classList.add('disabled'); o.onclick = null; });
+
+  const fb = document.getElementById('feedbackDiv');
+  const correct = q.ans;
+  userAnswers[current] = idx;
+
+  if (idx === correct) {
+    score++;
+    opts[idx].classList.add('correct');
+    fb.className = 'feedback ok show';
+    fb.textContent = '✅ Correct! Well done.';
+  } else {
+    opts[idx].classList.add('wrong');
+    opts[correct].classList.add('correct');
+    fb.className = 'feedback bad show';
+    fb.textContent = `❌ Wrong. The correct answer is: ${['A','B','C','D'][correct]}. ${q.opts[correct]}`;
+  }
+
+  document.getElementById('scoreLive').textContent = `Score: ${score}`;
+  document.getElementById('btnNext').classList.add('show');
+}
+
+function nextQuestion() {
+  current++;
+  if (current < questions.length) {
+    showQuestion();
+  } else {
+    showResult();
+  }
+}
+
+function showResult() {
+  document.getElementById('quiz').style.display = 'none';
+  const res = document.getElementById('result');
+  res.style.display = 'block';
+
+  const pct = Math.round((score / questions.length) * 100);
+  const nilai = pct;
+
+  document.getElementById('scoreFinal').textContent = `${score} / ${shuffledQuestions.length} correct`;
+  document.getElementById('rCorrect').textContent = score;
+  document.getElementById('rWrong').textContent = questions.length - score;
+  document.getElementById('rPct').textContent = nilai;
+
+  let grade = '';
+  if (pct >= 90) grade = '🥇 A';
+  else if (pct >= 80) grade = '🥈 B';
+  else if (pct >= 70) grade = '🥉 C';
+  else if (pct >= 60) grade = '📘 D';
+  else grade = '📕 E';
+  document.getElementById('gradeBadge').textContent = grade;
+
+  // Review
+  const reviewList = document.getElementById('reviewList');
+  reviewList.innerHTML = '';
+  shuffledQuestions.forEach((q, i) => {
+    const ua = userAnswers[i];
+    const correct = ua === q.ans;
+    const div = document.createElement('div');
+    div.className = 'review-item';
+    div.innerHTML = `
+      <div class="ri-q">${i+1}. ${q.q}</div>
+      <div>Your answer: <span class="${correct ? 'ri-correct' : 'ri-wrong'}">${ua !== undefined ? ['A','B','C','D'][ua] + '. ' + q.opts[ua] : 'Not answered'}</span></div>
+      ${!correct ? `<div>Correct answer: <span class="ri-correct">${['A','B','C','D'][q.ans]}. ${q.opts[q.ans]}</span></div>` : ''}
+    `;
+    reviewList.appendChild(div);
+  });
+}
+
+function restartQuiz() {
+  shuffledQuestions = shuffle(questions);
+  current = 0; score = 0; answered = []; userAnswers = [];
+  document.getElementById('result').style.display = 'none';
+  document.getElementById('quiz').style.display = 'block';
+  showQuestion();
+}
+</script>
+</body>
+</html>
