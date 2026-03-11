@@ -152,7 +152,27 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-h
 #mp-ctrl{display:flex;gap:.35rem}
 .mb{flex:1;background:#1e2d45;border:1px solid #2d3f58;color:#fff;border-radius:.45rem;padding:.3rem 0;cursor:pointer;font-size:.85rem;transition:all .15s;line-height:1}
 .mb:hover{background:var(--accent);color:#000;border-color:var(--accent)}
+
+/* extra music player styles */
+#mp { min-width: 220px; }
+#mp-playlist::-webkit-scrollbar { width: 4px; }
+#mp-playlist::-webkit-scrollbar-track { background: transparent; }
+#mp-playlist::-webkit-scrollbar-thumb { background: #2d3f58; border-radius: 4px; }
+.pl-item {
+  display: flex; align-items: center; gap: .4rem;
+  padding: .3rem .4rem; border-radius: .4rem; cursor: pointer;
+  font-size: .72rem; color: #94a3b8; transition: all .15s;
+  border: 1px solid transparent;
+}
+.pl-item:hover { background: #1e2d45; color: #e2e8f0; }
+.pl-item.active { background: #0a2040; border-color: #00d4ff44; color: #00d4ff; }
+.pl-item .pl-name { flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.pl-item .pl-del { opacity: 0; font-size: .75rem; color: #ef4444; padding: 0 .2rem; flex-shrink:0; }
+.pl-item:hover .pl-del { opacity: 1; }
+.pl-item .pl-idx { min-width: 1.2rem; font-size: .65rem; color: #4a5568; text-align:right; flex-shrink:0; }
+
 </style>
+<script src="https://cdn.jsdelivr.net/npm/dexie@3/dist/dexie.min.js"></script>
 </head>
 <body>
 
@@ -221,13 +241,22 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-h
 </div>
 
 <!-- MUSIC PLAYER -->
+<input type="file" id="fileInput" accept="audio/*" multiple style="display:none" onchange="handleFiles(event)">
+
 <div id="mp">
   <div id="mp-song"><span id="mp-note">♪</span><span id="mp-name">— No Music —</span></div>
   <div id="mp-ctrl">
-    <button class="mb" onclick="prevS()">⏮</button>
-    <button class="mb" id="mb-play" onclick="togPlay()">▶</button>
-    <button class="mb" onclick="nextS()">⏭</button>
-    <button class="mb" id="mb-mute" onclick="togMute()">🔊</button>
+    <button class="mb" onclick="prevS()" title="Sebelumnya">⏮</button>
+    <button class="mb" id="mb-play" onclick="togPlay()" title="Play/Pause">▶</button>
+    <button class="mb" onclick="nextS()" title="Berikutnya">⏭</button>
+    <button class="mb" id="mb-mute" onclick="togMute()" title="Mute">🔊</button>
+    <button class="mb" onclick="document.getElementById('fileInput').click()" title="Tambah Lagu" style="background:#7c3aed33;border-color:#7c3aed88;color:#a78bfa">＋</button>
+  </div>
+  <!-- Playlist -->
+  <div id="mp-playlist" style="display:none;margin-top:.5rem;max-height:160px;overflow-y:auto;border-top:1px solid #1e2d45;padding-top:.4rem"></div>
+  <div id="mp-footer" style="display:flex;justify-content:space-between;align-items:center;margin-top:.4rem">
+    <button class="mb" onclick="togPlaylist()" id="mb-pl" style="font-size:.7rem;padding:.25rem .5rem;flex:1;margin-right:.3rem">🎵 Playlist</button>
+    <button class="mb" onclick="clearAll()" style="font-size:.7rem;padding:.25rem .5rem;background:#ef444422;border-color:#ef444466;color:#fca5a5">🗑</button>
   </div>
 </div>
 <audio id="bgAudio" loop></audio>
@@ -472,31 +501,133 @@ function restart(){
   showQ();
 }
 
-// ── MUSIC ──
-const songs=[
-  {n:'— No Music —',s:''},
-  {n:'🌿 Country Roads',s:'https://raw.githubusercontent.com/misthios997/marketsong/b3654ee4367a0060dcc77621d8ef9bfc2f0c3e3c/John%20Denver%20-%20Take%20Me%20Home%2C%20Country%20Roads%20(Official%20Audio).mp3'},
-  {n:'🍋 Lemon Tree',s:'https://raw.githubusercontent.com/misthios997/marketsong/b3654ee4367a0060dcc77621d8ef9bfc2f0c3e3c/lagu%20%20among%20%20%20us%20%20lemon%20%20tree%20%20(among%20%20us%20%20song).mp3'},
+// ── MUSIC (IndexedDB + Dexie.js) ──
+const builtinSongs=[
+  {n:'— No Music —',s:'',id:'builtin-0'},
+  {n:'🌿 Country Roads',s:'https://raw.githubusercontent.com/misthios997/marketsong/b3654ee4367a0060dcc77621d8ef9bfc2f0c3e3c/John%20Denver%20-%20Take%20Me%20Home%2C%20Country%20Roads%20(Official%20Audio).mp3',id:'builtin-1'},
+  {n:'🍋 Lemon Tree',s:'https://raw.githubusercontent.com/misthios997/marketsong/b3654ee4367a0060dcc77621d8ef9bfc2f0c3e3c/lagu%20%20among%20%20%20us%20%20lemon%20%20tree%20%20(among%20%20us%20%20song).mp3',id:'builtin-2'},
 ];
-let si=0,playing=false;
-const aud=document.getElementById('bgAudio');
-function mpUpdate(){
-  document.getElementById('mp-name').textContent=songs[si].n;
-  document.getElementById('mb-play').textContent=playing&&songs[si].s?'⏸':'▶';
-  const note=document.getElementById('mp-note');
-  playing&&songs[si].s?note.classList.add('on'):note.classList.remove('on');
+
+// Dexie DB
+const db = new Dexie('KuisMusic');
+db.version(1).stores({ tracks: '++id, name' });
+
+let allSongs = [...builtinSongs];
+let si = 0, playing = false, objUrls = {};
+const aud = document.getElementById('bgAudio');
+
+// Load saved tracks from IndexedDB
+async function loadDB() {
+  try {
+    const tracks = await db.tracks.toArray();
+    for (const t of tracks) {
+      const blob = t.blob;
+      const url = URL.createObjectURL(blob);
+      objUrls[t.id] = url;
+      allSongs.push({ n: t.name, s: url, id: 'db-' + t.id, dbId: t.id });
+    }
+  } catch(e) { console.log('DB load error:', e); }
+  renderPlaylist();
+  mpUpdate();
 }
-function loadPlay(i){
-  si=(i+songs.length)%songs.length;
-  if(!songs[si].s){aud.pause();aud.src='';playing=false;mpUpdate();return}
-  aud.src=songs[si].s;aud.loop=true;
-  aud.play().then(()=>{playing=true;mpUpdate()}).catch(()=>{playing=false;mpUpdate()});
+
+// Handle file upload
+async function handleFiles(e) {
+  const files = Array.from(e.target.files);
+  for (const file of files) {
+    const name = file.name.replace(/\.[^.]+$/, '');
+    const emoji = ['🎵','🎶','🎸','🎹','🥁','🎺','🎻'][Math.floor(Math.random()*7)];
+    try {
+      const dbId = await db.tracks.add({ name: emoji + ' ' + name, blob: file });
+      const url = URL.createObjectURL(file);
+      objUrls[dbId] = url;
+      allSongs.push({ n: emoji + ' ' + name, s: url, id: 'db-' + dbId, dbId });
+    } catch(err) { console.log('Save error:', err); }
+  }
+  e.target.value = '';
+  renderPlaylist();
+  // Auto play first uploaded
+  if (files.length > 0) loadPlay(allSongs.length - files.length);
 }
-function togPlay(){if(si===0){loadPlay(1);return}if(aud.paused){aud.play().then(()=>{playing=true;mpUpdate()})}else{aud.pause();playing=false;mpUpdate()}}
-function nextS(){loadPlay(si+1)}
-function prevS(){loadPlay(si-1)}
-function togMute(){aud.muted=!aud.muted;document.getElementById('mb-mute').textContent=aud.muted?'🔇':'🔊'}
-mpUpdate();
+
+// Delete a custom track
+async function deleteTrack(idx) {
+  const song = allSongs[idx];
+  if (!song.dbId) return;
+  try {
+    await db.tracks.delete(song.dbId);
+    if (objUrls[song.dbId]) { URL.revokeObjectURL(objUrls[song.dbId]); delete objUrls[song.dbId]; }
+    if (si === idx) { aud.pause(); playing = false; si = 0; }
+    else if (si > idx) si--;
+    allSongs.splice(idx, 1);
+    renderPlaylist();
+    mpUpdate();
+  } catch(e) { console.log('Delete error:', e); }
+}
+
+async function clearAll() {
+  const customs = allSongs.filter(s => s.dbId);
+  if (!customs.length) return;
+  if (!confirm('Hapus semua lagu custom?')) return;
+  for (const s of customs) {
+    await db.tracks.delete(s.dbId);
+    if (objUrls[s.dbId]) { URL.revokeObjectURL(objUrls[s.dbId]); delete objUrls[s.dbId]; }
+  }
+  allSongs = [...builtinSongs];
+  aud.pause(); playing = false; si = 0;
+  renderPlaylist(); mpUpdate();
+}
+
+function renderPlaylist() {
+  const pl = document.getElementById('mp-playlist');
+  pl.innerHTML = '';
+  allSongs.forEach((s, i) => {
+    const row = document.createElement('div');
+    row.className = 'pl-item' + (i === si ? ' active' : '');
+    row.innerHTML = `<span class="pl-idx">${i === si ? '▶' : i + 1}</span>
+      <span class="pl-name">${s.n}</span>
+      ${s.dbId ? `<span class="pl-del" onclick="event.stopPropagation();deleteTrack(${i})">✕</span>` : ''}`;
+    row.onclick = () => loadPlay(i);
+    pl.appendChild(row);
+  });
+}
+
+let plOpen = false;
+function togPlaylist() {
+  plOpen = !plOpen;
+  document.getElementById('mp-playlist').style.display = plOpen ? 'block' : 'none';
+  document.getElementById('mb-pl').textContent = plOpen ? '▲ Playlist' : '🎵 Playlist';
+}
+
+function mpUpdate() {
+  const s = allSongs[si] || allSongs[0];
+  document.getElementById('mp-name').textContent = s ? s.n : '— No Music —';
+  document.getElementById('mb-play').textContent = playing && s && s.s ? '⏸' : '▶';
+  const note = document.getElementById('mp-note');
+  playing && s && s.s ? note.classList.add('on') : note.classList.remove('on');
+  renderPlaylist();
+}
+
+function loadPlay(i) {
+  si = ((i % allSongs.length) + allSongs.length) % allSongs.length;
+  const s = allSongs[si];
+  if (!s || !s.s) { aud.pause(); aud.src = ''; playing = false; mpUpdate(); return; }
+  aud.src = s.s;
+  aud.loop = true;
+  aud.play().then(() => { playing = true; mpUpdate(); }).catch(() => { playing = false; mpUpdate(); });
+}
+
+function togPlay() {
+  if (!allSongs[si] || !allSongs[si].s) { loadPlay(1); return; }
+  if (aud.paused) { aud.play().then(() => { playing = true; mpUpdate(); }); }
+  else { aud.pause(); playing = false; mpUpdate(); }
+}
+function nextS() { loadPlay(si + 1); }
+function prevS() { loadPlay(si - 1); }
+function togMute() { aud.muted = !aud.muted; document.getElementById('mb-mute').textContent = aud.muted ? '🔇' : '🔊'; }
+
+// Init
+loadDB();
 </script>
 </body>
 </html>
