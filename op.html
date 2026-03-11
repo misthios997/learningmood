@@ -1,0 +1,1562 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quiz Biologi + Kimia</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;600&display=swap');
+
+        :root {
+            --bg-primary: #0a0a0f;
+            --bg-secondary: #12121a;
+            --bg-tertiary: #1a1a2e;
+            --bg-card: #16162a;
+            --bg-card-hover: #1e1e3a;
+            --accent-primary: #6c5ce7;
+            --accent-secondary: #a29bfe;
+            --accent-glow: rgba(108, 92, 231, 0.3);
+            --correct: #00b894;
+            --correct-bg: rgba(0, 184, 148, 0.1);
+            --correct-border: rgba(0, 184, 148, 0.4);
+            --wrong: #e17055;
+            --wrong-bg: rgba(225, 112, 85, 0.1);
+            --wrong-border: rgba(225, 112, 85, 0.4);
+            --text-primary: #e8e8ff;
+            --text-secondary: #a0a0c0;
+            --text-muted: #6060a0;
+            --border: rgba(108, 92, 231, 0.15);
+            --border-hover: rgba(108, 92, 231, 0.3);
+            --glass: rgba(22, 22, 42, 0.8);
+            --warning: #fdcb6e;
+            --warning-bg: rgba(253, 203, 110, 0.1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* Animated Background */
+        .bg-animation {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            pointer-events: none;
+            overflow: hidden;
+        }
+
+        .bg-animation .orb {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(80px);
+            opacity: 0.15;
+            animation: floatOrb 20s infinite ease-in-out;
+        }
+
+        .bg-animation .orb:nth-child(1) {
+            width: 400px;
+            height: 400px;
+            background: #6c5ce7;
+            top: -100px;
+            left: -100px;
+            animation-delay: 0s;
+        }
+
+        .bg-animation .orb:nth-child(2) {
+            width: 500px;
+            height: 500px;
+            background: #00b894;
+            bottom: -150px;
+            right: -150px;
+            animation-delay: -7s;
+        }
+
+        .bg-animation .orb:nth-child(3) {
+            width: 350px;
+            height: 350px;
+            background: #e17055;
+            top: 50%;
+            left: 50%;
+            animation-delay: -14s;
+        }
+
+        @keyframes floatOrb {
+            0%, 100% { transform: translate(0, 0) scale(1); }
+            25% { transform: translate(100px, -50px) scale(1.1); }
+            50% { transform: translate(-50px, 100px) scale(0.9); }
+            75% { transform: translate(80px, 50px) scale(1.05); }
+        }
+
+        /* Grid Pattern */
+        .grid-pattern {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            pointer-events: none;
+            background-image:
+                linear-gradient(rgba(108, 92, 231, 0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(108, 92, 231, 0.03) 1px, transparent 1px);
+            background-size: 60px 60px;
+        }
+
+        .container {
+            position: relative;
+            z-index: 1;
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        /* INTRO SCREEN */
+        .intro-screen {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .intro-card {
+            background: var(--glass);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--border);
+            border-radius: 24px;
+            padding: 50px 40px;
+            max-width: 650px;
+            width: 100%;
+            text-align: center;
+            animation: fadeInUp 0.8s ease;
+        }
+
+        .intro-icon {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 36px;
+            margin: 0 auto 24px;
+            box-shadow: 0 8px 32px var(--accent-glow);
+        }
+
+        .intro-card h1 {
+            font-size: 2rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, var(--text-primary), var(--accent-secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 12px;
+        }
+
+        .intro-card .subtitle {
+            color: var(--text-secondary);
+            font-size: 1rem;
+            margin-bottom: 30px;
+            line-height: 1.6;
+        }
+
+        .disclaimer-box {
+            background: var(--warning-bg);
+            border: 1px solid rgba(253, 203, 110, 0.3);
+            border-radius: 16px;
+            padding: 20px 24px;
+            margin-bottom: 30px;
+            text-align: left;
+        }
+
+        .disclaimer-box .disc-title {
+            color: var(--warning);
+            font-weight: 700;
+            font-size: 0.95rem;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .disclaimer-box p {
+            color: #c8b87a;
+            font-size: 0.88rem;
+            line-height: 1.7;
+        }
+
+        .info-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-bottom: 30px;
+        }
+
+        .info-item {
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 16px;
+            text-align: center;
+        }
+
+        .info-item .info-num {
+            font-size: 1.5rem;
+            font-weight: 800;
+            color: var(--accent-secondary);
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        .info-item .info-label {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-top: 4px;
+        }
+
+        .feature-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            justify-content: center;
+            margin-bottom: 30px;
+        }
+
+        .feature-tag {
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 6px 14px;
+            font-size: 0.78rem;
+            color: var(--text-secondary);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .feature-tag .dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: var(--accent-primary);
+        }
+
+        .btn-start {
+            background: linear-gradient(135deg, var(--accent-primary), #8b7cf7);
+            color: white;
+            border: none;
+            padding: 16px 48px;
+            font-size: 1.05rem;
+            font-weight: 700;
+            border-radius: 14px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 24px var(--accent-glow);
+            font-family: 'Inter', sans-serif;
+            letter-spacing: 0.5px;
+        }
+
+        .btn-start:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 40px var(--accent-glow);
+        }
+
+        .btn-start:active {
+            transform: translateY(0);
+        }
+
+        /* MODE SELECT */
+        .mode-select {
+            display: none;
+            min-height: 100vh;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .mode-card {
+            background: var(--glass);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--border);
+            border-radius: 24px;
+            padding: 40px;
+            max-width: 550px;
+            width: 100%;
+            text-align: center;
+            animation: fadeInUp 0.6s ease;
+        }
+
+        .mode-card h2 {
+            font-size: 1.5rem;
+            margin-bottom: 8px;
+            font-weight: 700;
+        }
+
+        .mode-card .mode-sub {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            margin-bottom: 28px;
+        }
+
+        .mode-buttons {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .btn-mode {
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            padding: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: left;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            color: var(--text-primary);
+            font-family: 'Inter', sans-serif;
+        }
+
+        .btn-mode:hover {
+            border-color: var(--accent-primary);
+            background: var(--bg-card-hover);
+            transform: translateX(4px);
+        }
+
+        .btn-mode .mode-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            flex-shrink: 0;
+        }
+
+        .btn-mode .mode-icon.all { background: linear-gradient(135deg, #6c5ce7, #a29bfe); }
+        .btn-mode .mode-icon.bio { background: linear-gradient(135deg, #00b894, #55efc4); }
+        .btn-mode .mode-icon.chem { background: linear-gradient(135deg, #e17055, #fab1a0); }
+        .btn-mode .mode-icon.essay { background: linear-gradient(135deg, #fdcb6e, #ffeaa7); }
+
+        .btn-mode .mode-info h3 {
+            font-size: 1rem;
+            font-weight: 600;
+            margin-bottom: 2px;
+        }
+
+        .btn-mode .mode-info p {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+        }
+
+        /* QUIZ SCREEN */
+        .quiz-screen {
+            display: none;
+            padding: 20px;
+            padding-bottom: 100px;
+        }
+
+        /* Top Bar */
+        .top-bar {
+            background: var(--glass);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 16px 24px;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: sticky;
+            top: 10px;
+            z-index: 100;
+        }
+
+        .top-bar-left {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .btn-back {
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 8px 12px;
+            cursor: pointer;
+            color: var(--text-secondary);
+            font-size: 1.1rem;
+            transition: all 0.2s;
+            font-family: 'Inter', sans-serif;
+        }
+
+        .btn-back:hover {
+            border-color: var(--accent-primary);
+            color: var(--text-primary);
+        }
+
+        .progress-info {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .progress-info .q-counter {
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .progress-info .q-category {
+            font-size: 0.7rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .top-bar-right {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .score-badge {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+
+        .score-badge.correct-badge { color: var(--correct); }
+        .score-badge.wrong-badge { color: var(--wrong); }
+
+        .progress-bar-container {
+            width: 100%;
+            height: 4px;
+            background: var(--bg-tertiary);
+            border-radius: 2px;
+            margin-bottom: 24px;
+            overflow: hidden;
+        }
+
+        .progress-bar-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--accent-primary), var(--accent-secondary));
+            border-radius: 2px;
+            transition: width 0.5s ease;
+        }
+
+        /* Question Card */
+        .question-card {
+            background: var(--glass);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 32px;
+            margin-bottom: 20px;
+            animation: fadeInUp 0.5s ease;
+        }
+
+        .q-number-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 4px 12px;
+            font-size: 0.75rem;
+            color: var(--accent-secondary);
+            font-weight: 600;
+            margin-bottom: 16px;
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        .question-text {
+            font-size: 1.05rem;
+            line-height: 1.8;
+            color: var(--text-primary);
+            margin-bottom: 24px;
+            font-weight: 500;
+        }
+
+        /* Options */
+        .options-container {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .option-btn {
+            background: var(--bg-tertiary);
+            border: 1.5px solid var(--border);
+            border-radius: 14px;
+            padding: 16px 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: flex-start;
+            gap: 14px;
+            text-align: left;
+            color: var(--text-primary);
+            font-family: 'Inter', sans-serif;
+            font-size: 0.95rem;
+            line-height: 1.6;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .option-btn:hover:not(.disabled) {
+            border-color: var(--accent-primary);
+            background: var(--bg-card-hover);
+            transform: translateX(4px);
+        }
+
+        .option-btn .opt-letter {
+            width: 32px;
+            height: 32px;
+            border-radius: 8px;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 0.85rem;
+            color: var(--accent-secondary);
+            flex-shrink: 0;
+            transition: all 0.3s ease;
+        }
+
+        .option-btn .opt-text {
+            padding-top: 4px;
+            flex: 1;
+        }
+
+        .option-btn.correct {
+            border-color: var(--correct-border) !important;
+            background: var(--correct-bg) !important;
+        }
+
+        .option-btn.correct .opt-letter {
+            background: var(--correct);
+            color: white;
+            border-color: var(--correct);
+        }
+
+        .option-btn.wrong {
+            border-color: var(--wrong-border) !important;
+            background: var(--wrong-bg) !important;
+        }
+
+        .option-btn.wrong .opt-letter {
+            background: var(--wrong);
+            color: white;
+            border-color: var(--wrong);
+        }
+
+        .option-btn.disabled {
+            cursor: default;
+            opacity: 0.6;
+        }
+
+        .option-btn.correct.disabled,
+        .option-btn.wrong.disabled {
+            opacity: 1;
+        }
+
+        /* Explanation */
+        .explanation-box {
+            display: none;
+            margin-top: 20px;
+            border-radius: 14px;
+            padding: 20px 24px;
+            animation: fadeInUp 0.4s ease;
+            line-height: 1.7;
+        }
+
+        .explanation-box.correct-exp {
+            background: var(--correct-bg);
+            border: 1px solid var(--correct-border);
+        }
+
+        .explanation-box.wrong-exp {
+            background: var(--wrong-bg);
+            border: 1px solid var(--wrong-border);
+        }
+
+        .explanation-box .exp-title {
+            font-weight: 700;
+            font-size: 0.9rem;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .explanation-box.correct-exp .exp-title { color: var(--correct); }
+        .explanation-box.wrong-exp .exp-title { color: var(--wrong); }
+
+        .explanation-box .exp-text {
+            font-size: 0.88rem;
+            color: var(--text-secondary);
+        }
+
+        .btn-next {
+            display: none;
+            width: 100%;
+            background: linear-gradient(135deg, var(--accent-primary), #8b7cf7);
+            color: white;
+            border: none;
+            padding: 16px;
+            font-size: 1rem;
+            font-weight: 600;
+            border-radius: 14px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 16px;
+            font-family: 'Inter', sans-serif;
+            animation: fadeInUp 0.4s ease;
+        }
+
+        .btn-next:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 32px var(--accent-glow);
+        }
+
+        /* RESULT SCREEN */
+        .result-screen {
+            display: none;
+            min-height: 100vh;
+            padding: 40px 20px;
+        }
+
+        .result-card {
+            background: var(--glass);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--border);
+            border-radius: 24px;
+            padding: 40px;
+            max-width: 600px;
+            margin: 0 auto;
+            text-align: center;
+            animation: fadeInUp 0.8s ease;
+        }
+
+        .result-emoji {
+            font-size: 64px;
+            margin-bottom: 16px;
+        }
+
+        .result-card h2 {
+            font-size: 1.8rem;
+            font-weight: 800;
+            margin-bottom: 8px;
+        }
+
+        .result-card .result-sub {
+            color: var(--text-secondary);
+            margin-bottom: 28px;
+        }
+
+        .result-stats {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 12px;
+            margin-bottom: 28px;
+        }
+
+        .stat-box {
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            padding: 16px;
+        }
+
+        .stat-box .stat-num {
+            font-size: 1.8rem;
+            font-weight: 800;
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        .stat-box .stat-label {
+            font-size: 0.72rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-top: 4px;
+        }
+
+        .stat-box.correct-stat .stat-num { color: var(--correct); }
+        .stat-box.wrong-stat .stat-num { color: var(--wrong); }
+        .stat-box.score-stat .stat-num { color: var(--accent-secondary); }
+
+        .result-bar-outer {
+            width: 100%;
+            height: 12px;
+            background: var(--bg-tertiary);
+            border-radius: 6px;
+            overflow: hidden;
+            margin-bottom: 28px;
+        }
+
+        .result-bar-inner {
+            height: 100%;
+            border-radius: 6px;
+            transition: width 1.5s ease;
+            background: linear-gradient(90deg, var(--wrong), var(--warning), var(--correct));
+        }
+
+        .result-actions {
+            display: flex;
+            gap: 12px;
+        }
+
+        .btn-result {
+            flex: 1;
+            padding: 14px;
+            border-radius: 12px;
+            font-size: 0.95rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-family: 'Inter', sans-serif;
+            border: none;
+        }
+
+        .btn-result.primary {
+            background: linear-gradient(135deg, var(--accent-primary), #8b7cf7);
+            color: white;
+            box-shadow: 0 4px 24px var(--accent-glow);
+        }
+
+        .btn-result.secondary {
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border);
+            color: var(--text-primary);
+        }
+
+        .btn-result:hover {
+            transform: translateY(-2px);
+        }
+
+        /* Review Section */
+        .review-section {
+            display: none;
+            max-width: 900px;
+            margin: 20px auto 0;
+            padding: 20px;
+        }
+
+        .review-title {
+            text-align: center;
+            font-size: 1.3rem;
+            font-weight: 700;
+            margin-bottom: 20px;
+            color: var(--text-primary);
+        }
+
+        .review-item {
+            background: var(--glass);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 24px;
+            margin-bottom: 12px;
+        }
+
+        .review-item.review-correct { border-left: 4px solid var(--correct); }
+        .review-item.review-wrong { border-left: 4px solid var(--wrong); }
+
+        .review-q-text {
+            font-size: 0.95rem;
+            margin-bottom: 10px;
+            color: var(--text-primary);
+            line-height: 1.6;
+        }
+
+        .review-answer {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            line-height: 1.6;
+        }
+
+        .review-answer span.r-correct { color: var(--correct); font-weight: 600; }
+        .review-answer span.r-wrong { color: var(--wrong); font-weight: 600; }
+
+        /* Number Navigation */
+        .number-nav {
+            display: none;
+            padding: 20px;
+        }
+
+        .number-nav-card {
+            background: var(--glass);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 30px;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .number-nav h3 {
+            text-align: center;
+            margin-bottom: 20px;
+            font-weight: 700;
+        }
+
+        .number-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(46px, 1fr));
+            gap: 8px;
+            margin-bottom: 20px;
+        }
+
+        .num-btn {
+            width: 100%;
+            aspect-ratio: 1;
+            border-radius: 10px;
+            border: 1px solid var(--border);
+            background: var(--bg-tertiary);
+            color: var(--text-secondary);
+            font-size: 0.8rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        .num-btn:hover { border-color: var(--accent-primary); }
+        .num-btn.current { border-color: var(--accent-primary); background: var(--accent-primary); color: white; }
+        .num-btn.answered-correct { background: var(--correct-bg); border-color: var(--correct-border); color: var(--correct); }
+        .num-btn.answered-wrong { background: var(--wrong-bg); border-color: var(--wrong-border); color: var(--wrong); }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: var(--bg-primary); }
+        ::-webkit-scrollbar-thumb { background: var(--bg-tertiary); border-radius: 3px; }
+        ::-webkit-scrollbar-thumb:hover { background: var(--accent-primary); }
+
+        /* Animations */
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
+        /* Timer */
+        .timer-display {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            font-weight: 600;
+        }
+
+        /* Responsive */
+        @media (max-width: 640px) {
+            .intro-card { padding: 30px 24px; }
+            .intro-card h1 { font-size: 1.5rem; }
+            .info-grid { grid-template-columns: 1fr 1fr; }
+            .question-card { padding: 24px 20px; }
+            .top-bar { padding: 12px 16px; }
+            .result-stats { grid-template-columns: 1fr 1fr 1fr; gap: 8px; }
+            .stat-box .stat-num { font-size: 1.3rem; }
+            .result-actions { flex-direction: column; }
+            .result-card { padding: 30px 24px; }
+        }
+
+        /* Confetti Canvas */
+        #confetti-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1000;
+            pointer-events: none;
+        }
+
+        /* Keyboard shortcut hint */
+        .kbd {
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            padding: 2px 8px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.75rem;
+            color: var(--text-muted);
+        }
+    </style>
+</head>
+<body>
+
+<div class="bg-animation">
+    <div class="orb"></div>
+    <div class="orb"></div>
+    <div class="orb"></div>
+</div>
+<div class="grid-pattern"></div>
+
+<canvas id="confetti-canvas"></canvas>
+
+<!-- INTRO SCREEN -->
+<div class="intro-screen" id="introScreen">
+    <div class="intro-card">
+        <div class="intro-icon">🧬</div>
+        <h1>Biologi + Kimia</h1>
+        <p class="subtitle">Latihan soal untuk persiapan ujian</p>
+
+        <div class="disclaimer-box">
+            <div class="disc-title">⚠️ Peringatan</div>
+            <p>
+                <strong>Ga yakin bakal masuk pas ujian.</strong><br>
+                Soal-soal ini dikumpulkan dari berbagai sumber dan belum tentu keluar saat ujian. 
+                Gunakan sebagai bahan latihan tambahan, bukan satu-satunya referensi belajar. 
+                Tetap pelajari materi dari buku dan catatan resmi ya!
+            </p>
+        </div>
+
+        <div class="info-grid">
+            <div class="info-item">
+                <div class="info-num">91</div>
+                <div class="info-label">Total Soal</div>
+            </div>
+            <div class="info-item">
+                <div class="info-num">PG</div>
+                <div class="info-label">Pilihan Ganda</div>
+            </div>
+            <div class="info-item">
+                <div class="info-num">🔀</div>
+                <div class="info-label">Soal Acak</div>
+            </div>
+            <div class="info-item">
+                <div class="info-num">📝</div>
+                <div class="info-label">Ada Penjelasan</div>
+            </div>
+        </div>
+
+        <div class="feature-list">
+            <div class="feature-tag"><div class="dot"></div>Soal diacak otomatis</div>
+            <div class="feature-tag"><div class="dot"></div>Penjelasan tiap jawaban</div>
+            <div class="feature-tag"><div class="dot"></div>Skor real-time</div>
+            <div class="feature-tag"><div class="dot"></div>Review jawaban</div>
+            <div class="feature-tag"><div class="dot"></div>Navigasi soal</div>
+            <div class="feature-tag"><div class="dot"></div>Keyboard shortcut</div>
+        </div>
+
+        <button class="btn-start" onclick="showModeSelect()">Mulai Latihan →</button>
+    </div>
+</div>
+
+<!-- MODE SELECT -->
+<div class="mode-select" id="modeSelect">
+    <div class="mode-card">
+        <h2>Pilih Mode</h2>
+        <p class="mode-sub">Tentukan soal yang ingin dikerjakan</p>
+        <div class="mode-buttons">
+            <button class="btn-mode" onclick="startQuiz('all')">
+                <div class="mode-icon all">📚</div>
+                <div class="mode-info">
+                    <h3>Semua Soal</h3>
+                    <p>91 soal — PG + Essay (sebagai PG)</p>
+                </div>
+            </button>
+            <button class="btn-mode" onclick="startQuiz('pg')">
+                <div class="mode-icon bio">📋</div>
+                <div class="mode-info">
+                    <h3>Pilihan Ganda Saja</h3>
+                    <p>85 soal — Nomor 1–85</p>
+                </div>
+            </button>
+            <button class="btn-mode" onclick="startQuiz('essay')">
+                <div class="mode-icon essay">✏️</div>
+                <div class="mode-info">
+                    <h3>Essay (sebagai PG)</h3>
+                    <p>6 soal — Nomor 86–91</p>
+                </div>
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- QUIZ SCREEN -->
+<div class="quiz-screen" id="quizScreen">
+    <div class="container">
+        <div class="top-bar" id="topBar">
+            <div class="top-bar-left">
+                <button class="btn-back" onclick="toggleNumberNav()" title="Navigasi Soal">☰</button>
+                <div class="progress-info">
+                    <span class="q-counter" id="qCounter">Soal 1 / 91</span>
+                    <span class="q-category" id="qCategory">BIOLOGI + KIMIA</span>
+                </div>
+            </div>
+            <div class="top-bar-right">
+                <span class="score-badge correct-badge">✓ <span id="correctCount">0</span></span>
+                <span class="score-badge wrong-badge">✗ <span id="wrongCount">0</span></span>
+                <span class="timer-display" id="timerDisplay">00:00</span>
+            </div>
+        </div>
+
+        <div class="progress-bar-container">
+            <div class="progress-bar-fill" id="progressBar" style="width: 0%"></div>
+        </div>
+
+        <div class="number-nav" id="numberNav">
+            <div class="number-nav-card">
+                <h3>Navigasi Soal</h3>
+                <div class="number-grid" id="numberGrid"></div>
+                <button class="btn-start" style="width:100%" onclick="toggleNumberNav()">Tutup</button>
+            </div>
+        </div>
+
+        <div id="questionArea"></div>
+    </div>
+</div>
+
+<!-- RESULT SCREEN -->
+<div class="result-screen" id="resultScreen">
+    <div class="container">
+        <div class="result-card">
+            <div class="result-emoji" id="resultEmoji">🎉</div>
+            <h2 id="resultTitle">Selesai!</h2>
+            <p class="result-sub" id="resultSub">Berikut hasil latihan kamu</p>
+
+            <div class="result-stats">
+                <div class="stat-box correct-stat">
+                    <div class="stat-num" id="finalCorrect">0</div>
+                    <div class="stat-label">Benar</div>
+                </div>
+                <div class="stat-box wrong-stat">
+                    <div class="stat-num" id="finalWrong">0</div>
+                    <div class="stat-label">Salah</div>
+                </div>
+                <div class="stat-box score-stat">
+                    <div class="stat-num" id="finalScore">0%</div>
+                    <div class="stat-label">Skor</div>
+                </div>
+            </div>
+
+            <div class="result-bar-outer">
+                <div class="result-bar-inner" id="resultBar" style="width: 0%"></div>
+            </div>
+
+            <div class="result-actions">
+                <button class="btn-result primary" onclick="showReview()">📋 Review Jawaban</button>
+                <button class="btn-result secondary" onclick="resetAll()">🔄 Ulangi</button>
+            </div>
+        </div>
+
+        <div class="review-section" id="reviewSection">
+            <h3 class="review-title">Review Jawaban</h3>
+            <div id="reviewContainer"></div>
+        </div>
+    </div>
+</div>
+
+<script>
+// ==========================================
+// QUESTION DATABASE — BIOLOGI + KIMIA
+// ==========================================
+
+const allQuestions = [
+    // ===== PG 1-85 =====
+    {id:1, q:"Organisme yang dapat membuat makanannya sendiri disebut...", options:["Heterotrof","Dekomposer","Autotrof","Saprofit"], answer:2, explanation:"Autotrof adalah organisme yang dapat menghasilkan makanan sendiri melalui fotosintesis atau kemosintesis. Contoh: tumbuhan hijau."},
+    {id:2, q:"Proses fotosintesis menghasilkan...", options:["CO₂ dan air","Oksigen dan air","Glukosa dan oksigen","Protein dan lemak"], answer:2, explanation:"Fotosintesis mengubah CO₂ + H₂O dengan bantuan cahaya menjadi glukosa (C₆H₁₂O₆) dan oksigen (O₂). Jawaban yang benar: Glukosa dan oksigen."},
+    {id:3, q:"Bagian sel tumbuhan yang tidak dimiliki sel hewan adalah...", options:["Mitokondria","Ribosom","Membran sel","Dinding sel"], answer:3, explanation:"Dinding sel terbuat dari selulosa dan hanya ditemukan pada sel tumbuhan, memberi bentuk dan perlindungan tambahan."},
+    {id:4, q:"Organel yang berfungsi sebagai pusat pengendali sel adalah...", options:["Ribosom","Mitokondria","Badan golgi","Nukleus"], answer:3, explanation:"Nukleus (inti sel) mengandung DNA dan berperan mengatur seluruh aktivitas sel termasuk pembelahan dan sintesis protein."},
+    {id:5, q:"Jaringan yang berfungsi melindungi permukaan tubuh tumbuhan adalah...", options:["Jaringan parenkim","Jaringan epidermis","Jaringan meristem","Jaringan xilem"], answer:1, explanation:"Jaringan epidermis melapisi permukaan luar tumbuhan sebagai pelindung dari kehilangan air dan patogen."},
+    {id:6, q:"Tulang rawan termasuk jaringan...", options:["Jaringan ikat","Jaringan epitel","Jaringan saraf","Jaringan otot"], answer:0, explanation:"Tulang rawan (kartilago) merupakan bagian dari jaringan ikat yang berfungsi sebagai penyokong dan pelindung."},
+    {id:7, q:"Proses pembelahan sel yang menghasilkan sel dengan jumlah kromosom setengah dari sel induk disebut...", options:["Mitosis","Meiosis","Amitosis","Binary fission"], answer:1, explanation:"Meiosis menghasilkan 4 sel anak dengan jumlah kromosom setengah (haploid) dari sel induk, penting untuk pembentukan sel gamet."},
+    {id:8, q:"Dalam ekosistem, jamur berperan sebagai...", options:["Produsen","Konsumen","Dekomposer","Predator"], answer:2, explanation:"Jamur (fungi) berperan sebagai dekomposer yang menguraikan bahan organik mati menjadi zat anorganik sederhana."},
+    {id:9, q:"Vitamin yang larut dalam lemak adalah...", options:["Vitamin A, D, E, K","Vitamin B dan C","Vitamin A dan B","Vitamin C dan D"], answer:0, explanation:"Vitamin A, D, E, dan K bersifat larut dalam lemak sehingga dapat disimpan dalam jaringan lemak tubuh."},
+    {id:10, q:"Organ yang berperan dalam sistem ekskresi manusia adalah...", options:["Ginjal","Jantung","Lambung","Usus halus"], answer:0, explanation:"Ginjal adalah organ utama ekskresi yang menyaring darah dan mengeluarkan zat sisa metabolisme berupa urine."},
+    {id:11, q:"Proses pertukaran gas di alveolus terjadi secara...", options:["Osmosis","Difusi","Transpor aktif","Endositosis"], answer:1, explanation:"Pertukaran O₂ dan CO₂ di alveolus paru-paru terjadi secara difusi, yaitu perpindahan zat dari konsentrasi tinggi ke rendah."},
+    {id:12, q:"Hormon insulin dihasilkan oleh...", options:["Kelenjar tiroid","Pankreas","Kelenjar adrenal","Hipofisis"], answer:1, explanation:"Hormon insulin dihasilkan oleh sel beta pulau Langerhans di pankreas, berfungsi menurunkan kadar gula darah."},
+    {id:13, q:"Gerak pada tumbuhan yang dipengaruhi rangsang cahaya disebut...", options:["Fototropisme","Geotropisme","Tigmotropisme","Hidrotropisme"], answer:0, explanation:"Fototropisme adalah gerak tumbuhan yang dipengaruhi oleh rangsang cahaya, misalnya batang tumbuh ke arah sinar matahari."},
+    {id:14, q:"Sel darah putih berfungsi untuk...", options:["Mengangkut O₂","Membentuk trombosit","Mengangkut sari makanan","Melawan kuman dan penyakit"], answer:3, explanation:"Sel darah putih (leukosit) merupakan bagian dari sistem imun tubuh yang berperan melawan patogen/kuman."},
+    {id:15, q:"Bagian bunga yang berfungsi sebagai alat kelamin jantan adalah...", options:["Putik","Benang sari","Mahkota bunga","Kelopak bunga"], answer:1, explanation:"Benang sari (stamen) adalah alat kelamin jantan bunga yang menghasilkan serbuk sari (pollen)."},
+    {id:16, q:"Lapisan atmosfer yang melindungi bumi dari sinar ultraviolet adalah...", options:["Troposfer","Stratosfer (lapisan ozon)","Mesosfer","Termosfer"], answer:1, explanation:"Lapisan ozon di stratosfer menyerap sebagian besar radiasi UV berbahaya dari matahari."},
+    {id:17, q:"DNA tersusun dari monomer yang disebut...", options:["Asam amino","Asam lemak","Nukleotida","Glukosa"], answer:2, explanation:"DNA (asam deoksiribonukleat) tersusun dari monomer nukleotida yang terdiri dari gula deoksiribosa, fosfat, dan basa nitrogen."},
+    {id:18, q:"Persilangan monohibrid Mendel menghasilkan perbandingan fenotip F2...", options:["1:1","1:2:1","2:1","3:1"], answer:3, explanation:"Hukum Mendel I menghasilkan perbandingan fenotip 3:1 pada F2 persilangan monohibrid (misalnya 3 dominan : 1 resesif)."},
+    {id:19, q:"Simbiosis antara ikan remora dan hiu termasuk...", options:["Mutualisme","Parasitisme","Predasi","Komensalisme"], answer:3, explanation:"Komensalisme: ikan remora mendapat keuntungan (sisa makanan, tumpangan) sedangkan hiu tidak dirugikan maupun diuntungkan."},
+    {id:20, q:"Rantai makanan yang benar adalah...", options:["Ular → tikus → padi → elang","Elang → ular → tikus → padi","Padi → tikus → ular → elang","Tikus → padi → elang → ular"], answer:2, explanation:"Rantai makanan dimulai dari produsen: Padi (produsen) → Tikus (konsumen I) → Ular (konsumen II) → Elang (konsumen III)."},
+    {id:21, q:"Salah satu cara menjaga kelestarian lingkungan adalah...", options:["Reboisasi","Pembakaran hutan","Pembuangan limbah ke sungai","Penggunaan pestisida berlebihan"], answer:0, explanation:"Reboisasi (penanaman kembali hutan) membantu menjaga kelestarian lingkungan dan mencegah erosi."},
+    {id:22, q:"Vaksinasi bertujuan untuk...", options:["Membentuk kekebalan aktif","Menyembuhkan penyakit","Menambah sel darah merah","Mempercepat pembelahan sel"], answer:0, explanation:"Vaksinasi merangsang tubuh membentuk antibodi (kekebalan aktif) terhadap patogen tertentu tanpa menyebabkan penyakit."},
+    {id:23, q:"Klorofil paling banyak terdapat di...", options:["Daun","Batang","Akar","Bunga"], answer:0, explanation:"Klorofil sebagai pigmen fotosintesis paling banyak terdapat di daun, khususnya di jaringan mesofil (palisade dan spons)."},
+    {id:24, q:"Kelainan pada mata yang tidak bisa melihat jauh disebut...", options:["Hipermetropi","Presbiopi","Astigmatisme","Miopi"], answer:3, explanation:"Miopi (rabun jauh) adalah kelainan mata dimana bayangan jatuh di depan retina sehingga objek jauh terlihat kabur. Dikoreksi dengan lensa cekung."},
+    {id:25, q:"Bakteri yang menguntungkan dalam pembuatan yoghurt adalah...", options:["E. coli","Salmonella","Clostridium","Lactobacillus"], answer:3, explanation:"Lactobacillus adalah bakteri asam laktat yang berperan dalam fermentasi susu menjadi yoghurt."},
+    {id:26, q:"Proses respirasi aerob terjadi di organel...", options:["Ribosom","Badan golgi","Retikulum endoplasma","Mitokondria"], answer:3, explanation:"Mitokondria adalah organel tempat terjadinya respirasi aerob yang menghasilkan energi (ATP) dari pemecahan glukosa."},
+    {id:27, q:"Sistem peredaran darah manusia bersifat...", options:["Terbuka","Tertutup ganda","Tunggal","Terbuka ganda"], answer:1, explanation:"Manusia memiliki sistem peredaran darah tertutup ganda: darah melewati jantung dua kali dalam satu siklus (peredaran kecil dan besar)."},
+    {id:28, q:"Sumber energi utama bagi sel tubuh adalah...", options:["Protein","Lemak","Karbohidrat","Vitamin"], answer:2, explanation:"Karbohidrat (glukosa) adalah sumber energi utama yang paling cepat diubah menjadi ATP oleh sel tubuh."},
+    {id:29, q:"Tumbuhan monokotil memiliki ciri...", options:["Berkeping dua","Tulang daun sejajar","Berakar tunggang","Mahkota kelipatan 4/5"], answer:1, explanation:"Ciri monokotil: tulang daun sejajar/melengkung, berkeping satu, berakar serabut, dan bagian bunga kelipatan 3."},
+    {id:30, q:"Pencernaan mekanik di mulut dilakukan oleh...", options:["Enzim amilase","Lidah","Kelenjar ludah","Gigi"], answer:3, explanation:"Gigi melakukan pencernaan mekanik dengan mengunyah dan menghaluskan makanan secara fisik."},
+    {id:31, q:"Fungsi trombosit dalam darah adalah...", options:["Mengangkut oksigen","Pembekuan darah","Melawan kuman","Mengangkut zat sisa"], answer:1, explanation:"Trombosit (keping darah) berperan penting dalam proses pembekuan darah (koagulasi) untuk menutup luka."},
+    {id:32, q:"Peristiwa naiknya air dari akar ke daun melalui xilem disebut...", options:["Transpirasi","Gutasi","Osmosis","Kapilaritas dan transpirasi"], answer:3, explanation:"Naiknya air melalui xilem melibatkan kapilaritas (kohesi-adhesi air) dan tarikan transpirasi dari daun."},
+    {id:33, q:"Hewan yang mengalami metamorfosis sempurna adalah...", options:["Belalang","Kecoa","Kupu-kupu","Capung"], answer:2, explanation:"Kupu-kupu mengalami metamorfosis sempurna: telur → larva (ulat) → pupa (kepompong) → imago (dewasa)."},
+    {id:34, q:"Contoh adaptasi morfologi pada kaktus adalah...", options:["Daun berubah menjadi duri","Menggugurkan daun saat kemarau","Akar menyimpan air","Fotosintesis di batang"], answer:0, explanation:"Daun kaktus berubah menjadi duri adalah adaptasi morfologi untuk mengurangi penguapan di lingkungan kering."},
+    {id:35, q:"Penyakit yang disebabkan oleh virus adalah...", options:["TBC","Malaria","Kolera","Influenza"], answer:3, explanation:"Influenza disebabkan oleh virus Influenza. TBC oleh bakteri, malaria oleh Plasmodium, kolera oleh bakteri Vibrio cholerae."},
+    {id:36, q:"Alel dominan dilambangkan dengan huruf...", options:["Huruf kecil","Huruf Yunani","Angka","Huruf kapital"], answer:3, explanation:"Dalam genetika Mendel, alel dominan dilambangkan huruf kapital (misal: A) dan alel resesif huruf kecil (misal: a)."},
+    {id:37, q:"Proses penguapan air melalui stomata daun disebut...", options:["Gutasi","Transpirasi","Respirasi","Evaporasi"], answer:1, explanation:"Transpirasi adalah proses penguapan air dari permukaan daun melalui stomata."},
+    {id:38, q:"Bagian ginjal yang berfungsi menyaring darah adalah...", options:["Pelvis renalis","Glomerulus","Tubulus kolektivus","Ureter"], answer:1, explanation:"Glomerulus merupakan kumpulan kapiler darah di nefron ginjal yang berperan dalam filtrasi/penyaringan darah."},
+    {id:39, q:"Fase gelap fotosintesis terjadi di...", options:["Stroma kloroplas","Tilakoid","Membran luar kloroplas","Sitoplasma"], answer:0, explanation:"Fase gelap (siklus Calvin) terjadi di stroma kloroplas, dimana CO₂ difiksasi menjadi glukosa."},
+    {id:40, q:"Contoh gerak refleks adalah...", options:["Berjalan","Menulis","Menarik tangan saat terkena panas","Berlari"], answer:2, explanation:"Gerak refleks terjadi tanpa disadari sebagai respons cepat terhadap rangsangan, misalnya menarik tangan saat terkena panas."},
+    {id:41, q:"Klasifikasi makhluk hidup berdasarkan 5 kingdom dikemukakan oleh...", options:["Carolus Linnaeus","Aristoteles","Robert H. Whittaker","Charles Darwin"], answer:2, explanation:"Robert H. Whittaker (1969) mengusulkan sistem klasifikasi 5 kingdom: Monera, Protista, Fungi, Plantae, dan Animalia."},
+    {id:42, q:"Lambung menghasilkan enzim...", options:["Pepsin","Amilase","Lipase pankreas","Tripsin"], answer:0, explanation:"Lambung menghasilkan enzim pepsin (dari pepsinogen + HCl) yang berfungsi memecah protein menjadi pepton."},
+    {id:43, q:"Proses penyerapan nutrisi terjadi terutama di...", options:["Usus halus","Lambung","Usus besar","Kerongkongan"], answer:0, explanation:"Usus halus (terutama jejunum dan ileum) memiliki vili dan mikrovili yang memperluas permukaan untuk penyerapan nutrisi."},
+    {id:44, q:"Tumbuhan dikotil memiliki ciri...", options:["Berkeping satu","Tulang daun sejajar","Berakar serabut","Berakar tunggang"], answer:3, explanation:"Ciri dikotil: berakar tunggang, berkeping dua, tulang daun menyirip/menjari, dan bagian bunga kelipatan 4 atau 5."},
+    {id:45, q:"Sel yang bertanggung jawab terhadap kekebalan tubuh adalah...", options:["Eritrosit","Trombosit","Limfosit","Platelet"], answer:2, explanation:"Limfosit (jenis sel darah putih) berperan utama dalam sistem kekebalan tubuh, baik limfosit B (antibodi) maupun limfosit T."},
+    {id:46, q:"Tingkat organisasi kehidupan dari kecil ke besar yang benar adalah...", options:["Sel → organ → jaringan → organisme","Sel → jaringan → organ → sistem organ","Jaringan → sel → organ → organisme","Organ → sel → jaringan → organisme"], answer:1, explanation:"Urutan yang benar: Sel → Jaringan → Organ → Sistem Organ → Organisme."},
+    {id:47, q:"Fotosintesis memerlukan bahan baku...", options:["CO₂ dan H₂O","O₂ dan glukosa","CO₂ dan O₂","Glukosa dan air"], answer:0, explanation:"Bahan baku fotosintesis: karbon dioksida (CO₂) dan air (H₂O), dengan bantuan cahaya matahari dan klorofil."},
+    {id:48, q:"Penyerbukan yang dibantu oleh angin disebut...", options:["Entomogami","Hidrogami","Anemogami","Ornitogami"], answer:2, explanation:"Anemogami adalah penyerbukan yang dibantu oleh angin. Entomogami (serangga), hidrogami (air), ornitogami (burung)."},
+    {id:49, q:"Organ yang termasuk sistem pernapasan adalah...", options:["Jantung","Ginjal","Paru-paru","Hati"], answer:2, explanation:"Paru-paru adalah organ utama pernapasan tempat terjadinya pertukaran gas O₂ dan CO₂."},
+    {id:50, q:"Zat besi dalam tubuh penting untuk pembentukan...", options:["Tulang","Hemoglobin","Hormon","Enzim pencernaan"], answer:1, explanation:"Zat besi (Fe) merupakan komponen penting hemoglobin dalam sel darah merah yang berperan mengikat dan mengangkut oksigen."},
+    {id:51, q:"Tabel periodik unsur disusun berdasarkan kenaikan...", options:["Massa atom","Nomor atom","Jumlah neutron","Jumlah elektron valensi"], answer:1, explanation:"Tabel periodik modern disusun berdasarkan kenaikan nomor atom (jumlah proton) unsur, sesuai hukum periodik Moseley."},
+    {id:52, q:"Unsur dengan nomor atom 11 terletak di golongan...", options:["IA (1)","IIA (2)","IIIA (13)","IVA (14)"], answer:0, explanation:"Nomor atom 11 = Natrium (Na). Konfigurasi: 2, 8, 1 → elektron valensi 1 → golongan IA (1)."},
+    {id:53, q:"Ikatan ion terbentuk antara...", options:["Dua atom nonlogam","Logam dan logam","Logam dan nonlogam","Dua atom gas mulia"], answer:2, explanation:"Ikatan ion terbentuk dari transfer elektron antara atom logam (melepas elektron) dan atom nonlogam (menerima elektron)."},
+    {id:54, q:"Contoh senyawa yang memiliki ikatan kovalen adalah...", options:["NaCl","MgO","KBr","H₂O"], answer:3, explanation:"H₂O memiliki ikatan kovalen karena terbentuk dari pemakaian bersama elektron antara atom H dan O (sesama nonlogam)."},
+    {id:55, q:"Reaksi antara asam dan basa menghasilkan...", options:["Garam dan air","Gas dan air","Garam dan oksigen","Gas dan garam"], answer:0, explanation:"Reaksi netralisasi: Asam + Basa → Garam + Air. Contoh: HCl + NaOH → NaCl + H₂O."},
+    {id:56, q:"pH larutan asam adalah...", options:["Kurang dari 7","Sama dengan 7","Lebih dari 7","Sama dengan 14"], answer:0, explanation:"Skala pH: asam (pH < 7), netral (pH = 7), basa (pH > 7). Semakin kecil pH, semakin kuat sifat asamnya."},
+    {id:57, q:"Contoh perubahan kimia adalah...", options:["Es mencair","Besi berkarat","Gula larut","Kertas disobek"], answer:1, explanation:"Besi berkarat (4Fe + 3O₂ → 2Fe₂O₃) adalah perubahan kimia karena menghasilkan zat baru dengan sifat berbeda."},
+    {id:58, q:"Hukum kekekalan massa dikemukakan oleh...", options:["Dalton","Lavoisier","Proust","Avogadro"], answer:1, explanation:"Hukum kekekalan massa (Lavoisier): massa zat sebelum reaksi = massa zat sesudah reaksi."},
+    {id:59, q:"Rumus kimia asam sulfat adalah...", options:["H₂SO₄","HCl","HNO₃","H₃PO₄"], answer:0, explanation:"Asam sulfat = H₂SO₄. HCl = asam klorida, HNO₃ = asam nitrat, H₃PO₄ = asam fosfat."},
+    {id:60, q:"Unsur gas mulia bersifat stabil karena...", options:["Memiliki elektron valensi penuh (oktet/duplet)","Tidak memiliki elektron","Memiliki proton lebih banyak","Berukuran sangat kecil"], answer:0, explanation:"Gas mulia stabil karena konfigurasi elektron terluarnya sudah penuh (2 untuk He/duplet, 8 untuk lainnya/oktet)."},
+    {id:61, q:"Dalam reaksi redoks, oksidasi adalah peristiwa...", options:["Penerimaan elektron","Pengurangan bilangan oksidasi","Pelepasan elektron","Penambahan proton"], answer:2, explanation:"Oksidasi = pelepasan elektron = kenaikan bilangan oksidasi. Reduksi = penerimaan elektron = penurunan bilangan oksidasi."},
+    {id:62, q:"Larutan yang dapat menghantarkan listrik disebut...", options:["Nonelektrolit","Insulator","Konduktor","Elektrolit"], answer:3, explanation:"Larutan elektrolit mengandung ion-ion bebas yang dapat menghantarkan arus listrik, contoh: larutan NaCl, HCl, NaOH."},
+    {id:63, q:"Contoh campuran homogen adalah...", options:["Air dan pasir","Minyak dan air","Larutan gula","Air dan tanah"], answer:2, explanation:"Larutan gula adalah campuran homogen karena partikel gula terlarut merata dan tidak bisa dibedakan secara kasat mata."},
+    {id:64, q:"Proses pemisahan campuran berdasarkan titik didih disebut...", options:["Filtrasi","Kristalisasi","Kromatografi","Distilasi"], answer:3, explanation:"Distilasi memisahkan campuran berdasarkan perbedaan titik didih komponen-komponennya."},
+    {id:65, q:"Massa atom relatif (Ar) merupakan perbandingan massa atom terhadap...", options:["1/12 massa atom C-12","Massa atom hidrogen","Massa atom oksigen","Massa 1 mol atom"], answer:0, explanation:"Massa atom relatif (Ar) didefinisikan sebagai perbandingan massa rata-rata atom unsur terhadap 1/12 massa atom C-12."},
+    {id:66, q:"Jumlah mol dalam 44 gram CO₂ (Mr CO₂ = 44) adalah...", options:["0,5 mol","2 mol","1 mol","4 mol"], answer:2, explanation:"n = massa/Mr = 44/44 = 1 mol. Jadi 44 gram CO₂ = 1 mol CO₂."},
+    {id:67, q:"Logam yang paling reaktif di tabel periodik terletak di...", options:["Golongan VIIIA","Golongan IVA","Golongan IA","Golongan VIIA"], answer:2, explanation:"Logam golongan IA (alkali) paling reaktif karena mudah melepaskan 1 elektron valensinya. Reaktivitas meningkat ke bawah."},
+    {id:68, q:"Senyawa berikut yang termasuk basa adalah...", options:["NaOH","HCl","H₂SO₄","CH₃COOH"], answer:0, explanation:"NaOH (natrium hidroksida) adalah basa kuat. HCl dan H₂SO₄ adalah asam, CH₃COOH adalah asam lemah (asam asetat)."},
+    {id:69, q:"Lambang unsur emas adalah...", options:["Au","Ag","Fe","Cu"], answer:0, explanation:"Au (Aurum) = Emas, Ag (Argentum) = Perak, Fe (Ferrum) = Besi, Cu (Cuprum) = Tembaga."},
+    {id:70, q:"Laju reaksi dipengaruhi oleh faktor berikut, kecuali...", options:["Konsentrasi","Suhu","Warna larutan","Katalis"], answer:2, explanation:"Faktor yang mempengaruhi laju reaksi: konsentrasi, suhu, luas permukaan, katalis, dan sifat pereaksi. Warna larutan bukan faktor."},
+    {id:71, q:"Reaksi eksoterm adalah reaksi yang...", options:["Menyerap energi","Memerlukan katalis","Melepaskan energi","Berlangsung lambat"], answer:2, explanation:"Reaksi eksoterm melepaskan energi (panas) ke lingkungan sehingga suhu lingkungan naik. ΔH bernilai negatif."},
+    {id:72, q:"Dalam senyawa NaCl, bilangan oksidasi Na adalah...", options:["+2","+1","-1","-2"], answer:1, explanation:"Na dalam NaCl memiliki bilangan oksidasi +1 karena Na golongan IA melepas 1 elektron. Cl = -1."},
+    {id:73, q:"Koloid berbeda dari larutan sejati karena koloid...", options:["Transparan sempurna","Dapat menghamburkan cahaya (efek Tyndall)","Mengendap segera","Tidak stabil"], answer:1, explanation:"Koloid dapat menghamburkan cahaya (efek Tyndall) karena ukuran partikelnya lebih besar dari larutan sejati (1-100 nm)."},
+    {id:74, q:"Jumlah proton dalam atom Karbon-12 adalah...", options:["6","12","8","14"], answer:0, explanation:"Karbon (C) memiliki nomor atom 6, artinya memiliki 6 proton. Karbon-12 memiliki 6 proton + 6 neutron = 12 nukleon."},
+    {id:75, q:"Senyawa organik sederhana yang banyak digunakan sebagai bahan bakar adalah...", options:["NaCl","Metana (CH₄)","CaCO₃","H₂SO₄"], answer:1, explanation:"Metana (CH₄) adalah senyawa organik sederhana (hidrokarbon) yang merupakan komponen utama gas alam untuk bahan bakar."},
+    {id:76, q:"Katalis berfungsi untuk...", options:["Menambah produk","Mengubah arah reaksi","Menaikkan energi aktivasi","Mempercepat reaksi tanpa ikut bereaksi"], answer:3, explanation:"Katalis mempercepat laju reaksi dengan menurunkan energi aktivasi tanpa ikut berubah secara permanen setelah reaksi."},
+    {id:77, q:"Bentuk molekul H₂O adalah...", options:["Linear","Segitiga planar","Tekuk (bengkok)","Tetrahedral"], answer:2, explanation:"H₂O memiliki 2 pasang elektron bebas dan 2 ikatan, membentuk geometri tekuk/bengkok dengan sudut ~104.5°."},
+    {id:78, q:"Contoh unsur nonlogam adalah...", options:["Oksigen","Besi","Tembaga","Aluminium"], answer:0, explanation:"Oksigen (O) adalah unsur nonlogam. Besi (Fe), Tembaga (Cu), dan Aluminium (Al) adalah logam."},
+    {id:79, q:"Garam dapur (NaCl) termasuk jenis senyawa...", options:["Ion","Kovalen polar","Kovalen nonpolar","Logam"], answer:0, explanation:"NaCl adalah senyawa ionik, terbentuk dari ikatan ion antara Na⁺ dan Cl⁻."},
+    {id:80, q:"Ciri-ciri reaksi kimia adalah...", options:["Hanya terjadi perubahan fisik","Menghasilkan zat baru","Tidak ada perubahan energi","Bersifat sementara"], answer:1, explanation:"Ciri reaksi kimia: menghasilkan zat baru dengan sifat berbeda, disertai perubahan energi, bersifat ireversibel/sulit dikembalikan."},
+    {id:81, q:"Teknologi energi angin atau air menjadi listrik ramah lingkungan karena...", options:["Murah dan mudah","Sumber energi terbarukan dan ramah lingkungan","Tidak memerlukan alat","Menghasilkan polusi sedikit"], answer:1, explanation:"Energi angin dan air menjadi listrik ramah lingkungan karena: (a) Ramah lingkungan, (b) Sumber energi terbarukan, (c) Mengurangi pencemaran dari minyak bumi dan batu bara."},
+    {id:82, q:"Alasan utama penggunaan energi angin/air untuk listrik adalah...", options:["Efisiensi tinggi","Sumber terbarukan dan minim polusi","Biaya nol","Mudah disimpan"], answer:1, explanation:"Energi angin/air terbarukan, ramah lingkungan, dan mengurangi pencemaran dari bahan bakar fosil."},
+    {id:83, q:"Keuntungan energi terbarukan dibanding bahan bakar fosil adalah...", options:["Mengurangi pencemaran","Lebih murah selalu","Tidak memerlukan teknologi","Stabil sepanjang waktu"], answer:0, explanation:"Keuntungan utama energi terbarukan: mengurangi pencemaran dan emisi gas rumah kaca dibanding bahan bakar fosil."},
+    {id:84, q:"Energi terbarukan yang berasal dari angin/air tidak menghasilkan...", options:["Polusi udara signifikan","Listrik","Energi kinetik","Suara"], answer:0, explanation:"Energi angin dan air tidak menghasilkan polusi udara yang signifikan, berbeda dengan pembakaran bahan bakar fosil."},
+    {id:85, q:"Konversi energi angin menjadi listrik menggunakan...", options:["Panel surya","Turbin angin","Reaktor nuklir","Generator diesel"], answer:1, explanation:"Turbin angin mengubah energi kinetik angin menjadi energi listrik melalui generator yang terhubung."},
+
+    // ===== ESSAY → PG: Soal 86-91 =====
+    {id:86, q:"Perbandingan bioteknologi konvensional dan modern yang BENAR adalah...", options:[
+        "Konvensional menggunakan prinsip genetika, modern menggunakan mikroorganisme sederhana",
+        "Konvensional biaya lebih mahal, modern biaya lebih murah",
+        "Konvensional menggunakan mikroorganisme sederhana dengan biaya murah, modern menggunakan prinsip genetika dengan hasil lebih akurat",
+        "Konvensional hasil lebih akurat, modern hasil tergantung usaha"
+    ], answer:2, explanation:"Bioteknologi konvensional: menggunakan mikroorganisme, biaya murah, hasil tergantung usaha, waktu lebih lama. Bioteknologi modern: menggunakan prinsip genetika, biaya mahal, hasil lebih akurat, waktu lebih cepat."},
+
+    {id:87, q:"Pernyataan berikut yang BENAR tentang pelapukan adalah...", options:[
+        "Pelapukan fisika terjadi karena reaksi kimia dengan air dan oksigen",
+        "Pelapukan kimia terjadi karena aktivitas akar tumbuhan dan mikroorganisme",
+        "Pelapukan biologi terjadi karena batuan hancur oleh suhu, air, atau angin",
+        "Pelapukan fisika: batuan hancur karena suhu/air/angin; Pelapukan kimia: perubahan karena reaksi kimia; Pelapukan biologi: akibat aktivitas makhluk hidup"
+    ], answer:3, explanation:"Pelapukan fisika = batuan hancur karena suhu, air, atau angin. Pelapukan kimia = perubahan karena reaksi kimia (air, oksigen). Pelapukan biologi = akibat aktivitas makhluk hidup seperti akar tumbuhan dan mikroorganisme."},
+
+    {id:88, q:"Kelebihan dan kekurangan sel surya yang BENAR adalah...", options:[
+        "Kelebihan: energi bersih tanpa polusi; Kekurangan: bergantung pada cuaca dan sinar matahari",
+        "Kelebihan: murah; Kekurangan: menghasilkan banyak polusi",
+        "Kelebihan: bisa digunakan kapan saja; Kekurangan: membutuhkan bahan bakar",
+        "Kelebihan: tidak perlu perawatan; Kekurangan: tidak bisa menghasilkan listrik"
+    ], answer:0, explanation:"Sel Surya — Kelebihan: energi bersih dan tidak menghasilkan polusi. Kekurangan: bergantung pada cuaca dan sinar matahari."},
+
+    {id:89, q:"Kelebihan dan kekurangan biofuel yang BENAR adalah...", options:[
+        "Kelebihan: tidak membutuhkan lahan; Kekurangan: emisi karbon tinggi",
+        "Kelebihan: emisi karbon lebih rendah dibanding bahan bakar fosil; Kekurangan: membutuhkan lahan pertanian luas",
+        "Kelebihan: tidak ada emisi karbon; Kekurangan: sulit diproduksi",
+        "Kelebihan: mudah disimpan; Kekurangan: berbahaya bagi lingkungan"
+    ], answer:1, explanation:"Biofuel — Kelebihan: emisi karbon lebih rendah dibanding bahan bakar fosil. Kekurangan: membutuhkan lahan pertanian luas."},
+
+    {id:90, q:"Model atom Rutherford menyatakan bahwa...", options:[
+        "Atom seperti roti kismis dengan elektron tersebar merata",
+        "Atom memiliki inti kecil bermuatan positif, sebagian besar ruang atom kosong, dan elektron bergerak mengelilingi inti",
+        "Elektron bergerak pada lintasan tetap mengelilingi inti",
+        "Atom adalah bola pejal yang tidak dapat dibagi"
+    ], answer:1, explanation:"Model atom Rutherford: (I) Atom memiliki inti kecil bermuatan positif di pusat atom, (II) Sebagian besar ruang atom adalah ruang kosong, (III) Elektron bergerak mengelilingi inti atom."},
+
+    {id:91, q:"Kation dan anion terbentuk melalui proses...", options:[
+        "Kation terbentuk saat atom menerima elektron, anion saat atom melepas elektron",
+        "Kation dan anion terbentuk saat atom berbagi elektron",
+        "Kation terbentuk saat atom kehilangan elektron (bermuatan positif), anion terbentuk saat atom menerima elektron (bermuatan negatif)",
+        "Kation dan anion hanya terbentuk dari unsur logam"
+    ], answer:2, explanation:"KATION terbentuk ketika atom kehilangan elektron sehingga bermuatan positif. ANION terbentuk ketika atom menerima elektron sehingga bermuatan negatif."}
+];
+
+// ==========================================
+// GAME STATE
+// ==========================================
+let currentQuestions = [];
+let currentIndex = 0;
+let correctTotal = 0;
+let wrongTotal = 0;
+let answers = [];
+let timerInterval;
+let seconds = 0;
+let navOpen = false;
+
+// ==========================================
+// FUNCTIONS
+// ==========================================
+
+function shuffleArray(arr) {
+    const a = [...arr];
+    for (let i = a.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [a[i], a[j]] = [a[j], a[i]];
+    }
+    return a;
+}
+
+function showModeSelect() {
+    document.getElementById('introScreen').style.display = 'none';
+    const ms = document.getElementById('modeSelect');
+    ms.style.display = 'flex';
+}
+
+function startQuiz(mode) {
+    let questions;
+    if (mode === 'all') {
+        questions = allQuestions;
+    } else if (mode === 'pg') {
+        questions = allQuestions.filter(q => q.id <= 85);
+    } else if (mode === 'essay') {
+        questions = allQuestions.filter(q => q.id >= 86);
+    }
+
+    currentQuestions = shuffleArray(questions);
+    currentIndex = 0;
+    correctTotal = 0;
+    wrongTotal = 0;
+    answers = new Array(currentQuestions.length).fill(null);
+
+    document.getElementById('modeSelect').style.display = 'none';
+    document.getElementById('quizScreen').style.display = 'block';
+
+    startTimer();
+    buildNumberGrid();
+    renderQuestion();
+}
+
+function startTimer() {
+    seconds = 0;
+    clearInterval(timerInterval);
+    timerInterval = setInterval(() => {
+        seconds++;
+        const m = String(Math.floor(seconds / 60)).padStart(2, '0');
+        const s = String(seconds % 60).padStart(2, '0');
+        document.getElementById('timerDisplay').textContent = `${m}:${s}`;
+    }, 1000);
+}
+
+function buildNumberGrid() {
+    const grid = document.getElementById('numberGrid');
+    grid.innerHTML = '';
+    currentQuestions.forEach((q, i) => {
+        const btn = document.createElement('button');
+        btn.className = 'num-btn';
+        btn.textContent = i + 1;
+        btn.onclick = () => jumpToQuestion(i);
+        btn.id = `numBtn${i}`;
+        grid.appendChild(btn);
+    });
+    updateNumberGrid();
+}
+
+function updateNumberGrid() {
+    currentQuestions.forEach((q, i) => {
+        const btn = document.getElementById(`numBtn${i}`);
+        if (!btn) return;
+        btn.className = 'num-btn';
+        if (i === currentIndex) btn.classList.add('current');
+        if (answers[i] !== null) {
+            if (answers[i].correct) btn.classList.add('answered-correct');
+            else btn.classList.add('answered-wrong');
+        }
+    });
+}
+
+function toggleNumberNav() {
+    const nav = document.getElementById('numberNav');
+    navOpen = !navOpen;
+    nav.style.display = navOpen ? 'block' : 'none';
+    if (navOpen) updateNumberGrid();
+}
+
+function jumpToQuestion(index) {
+    currentIndex = index;
+    navOpen = false;
+    document.getElementById('numberNav').style.display = 'none';
+    renderQuestion();
+}
+
+function renderQuestion() {
+    const total = currentQuestions.length;
+    const q = currentQuestions[currentIndex];
+    const area = document.getElementById('questionArea');
+
+    document.getElementById('qCounter').textContent = `Soal ${currentIndex + 1} / ${total}`;
+    document.getElementById('qCategory').textContent = q.id <= 85 ? 'PILIHAN GANDA' : 'ESSAY → PG';
+    document.getElementById('correctCount').textContent = correctTotal;
+    document.getElementById('wrongCount').textContent = wrongTotal;
+    document.getElementById('progressBar').style.width = `${((currentIndex) / total) * 100}%`;
+
+    const prevAnswer = answers[currentIndex];
+    const letters = ['A', 'B', 'C', 'D'];
+
+    let optionsHtml = '';
+    q.options.forEach((opt, i) => {
+        let extraClass = '';
+        let disabled = '';
+        if (prevAnswer !== null) {
+            disabled = 'disabled';
+            if (i === q.answer) extraClass = 'correct';
+            else if (i === prevAnswer.selected && !prevAnswer.correct) extraClass = 'wrong';
+            else extraClass = '';
+        }
+        optionsHtml += `
+            <button class="option-btn ${extraClass} ${disabled}" 
+                    onclick="selectAnswer(${i})" 
+                    ${prevAnswer !== null ? 'disabled' : ''}>
+                <span class="opt-letter">${letters[i]}</span>
+                <span class="opt-text">${opt}</span>
+            </button>
+        `;
+    });
+
+    let explanationHtml = '';
+    if (prevAnswer !== null) {
+        const expClass = prevAnswer.correct ? 'correct-exp' : 'wrong-exp';
+        const expIcon = prevAnswer.correct ? '✅' : '❌';
+        const expTitle = prevAnswer.correct ? 'Benar!' : `Salah! Jawaban yang benar: ${letters[q.answer]}`;
+        explanationHtml = `
+            <div class="explanation-box ${expClass}" style="display:block">
+                <div class="exp-title">${expIcon} ${expTitle}</div>
+                <div class="exp-text">${q.explanation}</div>
+            </div>
+        `;
+    }
+
+    const nextBtnHtml = prevAnswer !== null ? `
+        <button class="btn-next" style="display:block" onclick="nextQuestion()">
+            ${currentIndex < total - 1 ? 'Soal Berikutnya →' : '🏁 Lihat Hasil'}
+        </button>
+    ` : '';
+
+    area.innerHTML = `
+        <div class="question-card">
+            <div class="q-number-badge">
+                #${q.id} &nbsp;•&nbsp; ${q.id <= 85 ? 'PG' : 'Essay→PG'}
+            </div>
+            <div class="question-text">${q.q}</div>
+            <div class="options-container">${optionsHtml}</div>
+            ${explanationHtml}
+            ${nextBtnHtml}
+        </div>
+    `;
+
+    updateNumberGrid();
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function selectAnswer(selected) {
+    if (answers[currentIndex] !== null) return;
+
+    const q = currentQuestions[currentIndex];
+    const isCorrect = selected === q.answer;
+
+    if (isCorrect) correctTotal++;
+    else wrongTotal++;
+
+    answers[currentIndex] = { selected, correct: isCorrect };
+
+    renderQuestion();
+}
+
+function nextQuestion() {
+    if (currentIndex < currentQuestions.length - 1) {
+        currentIndex++;
+        renderQuestion();
+    } else {
+        showResult();
+    }
+}
+
+function showResult() {
+    clearInterval(timerInterval);
+
+    document.getElementById('quizScreen').style.display = 'none';
+    document.getElementById('resultScreen').style.display = 'block';
+
+    const total = currentQuestions.length;
+    const pct = Math.round((correctTotal / total) * 100);
+
+    document.getElementById('finalCorrect').textContent = correctTotal;
+    document.getElementById('finalWrong').textContent = wrongTotal;
+    document.getElementById('finalScore').textContent = pct + '%';
+
+    const m = String(Math.floor(seconds / 60)).padStart(2, '0');
+    const s = String(seconds % 60).padStart(2, '0');
+
+    let emoji, title, sub;
+    if (pct >= 90) { emoji = '🏆'; title = 'Luar Biasa!'; sub = `Skor ${pct}% dalam ${m}:${s} — Kamu menguasai materinya!`; }
+    else if (pct >= 70) { emoji = '🎉'; title = 'Bagus!'; sub = `Skor ${pct}% dalam ${m}:${s} — Tinggal sedikit lagi!`; }
+    else if (pct >= 50) { emoji = '💪'; title = 'Lumayan!'; sub = `Skor ${pct}% dalam ${m}:${s} — Terus berlatih ya!`; }
+    else { emoji = '📚'; title = 'Semangat!'; sub = `Skor ${pct}% dalam ${m}:${s} — Perbanyak belajar lagi!`; }
+
+    document.getElementById('resultEmoji').textContent = emoji;
+    document.getElementById('resultTitle').textContent = title;
+    document.getElementById('resultSub').textContent = sub;
+
+    setTimeout(() => {
+        document.getElementById('resultBar').style.width = pct + '%';
+    }, 300);
+
+    if (pct >= 70) launchConfetti();
+}
+
+function showReview() {
+    const section = document.getElementById('reviewSection');
+    const container = document.getElementById('reviewContainer');
+    section.style.display = 'block';
+
+    const letters = ['A', 'B', 'C', 'D'];
+    let html = '';
+
+    currentQuestions.forEach((q, i) => {
+        const ans = answers[i];
+        const isCorrect = ans && ans.correct;
+        const className = isCorrect ? 'review-correct' : 'review-wrong';
+
+        html += `
+            <div class="review-item ${className}">
+                <div class="review-q-text"><strong>#${q.id}</strong> — ${q.q}</div>
+                <div class="review-answer">
+                    ${ans ? `Jawaban kamu: <span class="${isCorrect ? 'r-correct' : 'r-wrong'}">${letters[ans.selected]}. ${q.options[ans.selected]}</span>` : '<span class="r-wrong">Tidak dijawab</span>'}
+                    <br>Jawaban benar: <span class="r-correct">${letters[q.answer]}. ${q.options[q.answer]}</span>
+                    <br><br><em>${q.explanation}</em>
+                </div>
+            </div>
+        `;
+    });
+
+    container.innerHTML = html;
+    section.scrollIntoView({ behavior: 'smooth' });
+}
+
+function resetAll() {
+    document.getElementById('resultScreen').style.display = 'none';
+    document.getElementById('reviewSection').style.display = 'none';
+    const ms = document.getElementById('modeSelect');
+    ms.style.display = 'flex';
+    navOpen = false;
+}
+
+// Keyboard shortcuts
+document.addEventListener('keydown', (e) => {
+    if (document.getElementById('quizScreen').style.display !== 'block') return;
+    const key = e.key.toLowerCase();
+
+    if (key === 'a') selectAnswer(0);
+    else if (key === 'b') selectAnswer(1);
+    else if (key === 'c') selectAnswer(2);
+    else if (key === 'd') selectAnswer(3);
+    else if (key === 'enter' || key === ' ') {
+        e.preventDefault();
+        if (answers[currentIndex] !== null) nextQuestion();
+    }
+    else if (key === 'n') toggleNumberNav();
+});
+
+// Confetti
+function launchConfetti() {
+    const canvas = document.getElementById('confetti-canvas');
+    const ctx = canvas.getContext('2d');
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+
+    const pieces = [];
+    const colors = ['#6c5ce7', '#a29bfe', '#00b894', '#55efc4', '#fdcb6e', '#e17055', '#fab1a0', '#ff7675'];
+
+    for (let i = 0; i < 150; i++) {
+        pieces.push({
+            x: Math.random() * canvas.width,
+            y: Math.random() * canvas.height - canvas.height,
+            w: Math.random() * 10 + 5,
+            h: Math.random() * 6 + 3,
+            color: colors[Math.floor(Math.random() * colors.length)],
+            vy: Math.random() * 3 + 2,
+            vx: Math.random() * 2 - 1,
+            rot: Math.random() * 360,
+            rotSpeed: Math.random() * 6 - 3,
+            opacity: 1,
+        });
+    }
+
+    let frame = 0;
+    function animate() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        frame++;
+
+        pieces.forEach(p => {
+            p.y += p.vy;
+            p.x += p.vx;
+            p.rot += p.rotSpeed;
+            if (frame > 120) p.opacity -= 0.01;
+
+            ctx.save();
+            ctx.translate(p.x, p.y);
+            ctx.rotate((p.rot * Math.PI) / 180);
+            ctx.globalAlpha = Math.max(0, p.opacity);
+            ctx.fillStyle = p.color;
+            ctx.fillRect(-p.w / 2, -p.h / 2, p.w, p.h);
+            ctx.restore();
+        });
+
+        if (frame < 250) requestAnimationFrame(animate);
+        else ctx.clearRect(0, 0, canvas.width, canvas.height);
+    }
+
+    animate();
+}
+
+// Handle resize for confetti canvas
+window.addEventListener('resize', () => {
+    const canvas = document.getElementById('confetti-canvas');
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+});
+</script>
+
+</body>
+</html>
