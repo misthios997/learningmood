@@ -1,0 +1,910 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kuis PJOK - 45 Soal</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+            min-height: 100vh;
+            color: #fff;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .header {
+            text-align: center;
+            padding: 40px 20px;
+            background: linear-gradient(135deg, #e94560, #ff6b6b);
+            border-radius: 20px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 40px rgba(233, 69, 96, 0.3);
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .doubt-text {
+            font-size: 1.8em;
+            font-style: italic;
+            color: #ffe66d;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
+        .kisi-kisi {
+            background: rgba(255,255,255,0.1);
+            padding: 20px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+            backdrop-filter: blur(10px);
+        }
+
+        .kisi-kisi h3 {
+            color: #ffe66d;
+            margin-bottom: 15px;
+            font-size: 1.3em;
+        }
+
+        .kisi-kisi ul {
+            list-style: none;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .kisi-kisi li {
+            background: linear-gradient(135deg, #e94560, #ff6b6b);
+            padding: 10px 20px;
+            border-radius: 25px;
+            font-weight: 500;
+        }
+
+        .question-card {
+            background: rgba(255,255,255,0.95);
+            color: #1a1a2e;
+            border-radius: 20px;
+            padding: 25px;
+            margin-bottom: 20px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.2);
+            transition: transform 0.3s;
+        }
+
+        .question-card:hover {
+            transform: translateY(-3px);
+        }
+
+        .question-number {
+            background: linear-gradient(135deg, #e94560, #ff6b6b);
+            color: white;
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 1.2em;
+            margin-bottom: 15px;
+        }
+
+        .question-category {
+            display: inline-block;
+            background: #16213e;
+            color: #ffe66d;
+            padding: 5px 15px;
+            border-radius: 15px;
+            font-size: 0.85em;
+            margin-bottom: 15px;
+        }
+
+        .question-text {
+            font-size: 1.1em;
+            line-height: 1.6;
+            margin-bottom: 20px;
+            color: #1a1a2e;
+        }
+
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .option {
+            display: flex;
+            align-items: center;
+            padding: 15px 20px;
+            background: #f0f0f0;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s;
+            border: 2px solid transparent;
+        }
+
+        .option:hover {
+            background: #e0e0e0;
+            transform: translateX(5px);
+        }
+
+        .option.selected {
+            background: #e3f2fd;
+            border-color: #2196f3;
+        }
+
+        .option.correct {
+            background: #c8e6c9;
+            border-color: #4caf50;
+        }
+
+        .option.wrong {
+            background: #ffcdd2;
+            border-color: #f44336;
+        }
+
+        .option-letter {
+            width: 35px;
+            height: 35px;
+            background: #16213e;
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            margin-right: 15px;
+            flex-shrink: 0;
+        }
+
+        .option.correct .option-letter {
+            background: #4caf50;
+        }
+
+        .option.wrong .option-letter {
+            background: #f44336;
+        }
+
+        .explanation {
+            display: none;
+            margin-top: 20px;
+            padding: 20px;
+            background: linear-gradient(135deg, #e8f5e9, #c8e6c9);
+            border-radius: 12px;
+            border-left: 5px solid #4caf50;
+        }
+
+        .explanation.show {
+            display: block;
+            animation: slideIn 0.3s ease;
+        }
+
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .explanation h4 {
+            color: #2e7d32;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .explanation p {
+            color: #1b5e20;
+            line-height: 1.6;
+        }
+
+        .submit-btn {
+            width: 100%;
+            padding: 20px 40px;
+            font-size: 1.3em;
+            font-weight: bold;
+            color: white;
+            background: linear-gradient(135deg, #e94560, #ff6b6b);
+            border: none;
+            border-radius: 15px;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 5px 20px rgba(233, 69, 96, 0.4);
+            margin-top: 30px;
+        }
+
+        .submit-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 30px rgba(233, 69, 96, 0.5);
+        }
+
+        .submit-btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        .result-card {
+            display: none;
+            background: linear-gradient(135deg, #16213e, #1a1a2e);
+            border-radius: 25px;
+            padding: 40px;
+            text-align: center;
+            margin-top: 30px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+            animation: popIn 0.5s ease;
+        }
+
+        @keyframes popIn {
+            0% { transform: scale(0.5); opacity: 0; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        .result-card.show {
+            display: block;
+        }
+
+        .result-title {
+            font-size: 2em;
+            margin-bottom: 30px;
+            color: #ffe66d;
+        }
+
+        .score-circle {
+            width: 200px;
+            height: 200px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #e94560, #ff6b6b);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 30px;
+            box-shadow: 0 10px 40px rgba(233, 69, 96, 0.4);
+        }
+
+        .score-number {
+            font-size: 3.5em;
+            font-weight: bold;
+        }
+
+        .score-label {
+            font-size: 1.2em;
+            opacity: 0.9;
+        }
+
+        .stats {
+            display: flex;
+            justify-content: center;
+            gap: 40px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+        }
+
+        .stat-item {
+            text-align: center;
+        }
+
+        .stat-number {
+            font-size: 2.5em;
+            font-weight: bold;
+        }
+
+        .stat-number.correct {
+            color: #4caf50;
+        }
+
+        .stat-number.wrong {
+            color: #f44336;
+        }
+
+        .stat-label {
+            color: #aaa;
+            font-size: 1.1em;
+        }
+
+        .grade {
+            font-size: 1.5em;
+            padding: 15px 40px;
+            border-radius: 30px;
+            display: inline-block;
+            margin-top: 20px;
+            font-weight: bold;
+        }
+
+        .grade.excellent {
+            background: linear-gradient(135deg, #4caf50, #8bc34a);
+        }
+
+        .grade.good {
+            background: linear-gradient(135deg, #2196f3, #03a9f4);
+        }
+
+        .grade.average {
+            background: linear-gradient(135deg, #ff9800, #ffc107);
+        }
+
+        .grade.poor {
+            background: linear-gradient(135deg, #f44336, #e91e63);
+        }
+
+        .retry-btn {
+            margin-top: 30px;
+            padding: 15px 40px;
+            font-size: 1.1em;
+            background: transparent;
+            color: #ffe66d;
+            border: 2px solid #ffe66d;
+            border-radius: 30px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .retry-btn:hover {
+            background: #ffe66d;
+            color: #1a1a2e;
+        }
+
+        .progress-bar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 0%;
+            height: 5px;
+            background: linear-gradient(90deg, #e94560, #ffe66d);
+            z-index: 1000;
+            transition: width 0.3s;
+        }
+
+        .answered-count {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: linear-gradient(135deg, #e94560, #ff6b6b);
+            padding: 15px 25px;
+            border-radius: 30px;
+            font-weight: bold;
+            box-shadow: 0 5px 20px rgba(233, 69, 96, 0.4);
+            z-index: 100;
+        }
+
+        @media (max-width: 600px) {
+            .header h1 {
+                font-size: 1.8em;
+            }
+            .doubt-text {
+                font-size: 1.3em;
+            }
+            .stats {
+                gap: 20px;
+            }
+            .stat-number {
+                font-size: 2em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="progress-bar" id="progressBar"></div>
+    <div class="answered-count" id="answeredCount">0/45 Terjawab</div>
+
+    <div class="container">
+        <div class="header">
+            <h1>📚 KUIS PJOK</h1>
+            <p class="doubt-text">"Ga yakin bakal masuk pas ujian"</p>
+        </div>
+
+        <div class="kisi-kisi">
+            <h3>📋 Kisi-Kisi Materi:</h3>
+            <ul>
+                <li>🏸 Bulutangkis</li>
+                <li>🏃 Lari Jarak Pendek, Menengah, Jauh</li>
+                <li>⚽ Sepak Bola</li>
+            </ul>
+        </div>
+
+        <form id="quizForm">
+            <div id="questionsContainer"></div>
+            <button type="button" class="submit-btn" id="submitBtn" onclick="submitQuiz()">📝 Kumpulkan Jawaban</button>
+        </form>
+
+        <div class="result-card" id="resultCard">
+            <h2 class="result-title">📊 Hasil Kuis Kamu</h2>
+            <div class="score-circle">
+                <span class="score-number" id="scoreNumber">0</span>
+                <span class="score-label">NILAI</span>
+            </div>
+            <div class="stats">
+                <div class="stat-item">
+                    <div class="stat-number correct" id="correctCount">0</div>
+                    <div class="stat-label">✅ Benar</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number wrong" id="wrongCount">0</div>
+                    <div class="stat-label">❌ Salah</div>
+                </div>
+            </div>
+            <div class="grade" id="gradeText">-</div>
+            <br>
+            <button class="retry-btn" onclick="location.reload()">🔄 Ulangi Kuis</button>
+        </div>
+    </div>
+
+    <script>
+        const questions = [
+            // BULUTANGKIS (15 soal)
+            {
+                category: "Bulutangkis",
+                question: "Permainan bulutangkis berasal dari negara...",
+                options: ["Indonesia", "India", "China", "Inggris"],
+                answer: 1,
+                explanation: "Bulutangkis berasal dari India dengan nama Poona. Kemudian dibawa ke Inggris dan dikembangkan di Badminton House milik Duke of Beaufort, sehingga dinamakan Badminton."
+            },
+            {
+                category: "Bulutangkis",
+                question: "Organisasi bulutangkis dunia adalah...",
+                options: ["FIFA", "FIBA", "BWF", "FIVB"],
+                answer: 2,
+                explanation: "BWF (Badminton World Federation) adalah organisasi bulutangkis dunia yang bermarkas di Kuala Lumpur, Malaysia. Didirikan tahun 1934 dengan nama IBF."
+            },
+            {
+                category: "Bulutangkis",
+                question: "Ukuran panjang lapangan bulutangkis adalah...",
+                options: ["12,80 meter", "13,40 meter", "14,00 meter", "13,00 meter"],
+                answer: 1,
+                explanation: "Ukuran lapangan bulutangkis adalah panjang 13,40 meter dan lebar 6,10 meter untuk pertandingan ganda, sedangkan untuk tunggal lebarnya 5,18 meter."
+            },
+            {
+                category: "Bulutangkis",
+                question: "Tinggi net bulutangkis di bagian tengah adalah...",
+                options: ["1,52 meter", "1,55 meter", "1,524 meter", "1,50 meter"],
+                answer: 2,
+                explanation: "Tinggi net bulutangkis di bagian tengah adalah 1,524 meter (5 feet), sedangkan di bagian tepi (tiang) adalah 1,55 meter."
+            },
+            {
+                category: "Bulutangkis",
+                question: "Pukulan pertama untuk memulai permainan bulutangkis disebut...",
+                options: ["Smash", "Lob", "Service", "Drive"],
+                answer: 2,
+                explanation: "Service adalah pukulan pertama untuk memulai permainan bulutangkis. Service harus dilakukan dari bawah pinggang dan kepala raket harus mengarah ke bawah."
+            },
+            {
+                category: "Bulutangkis",
+                question: "Pukulan keras dan tajam yang mengarah ke bawah disebut...",
+                options: ["Lob", "Drop shot", "Smash", "Drive"],
+                answer: 2,
+                explanation: "Smash adalah pukulan overhead yang keras dan tajam mengarah ke bawah ke area lawan. Pukulan ini merupakan pukulan menyerang yang paling mematikan."
+            },
+            {
+                category: "Bulutangkis",
+                question: "Induk organisasi bulutangkis Indonesia adalah...",
+                options: ["PSSI", "PBSI", "PERBASI", "PBVSI"],
+                answer: 1,
+                explanation: "PBSI (Persatuan Bulutangkis Seluruh Indonesia) adalah induk organisasi bulutangkis di Indonesia yang didirikan pada 5 Mei 1951 di Bandung."
+            },
+            {
+                category: "Bulutangkis",
+                question: "Dalam permainan ganda, lebar lapangan bulutangkis adalah...",
+                options: ["5,18 meter", "6,10 meter", "6,00 meter", "5,50 meter"],
+                answer: 1,
+                explanation: "Lebar lapangan bulutangkis untuk permainan ganda adalah 6,10 meter, sedangkan untuk permainan tunggal adalah 5,18 meter."
+            },
+            {
+                category: "Bulutangkis",
+                question: "Pukulan yang dilakukan dengan ayunan raket dari bawah ke atas dan shuttlecock melambung tinggi ke belakang disebut...",
+                options: ["Smash", "Lob", "Dropshot", "Netting"],
+                answer: 1,
+                explanation: "Lob adalah pukulan yang menerbangkan shuttlecock tinggi dan jauh ke belakang lapangan lawan. Pukulan ini digunakan untuk pertahanan atau mengatur posisi."
+            },
+            {
+                category: "Bulutangkis",
+                question: "Berapa skor maksimal dalam satu game bulutangkis?",
+                options: ["21 poin", "25 poin", "30 poin", "15 poin"],
+                answer: 2,
+                explanation: "Dalam aturan BWF, satu game dimainkan hingga 21 poin. Jika skor 20-20, permainan berlanjut hingga selisih 2 poin atau maksimal 30 poin."
+            },
+            {
+                category: "Bulutangkis",
+                question: "Pukulan tipis yang jatuh dekat net di daerah lawan disebut...",
+                options: ["Lob", "Smash", "Dropshot", "Drive"],
+                answer: 2,
+                explanation: "Dropshot adalah pukulan yang dilakukan dengan tipis sehingga shuttlecock jatuh dekat net di area lawan. Pukulan ini membutuhkan kontrol yang baik."
+            },
+            {
+                category: "Bulutangkis",
+                question: "Jumlah bulu pada shuttlecock adalah...",
+                options: ["14 helai", "16 helai", "18 helai", "20 helai"],
+                answer: 1,
+                explanation: "Shuttlecock standar memiliki 16 helai bulu angsa atau bebek yang ditancapkan pada gabus. Berat shuttlecock adalah 4,74-5,50 gram."
+            },
+            {
+                category: "Bulutangkis",
+                question: "Teknik memegang raket seperti berjabat tangan disebut...",
+                options: ["Backhand grip", "Forehand grip", "American grip", "Continental grip"],
+                answer: 1,
+                explanation: "Forehand grip atau pegangan seperti berjabat tangan adalah teknik dasar memegang raket. Ibu jari dan telunjuk membentuk huruf V di bagian atas pegangan."
+            },
+            {
+                category: "Bulutangkis",
+                question: "Turnamen beregu putra bulutangkis tingkat dunia adalah...",
+                options: ["Uber Cup", "Thomas Cup", "Sudirman Cup", "All England"],
+                answer: 1,
+                explanation: "Thomas Cup adalah kejuaraan beregu putra bulutangkis tingkat dunia. Dinamakan dari Sir George Alan Thomas, mantan presiden IBF."
+            },
+            {
+                category: "Bulutangkis",
+                question: "Posisi siap menerima shuttlecock dalam bulutangkis disebut...",
+                options: ["Ready position", "Stance position", "Service position", "Attack position"],
+                answer: 0,
+                explanation: "Ready position adalah sikap siap untuk menerima shuttlecock dengan kaki selebar bahu, lutut sedikit ditekuk, dan raket di depan dada."
+            },
+
+            // LARI JARAK PENDEK, MENENGAH, JAUH (15 soal)
+            {
+                category: "Lari Jarak Pendek",
+                question: "Lari jarak pendek (sprint) meliputi jarak...",
+                options: ["100m, 200m, 400m", "800m, 1500m", "5000m, 10000m", "3000m, 5000m"],
+                answer: 0,
+                explanation: "Lari jarak pendek atau sprint meliputi nomor 100 meter, 200 meter, dan 400 meter. Karakteristiknya adalah kecepatan maksimal dari start hingga finish."
+            },
+            {
+                category: "Lari Jarak Pendek",
+                question: "Start yang digunakan dalam lari jarak pendek adalah...",
+                options: ["Standing start", "Crouch start", "Flying start", "Rolling start"],
+                answer: 1,
+                explanation: "Crouch start (start jongkok) digunakan dalam lari jarak pendek. Ada tiga jenis: bunch start, medium start, dan elongated start."
+            },
+            {
+                category: "Lari Jarak Pendek",
+                question: "Aba-aba dalam start lari jarak pendek secara berurutan adalah...",
+                options: ["Bersedia - Ya - Siap", "Siap - Bersedia - Ya", "Bersedia - Siap - Ya", "Ya - Siap - Bersedia"],
+                answer: 2,
+                explanation: "Aba-aba yang benar adalah: 'Bersedia' (pelari memasuki start block), 'Siap' (pelari mengangkat pinggul), dan 'Ya'/bunyi pistol (pelari berlari)."
+            },
+            {
+                category: "Lari Jarak Pendek",
+                question: "Alat yang digunakan untuk mendeteksi kesalahan start disebut...",
+                options: ["Stopwatch", "Starting block", "False start detector", "Finish camera"],
+                answer: 2,
+                explanation: "False start detector adalah alat elektronik yang mendeteksi gerakan pelari sebelum waktu reaksi minimum (0,1 detik) setelah bunyi pistol."
+            },
+            {
+                category: "Lari Jarak Pendek",
+                question: "Dalam lari 100 meter, pelari berlari di...",
+                options: ["Lintasan melengkung", "Lintasan lurus", "Lintasan zig-zag", "Lintasan oval"],
+                answer: 1,
+                explanation: "Lari 100 meter dilakukan di lintasan lurus. Sedangkan lari 200m dan 400m menggunakan lintasan yang melengkung (bagian dari trek oval)."
+            },
+            {
+                category: "Lari Jarak Menengah",
+                question: "Yang termasuk lari jarak menengah adalah...",
+                options: ["100m dan 200m", "800m dan 1500m", "5000m dan 10000m", "400m dan 800m"],
+                answer: 1,
+                explanation: "Lari jarak menengah meliputi nomor 800 meter dan 1500 meter. Membutuhkan kombinasi kecepatan dan daya tahan."
+            },
+            {
+                category: "Lari Jarak Menengah",
+                question: "Start yang digunakan dalam lari jarak menengah adalah...",
+                options: ["Crouch start", "Standing start", "Flying start", "Block start"],
+                answer: 1,
+                explanation: "Standing start (start berdiri) digunakan dalam lari jarak menengah dan jauh karena tidak memerlukan akselerasi maksimal seperti sprint."
+            },
+            {
+                category: "Lari Jarak Menengah",
+                question: "Dalam lari 800 meter, pelari harus tetap di lintasan masing-masing sampai...",
+                options: ["Finish", "100 meter pertama", "200 meter pertama", "Melewati tikungan pertama"],
+                answer: 0,
+                explanation: "Dalam lari 800 meter, pelari harus tetap di lintasan masing-masing selama 100 meter pertama (sampai garis breakline), setelah itu boleh pindah ke lintasan dalam."
+            },
+            {
+                category: "Lari Jarak Menengah",
+                question: "Teknik pernapasan yang tepat saat lari jarak menengah adalah...",
+                options: ["Menahan napas", "Bernapas cepat dan pendek", "Bernapas dalam dan teratur", "Bernapas melalui mulut saja"],
+                answer: 2,
+                explanation: "Pernapasan yang tepat adalah dalam dan teratur, menggunakan hidung dan mulut. Ini membantu suplai oksigen yang optimal ke otot."
+            },
+            {
+                category: "Lari Jarak Jauh",
+                question: "Yang termasuk lari jarak jauh adalah...",
+                options: ["800m dan 1500m", "3000m, 5000m, 10000m", "100m dan 200m", "400m dan 800m"],
+                answer: 1,
+                explanation: "Lari jarak jauh meliputi nomor 3000 meter, 5000 meter, dan 10000 meter. Marathon (42,195 km) juga termasuk kategori lari jarak jauh."
+            },
+            {
+                category: "Lari Jarak Jauh",
+                question: "Jarak lari marathon adalah...",
+                options: ["40 km", "42 km", "42,195 km", "45 km"],
+                answer: 2,
+                explanation: "Jarak marathon adalah 42,195 km (26 mil 385 yard). Jarak ini ditetapkan sejak Olimpiade London 1908."
+            },
+            {
+                category: "Lari Jarak Jauh",
+                question: "Fase melayang dalam lari disebut...",
+                options: ["Support phase", "Drive phase", "Flight phase", "Recovery phase"],
+                answer: 2,
+                explanation: "Flight phase (fase melayang) adalah saat kedua kaki tidak menyentuh tanah. Fase ini terjadi di antara tolakan satu kaki dan pendaratan kaki lainnya."
+            },
+            {
+                category: "Lari Jarak Pendek",
+                question: "Bagian kaki yang mendarat terlebih dahulu saat lari sprint adalah...",
+                options: ["Tumit", "Telapak kaki bagian tengah", "Ujung kaki/ball of foot", "Seluruh telapak kaki"],
+                answer: 2,
+                explanation: "Dalam lari sprint, yang mendarat terlebih dahulu adalah ujung kaki (ball of foot). Ini memungkinkan tolakan yang cepat dan efisien."
+            },
+            {
+                category: "Lari Jarak Jauh",
+                question: "Faktor utama yang menentukan keberhasilan lari jarak jauh adalah...",
+                options: ["Kecepatan maksimal", "Daya tahan kardiovaskular", "Kekuatan otot", "Kelincahan"],
+                answer: 1,
+                explanation: "Daya tahan kardiovaskular (jantung dan paru-paru) adalah faktor utama dalam lari jarak jauh karena pelari harus mempertahankan kecepatan dalam waktu lama."
+            },
+            {
+                category: "Lari Jarak Pendek",
+                question: "Posisi badan saat finish lari jarak pendek sebaiknya...",
+                options: ["Tegak lurus", "Condong ke depan", "Condong ke belakang", "Miring ke samping"],
+                answer: 1,
+                explanation: "Saat finish, badan dicondongkan ke depan untuk memasukkan dada lebih dulu melewati garis finish. Teknik ini disebut 'dipping' atau 'lunging'."
+            },
+
+            // SEPAK BOLA (15 soal)
+            {
+                category: "Sepak Bola",
+                question: "Jumlah pemain dalam satu tim sepak bola di lapangan adalah...",
+                options: ["10 orang", "11 orang", "12 orang", "9 orang"],
+                answer: 1,
+                explanation: "Satu tim sepak bola terdiri dari 11 pemain di lapangan, termasuk 1 penjaga gawang. Jumlah pemain cadangan maksimal biasanya 7 orang."
+            },
+            {
+                category: "Sepak Bola",
+                question: "Ukuran panjang lapangan sepak bola internasional adalah...",
+                options: ["90-100 meter", "100-110 meter", "110-120 meter", "80-90 meter"],
+                answer: 1,
+                explanation: "Lapangan sepak bola internasional memiliki panjang 100-110 meter dan lebar 64-75 meter sesuai standar FIFA."
+            },
+            {
+                category: "Sepak Bola",
+                question: "Organisasi sepak bola dunia adalah...",
+                options: ["UEFA", "FIFA", "AFC", "CONMEBOL"],
+                answer: 1,
+                explanation: "FIFA (Fédération Internationale de Football Association) adalah organisasi sepak bola dunia yang didirikan pada 21 Mei 1904 di Paris."
+            },
+            {
+                category: "Sepak Bola",
+                question: "Jarak titik penalti dari garis gawang adalah...",
+                options: ["10 meter", "11 meter", "12 meter", "9 meter"],
+                answer: 1,
+                explanation: "Titik penalti berada 11 meter (12 yard) dari tengah garis gawang. Dari titik ini dilakukan tendangan penalti."
+            },
+            {
+                category: "Sepak Bola",
+                question: "Lama waktu pertandingan sepak bola adalah...",
+                options: ["2 x 40 menit", "2 x 45 menit", "2 x 50 menit", "2 x 35 menit"],
+                answer: 1,
+                explanation: "Pertandingan sepak bola terdiri dari 2 babak @ 45 menit (total 90 menit), dengan istirahat 15 menit di antara babak."
+            },
+            {
+                category: "Sepak Bola",
+                question: "Tendangan sudut dilakukan ketika...",
+                options: ["Bola keluar melewati garis samping", "Bola keluar melewati garis gawang karena pemain bertahan", "Terjadi pelanggaran di kotak penalti", "Bola menyentuh tangan pemain"],
+                answer: 1,
+                explanation: "Tendangan sudut (corner kick) diberikan ketika bola meninggalkan lapangan melewati garis gawang dan terakhir disentuh oleh pemain bertahan."
+            },
+            {
+                category: "Sepak Bola",
+                question: "Induk organisasi sepak bola Indonesia adalah...",
+                options: ["PBSI", "PSSI", "PERBASI", "PBVSI"],
+                answer: 1,
+                explanation: "PSSI (Persatuan Sepak Bola Seluruh Indonesia) adalah induk organisasi sepak bola di Indonesia yang didirikan pada 19 April 1930 di Yogyakarta."
+            },
+            {
+                category: "Sepak Bola",
+                question: "Teknik menghentikan bola dengan dada disebut...",
+                options: ["Heading", "Trapping", "Chest control", "Dribbling"],
+                answer: 2,
+                explanation: "Chest control adalah teknik menghentikan/mengontrol bola menggunakan dada. Saat bola mengenai dada, dada sedikit ditarik ke belakang untuk meredam bola."
+            },
+            {
+                category: "Sepak Bola",
+                question: "Pelanggaran yang diganjar kartu merah langsung adalah...",
+                options: ["Handball biasa", "Tackling dari belakang berbahaya", "Protes ringan", "Offside"],
+                answer: 1,
+                explanation: "Kartu merah langsung diberikan untuk pelanggaran serius seperti tackling berbahaya dari belakang, kekerasan, kata-kata kasar, atau menyangkal gol dengan handball."
+            },
+            {
+                category: "Sepak Bola",
+                question: "Posisi offside terjadi ketika pemain penyerang...",
+                options: ["Berada di area kotak penalti", "Lebih dekat ke garis gawang lawan daripada bola dan pemain belakang kedua lawan", "Berada di luar lapangan", "Berada di area sendiri"],
+                answer: 1,
+                explanation: "Offside terjadi ketika pemain penyerang berada lebih dekat ke garis gawang lawan daripada bola dan pemain lawan kedua terakhir saat bola diumpan kepadanya."
+            },
+            {
+                category: "Sepak Bola",
+                question: "Teknik menggiring bola dalam sepak bola disebut...",
+                options: ["Passing", "Shooting", "Dribbling", "Heading"],
+                answer: 2,
+                explanation: "Dribbling adalah teknik membawa/menggiring bola dengan kaki sambil berlari. Teknik ini penting untuk melewati lawan dan menciptakan peluang."
+            },
+            {
+                category: "Sepak Bola",
+                question: "Radius lingkaran tengah lapangan sepak bola adalah...",
+                options: ["8,15 meter", "9,15 meter", "10,15 meter", "7,15 meter"],
+                answer: 1,
+                explanation: "Radius lingkaran tengah adalah 9,15 meter (10 yard). Lingkaran ini menandai jarak minimum pemain lawan saat kick-off."
+            },
+            {
+                category: "Sepak Bola",
+                question: "Teknik mengumpan bola pendek dengan kaki bagian dalam disebut...",
+                options: ["Long pass", "Through pass", "Short pass/push pass", "Chip pass"],
+                answer: 2,
+                explanation: "Short pass atau push pass adalah teknik mengumpan jarak pendek menggunakan kaki bagian dalam. Teknik ini memberikan akurasi tinggi."
+            },
+            {
+                category: "Sepak Bola",
+                question: "Lebar gawang sepak bola adalah...",
+                options: ["7 meter", "7,32 meter", "8 meter", "6,5 meter"],
+                answer: 1,
+                explanation: "Gawang sepak bola memiliki lebar 7,32 meter (8 yard) dan tinggi 2,44 meter (8 feet)."
+            },
+            {
+                category: "Sepak Bola",
+                question: "Throw-in dilakukan ketika...",
+                options: ["Bola keluar melewati garis gawang", "Bola keluar melewati garis samping", "Terjadi pelanggaran", "Gol tercipta"],
+                answer: 1,
+                explanation: "Throw-in (lemparan ke dalam) dilakukan ketika bola keluar lapangan melewati garis samping (touchline). Lemparan dilakukan oleh tim yang tidak terakhir menyentuh bola."
+            }
+        ];
+
+        let userAnswers = new Array(questions.length).fill(null);
+        let quizSubmitted = false;
+
+        function createQuestions() {
+            const container = document.getElementById('questionsContainer');
+            
+            questions.forEach((q, index) => {
+                const card = document.createElement('div');
+                card.className = 'question-card';
+                card.id = `question-${index}`;
+                
+                const optionsHTML = q.options.map((opt, optIndex) => `
+                    <div class="option" onclick="selectOption(${index}, ${optIndex})" id="option-${index}-${optIndex}">
+                        <span class="option-letter">${String.fromCharCode(65 + optIndex)}</span>
+                        <span>${opt}</span>
+                    </div>
+                `).join('');
+
+                card.innerHTML = `
+                    <div class="question-number">${index + 1}</div>
+                    <span class="question-category">${q.category}</span>
+                    <p class="question-text">${q.question}</p>
+                    <div class="options">
+                        ${optionsHTML}
+                    </div>
+                    <div class="explanation" id="explanation-${index}">
+                        <h4>💡 Pembahasan:</h4>
+                        <p><strong>Jawaban: ${String.fromCharCode(65 + q.answer)}. ${q.options[q.answer]}</strong></p>
+                        <p>${q.explanation}</p>
+                    </div>
+                `;
+                
+                container.appendChild(card);
+            });
+        }
+
+        function selectOption(questionIndex, optionIndex) {
+            if (quizSubmitted) return;
+
+            // Remove previous selection
+            for (let i = 0; i < 4; i++) {
+                document.getElementById(`option-${questionIndex}-${i}`).classList.remove('selected');
+            }
+
+            // Add new selection
+            document.getElementById(`option-${questionIndex}-${optionIndex}`).classList.add('selected');
+            userAnswers[questionIndex] = optionIndex;
+
+            updateProgress();
+        }
+
+        function updateProgress() {
+            const answered = userAnswers.filter(a => a !== null).length;
+            const percentage = (answered / questions.length) * 100;
+            
+            document.getElementById('progressBar').style.width = percentage + '%';
+            document.getElementById('answeredCount').textContent = `${answered}/${questions.length} Terjawab`;
+        }
+
+        function submitQuiz() {
+            const unanswered = userAnswers.filter(a => a === null).length;
+            
+            if (unanswered > 0) {
+                if (!confirm(`Masih ada ${unanswered} soal yang belum dijawab. Yakin ingin mengumpulkan?`)) {
+                    return;
+                }
+            }
+
+            quizSubmitted = true;
+            let correct = 0;
+
+            questions.forEach((q, index) => {
+                const userAnswer = userAnswers[index];
+                const isCorrect = userAnswer === q.answer;
+                
+                if (isCorrect) correct++;
+
+                // Show correct/wrong styling
+                for (let i = 0; i < 4; i++) {
+                    const option = document.getElementById(`option-${index}-${i}`);
+                    option.classList.remove('selected');
+                    
+                    if (i === q.answer) {
+                        option.classList.add('correct');
+                    } else if (i === userAnswer && !isCorrect) {
+                        option.classList.add('wrong');
+                    }
+                }
+
+                // Show explanation
+                document.getElementById(`explanation-${index}`).classList.add('show');
+            });
+
+            const wrong = questions.length - correct;
+            const score = Math.round((correct / questions.length) * 100);
+
+            // Display results
+            document.getElementById('scoreNumber').textContent = score;
+            document.getElementById('correctCount').textContent = correct;
+            document.getElementById('wrongCount').textContent = wrong;
+
+            let gradeText = '';
+            let gradeClass = '';
+
+            if (score >= 90) {
+                gradeText = '🏆 LUAR BIASA!';
+                gradeClass = 'excellent';
+            } else if (score >= 75) {
+                gradeText = '👍 BAGUS!';
+                gradeClass = 'good';
+            } else if (score >= 60) {
+                gradeText = '📚 PERLU BELAJAR LAGI';
+                gradeClass = 'average';
+            } else {
+                gradeText = '💪 SEMANGAT BELAJAR!';
+                gradeClass = 'poor';
+            }
+
+            const gradeElement = document.getElementById('gradeText');
+            gradeElement.textContent = gradeText;
+            gradeElement.className = 'grade ' + gradeClass;
+
+            document.getElementById('resultCard').classList.add('show');
+            document.getElementById('submitBtn').disabled = true;
+            document.getElementById('submitBtn').textContent = '✅ Sudah Dikumpulkan';
+
+            // Scroll to results
+            document.getElementById('resultCard').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        // Initialize
+        createQuestions();
+    </script>
+</body>
+</html>
