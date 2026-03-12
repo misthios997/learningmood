@@ -1,0 +1,547 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Latihan Soal PJOK</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:ital,wght@0,400;0,500;0,600;1,400&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0c0c0f;
+    --card: #13131a;
+    --card2: #1a1a24;
+    --border: #2a2a3a;
+    --accent: #e8ff47;
+    --accent2: #ff5757;
+    --accent3: #57d4ff;
+    --text: #ececf0;
+    --muted: #55556a;
+    --correct: #4ade80;
+    --wrong: #f87171;
+    --radius: 18px;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    min-height: 100vh;
+    display: flex; flex-direction: column; align-items: center;
+    overflow-x: hidden;
+  }
+  .bg-glow {
+    position: fixed; top: -20%; left: 50%; transform: translateX(-50%);
+    width: 600px; height: 600px; pointer-events: none; z-index: 0;
+    background: radial-gradient(circle, rgba(232,255,71,0.04) 0%, transparent 70%);
+  }
+
+  /* ---- HERO ---- */
+  #heroScreen {
+    width: 100%; max-width: 580px;
+    padding: 70px 24px 60px;
+    text-align: center;
+    position: relative; z-index: 2;
+  }
+  .hero-tag {
+    font-family: 'Space Mono', monospace;
+    font-size: 10px; letter-spacing: 3px; text-transform: uppercase;
+    color: var(--accent); border: 1px solid rgba(232,255,71,0.35);
+    padding: 5px 14px; border-radius: 20px;
+    display: inline-block; margin-bottom: 28px;
+  }
+  .hero-q {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(44px, 11vw, 80px);
+    line-height: 0.93;
+    color: var(--accent);
+    text-shadow: 3px 3px 0 #2e3300;
+    margin-bottom: 18px;
+  }
+  .hero-q em { color: var(--text); font-style: normal; }
+  .hero-byline {
+    font-family: 'Space Mono', monospace;
+    font-size: 12px; color: var(--muted);
+    margin-bottom: 36px;
+  }
+  .hero-pills { display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; margin-bottom: 36px; }
+  .pill {
+    font-family: 'Space Mono', monospace; font-size: 11px;
+    padding: 6px 14px; border-radius: 20px;
+    border: 1px solid var(--border); color: var(--muted);
+  }
+  .pill.p1 { border-color: rgba(232,255,71,0.4); color: var(--accent); }
+  .pill.p2 { border-color: rgba(87,212,255,0.4); color: var(--accent3); }
+  .pill.p3 { border-color: rgba(255,87,87,0.4); color: var(--accent2); }
+  .hero-info { font-size: 13px; color: var(--muted); margin-bottom: 36px; }
+  .btn-start {
+    font-family: 'Bebas Neue', sans-serif; font-size: 20px; letter-spacing: 4px;
+    padding: 18px 60px; background: var(--accent); color: #000;
+    border: none; border-radius: 14px; cursor: pointer; transition: all 0.18s;
+  }
+  .btn-start:hover { background: #d4eb30; transform: scale(1.03); }
+
+  /* ---- HEADER ---- */
+  .header {
+    width: 100%; max-width: 580px;
+    padding: 24px 20px 0;
+    position: relative; z-index: 2;
+    display: none;
+  }
+  .header-row { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; }
+  .logo { font-family: 'Bebas Neue', sans-serif; font-size: 20px; color: var(--accent); letter-spacing: 2px; }
+  .q-ctr { font-family: 'Space Mono', monospace; font-size: 12px; color: var(--muted); }
+  .q-ctr span { color: var(--text); font-weight: 700; }
+  .progress-track { width: 100%; height: 3px; background: var(--border); border-radius: 2px; overflow: hidden; }
+  .progress-fill { height: 100%; background: linear-gradient(90deg, var(--accent), #b8ff00); border-radius: 2px; transition: width 0.5s cubic-bezier(.4,0,.2,1); width: 0%; }
+
+  /* ---- QUIZ AREA ---- */
+  .quiz-area {
+    width: 100%; max-width: 580px;
+    padding: 0 20px;
+    position: relative; z-index: 2;
+    display: none; flex-direction: column;
+  }
+
+  .section-badge {
+    display: inline-flex; align-items: center; gap: 6px;
+    font-family: 'Space Mono', monospace; font-size: 10px;
+    letter-spacing: 1.5px; text-transform: uppercase;
+    padding: 5px 12px; border-radius: 20px; border: 1px solid;
+    margin: 20px 0 16px; align-self: flex-start;
+  }
+  .sb-bulu { color: var(--accent); border-color: rgba(232,255,71,0.35); background: rgba(232,255,71,0.05); }
+  .sb-lari { color: var(--accent3); border-color: rgba(87,212,255,0.35); background: rgba(87,212,255,0.05); }
+  .sb-bola { color: var(--accent2); border-color: rgba(255,87,87,0.35); background: rgba(255,87,87,0.05); }
+
+  .q-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 28px 26px 24px;
+    margin-bottom: 14px;
+    position: relative; overflow: hidden;
+    animation: slideUp 0.32s cubic-bezier(.4,0,.2,1);
+  }
+  .q-card::before {
+    content: ''; position: absolute; top: 0; left: 0; right: 0; height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.06), transparent);
+  }
+  @keyframes slideUp {
+    from { opacity: 0; transform: translateY(16px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  .q-num-lbl { font-family: 'Space Mono', monospace; font-size: 11px; letter-spacing: 2px; color: var(--muted); margin-bottom: 10px; }
+  .q-text { font-size: 16.5px; font-weight: 600; line-height: 1.6; }
+
+  /* OPTIONS */
+  .options { display: flex; flex-direction: column; gap: 9px; margin-bottom: 14px; }
+  .option {
+    display: flex; align-items: center; gap: 13px;
+    padding: 13px 17px; border: 1.5px solid var(--border);
+    border-radius: 12px; cursor: pointer; transition: all 0.17s;
+    background: var(--card2); color: var(--text);
+    text-align: left; font-family: 'DM Sans', sans-serif;
+    font-size: 14.5px; font-weight: 500; width: 100%;
+    position: relative; overflow: hidden;
+  }
+  .option::after {
+    content: ''; position: absolute; inset: 0;
+    background: var(--accent); opacity: 0; transition: opacity 0.17s;
+    pointer-events: none;
+  }
+  .option:hover:not(:disabled)::after { opacity: 0.04; }
+  .option:hover:not(:disabled) { border-color: rgba(232,255,71,0.5); transform: translateX(4px); }
+  .option:active:not(:disabled) { transform: scale(0.99); }
+  .option:disabled { cursor: default; }
+  .option:disabled:hover { transform: none; border-color: var(--border); }
+  .option:disabled:hover::after { opacity: 0; }
+
+  .opt-ltr {
+    font-family: 'Bebas Neue', sans-serif; font-size: 15px; letter-spacing: 1px;
+    width: 29px; height: 29px; border-radius: 7px;
+    background: var(--border); display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0; transition: all 0.17s; color: var(--muted); position: relative; z-index: 1;
+  }
+  .opt-txt { position: relative; z-index: 1; }
+
+  .option.correct-ans { border-color: var(--correct) !important; background: rgba(74,222,128,0.07) !important; }
+  .option.correct-ans .opt-ltr { background: var(--correct); color: #000; }
+  .option.wrong-ans { border-color: var(--wrong) !important; background: rgba(248,113,113,0.07) !important; }
+  .option.wrong-ans .opt-ltr { background: var(--wrong); color: #000; }
+
+  /* RESULT BADGE */
+  .result-badge {
+    display: none; align-items: center; gap: 8px;
+    font-family: 'Space Mono', monospace; font-size: 12px; font-weight: 700; letter-spacing: 1px;
+    padding: 9px 14px; border-radius: 9px; margin-bottom: 12px;
+    animation: fadeIn 0.28s ease;
+  }
+  .result-badge.show { display: flex; }
+  .result-badge.ok { background: rgba(74,222,128,0.1); color: var(--correct); border: 1px solid rgba(74,222,128,0.3); }
+  .result-badge.no { background: rgba(248,113,113,0.1); color: var(--wrong); border: 1px solid rgba(248,113,113,0.3); }
+
+  /* EXPLANATION */
+  .explanation {
+    background: #0e0e18; border: 1px solid var(--border);
+    border-left: 3px solid var(--accent3);
+    border-radius: 0 10px 10px 0;
+    padding: 14px 17px; font-size: 13.5px;
+    color: #9595b5; line-height: 1.65;
+    margin-bottom: 14px; display: none; animation: fadeIn 0.3s ease;
+  }
+  .explanation.show { display: block; }
+  .explanation strong { color: var(--accent3); }
+  .exp-label {
+    font-family: 'Space Mono', monospace; font-size: 10px;
+    letter-spacing: 2px; text-transform: uppercase;
+    color: var(--accent3); margin-bottom: 7px;
+  }
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(-5px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  /* NAV */
+  .nav-row { display: flex; gap: 10px; margin-bottom: 20px; }
+  .btn-nav {
+    font-family: 'Bebas Neue', sans-serif; font-size: 16px; letter-spacing: 2px;
+    padding: 14px 20px; border-radius: 12px; border: none; cursor: pointer; transition: all 0.17s;
+  }
+  .btn-next { background: var(--accent); color: #000; flex: 1; }
+  .btn-next:hover:not(:disabled) { background: #d4eb30; }
+  .btn-next:disabled { background: var(--border); color: var(--muted); cursor: not-allowed; }
+  .btn-prev {
+    background: var(--card2); border: 1.5px solid var(--border);
+    color: var(--muted); padding: 14px 18px;
+  }
+  .btn-prev:hover:not(:disabled) { border-color: var(--text); color: var(--text); }
+  .btn-prev:disabled { opacity: 0.3; cursor: not-allowed; }
+
+  /* DOT NAV */
+  .dot-nav {
+    display: none; flex-wrap: wrap; gap: 5px;
+    justify-content: center; max-width: 580px;
+    padding: 4px 20px 24px; position: relative; z-index: 2;
+  }
+  .dot {
+    width: 8px; height: 8px; border-radius: 50%;
+    background: var(--border); cursor: pointer; transition: all 0.2s;
+  }
+  .dot.cur { background: var(--accent); transform: scale(1.45); }
+  .dot.ac { background: var(--correct); }
+  .dot.aw { background: var(--wrong); }
+
+  /* ---- RESULT SCREEN ---- */
+  #resultScreen {
+    display: none; width: 100%; max-width: 580px;
+    padding: 30px 20px 60px; position: relative; z-index: 2;
+    animation: slideUp 0.4s ease;
+  }
+  #resultScreen.show { display: block; }
+  .res-card {
+    background: var(--card); border: 1px solid var(--border);
+    border-radius: var(--radius); padding: 44px 32px; text-align: center;
+  }
+  .res-emoji { font-size: 64px; margin-bottom: 10px; }
+  .res-title {
+    font-family: 'Bebas Neue', sans-serif; font-size: 14px;
+    letter-spacing: 5px; color: var(--muted); margin-bottom: 4px;
+  }
+  .res-nilai {
+    font-family: 'Bebas Neue', sans-serif; font-size: 100px; line-height: 1;
+    color: var(--accent); text-shadow: 0 0 60px rgba(232,255,71,0.25);
+  }
+  .res-dari { font-family: 'Space Mono', monospace; font-size: 12px; color: var(--muted); margin-bottom: 28px; }
+  .stats-row { display: flex; justify-content: center; gap: 14px; margin-bottom: 26px; flex-wrap: wrap; }
+  .stat-box {
+    background: var(--card2); border: 1px solid var(--border);
+    border-radius: 12px; padding: 16px 26px; text-align: center;
+  }
+  .stat-v { font-family: 'Bebas Neue', sans-serif; font-size: 40px; line-height: 1; }
+  .stat-v.c { color: var(--correct); }
+  .stat-v.w { color: var(--wrong); }
+  .stat-l { font-family: 'Space Mono', monospace; font-size: 10px; color: var(--muted); letter-spacing: 1.5px; text-transform: uppercase; margin-top: 4px; }
+  .res-msg { font-size: 14px; color: var(--muted); font-style: italic; margin-bottom: 28px; line-height: 1.6; }
+  .btn-reset {
+    font-family: 'Bebas Neue', sans-serif; font-size: 18px; letter-spacing: 3px;
+    padding: 16px 48px; background: var(--accent); color: #000;
+    border: none; border-radius: 12px; cursor: pointer; transition: all 0.17s;
+  }
+  .btn-reset:hover { background: #d4eb30; transform: scale(1.02); }
+</style>
+</head>
+<body>
+<div class="bg-glow"></div>
+
+<!-- HERO -->
+<div id="heroScreen">
+  <div class="hero-tag">📚 Latihan Ujian PJOK · 45 Soal</div>
+  <div class="hero-q">"Ga yakin<br>bakal <em>masuk</em><br>pas ujian"</div>
+  <div class="hero-byline">— ya latihan dulu dong bestie 💀</div>
+  <div class="hero-pills">
+    <span class="pill p1">🏸 Bulutangkis</span>
+    <span class="pill p2">🏃 Lari</span>
+    <span class="pill p3">⚽ Sepak Bola</span>
+  </div>
+  <div class="hero-info">45 soal pilihan ganda · penjelasan langsung muncul setelah jawab</div>
+  <button class="btn-start" onclick="startQuiz()">MULAI SEKARANG</button>
+</div>
+
+<!-- HEADER -->
+<div class="header" id="quizHeader">
+  <div class="header-row">
+    <div class="logo">PJOK</div>
+    <div class="q-ctr">Soal <span id="ctrNum">1</span> / 45</div>
+  </div>
+  <div class="progress-track"><div class="progress-fill" id="progFill"></div></div>
+</div>
+
+<!-- QUIZ -->
+<div class="quiz-area" id="quizArea">
+  <div id="secBadge" class="section-badge"></div>
+  <div class="q-card" id="qCard">
+    <div class="q-num-lbl" id="qNumLbl">SOAL 01</div>
+    <div class="q-text" id="qText"></div>
+  </div>
+  <div class="options" id="optsWrap"></div>
+  <div class="result-badge" id="resBadge"></div>
+  <div class="explanation" id="expEl"></div>
+  <div class="nav-row">
+    <button class="btn-nav btn-prev" id="btnPrev" onclick="go(cur-1)">←</button>
+    <button class="btn-nav btn-next" id="btnNext" onclick="nextOrEnd()">LANJUT →</button>
+  </div>
+</div>
+
+<!-- DOTS -->
+<div class="dot-nav" id="dotNav"></div>
+
+<!-- RESULT -->
+<div id="resultScreen">
+  <div class="res-card">
+    <div class="res-emoji" id="resEmoji">🏆</div>
+    <div class="res-title">NILAI KAMU</div>
+    <div class="res-nilai" id="resNilai">0</div>
+    <div class="res-dari">dari 100</div>
+    <div class="stats-row">
+      <div class="stat-box"><div class="stat-v c" id="resB">0</div><div class="stat-l">✅ Benar</div></div>
+      <div class="stat-box"><div class="stat-v w" id="resS">0</div><div class="stat-l">❌ Salah</div></div>
+      <div class="stat-box"><div class="stat-v" style="color:var(--muted)">45</div><div class="stat-l">📝 Total</div></div>
+    </div>
+    <div class="res-msg" id="resMsg"></div>
+    <button class="btn-reset" onclick="resetAll()">🔄 ULANGI LAGI</button>
+  </div>
+</div>
+
+<script>
+const QS = [
+  {s:'bulu',q:'Lapangan bulutangkis tunggal memiliki lebar berapa meter?',o:['5,18 meter','6,10 meter','4,00 meter','7,00 meter'],a:0,e:'Lebar lapangan <strong>tunggal</strong> adalah <strong>5,18 meter</strong>. Untuk ganda lebarnya 6,10 meter.'},
+  {s:'bulu',q:'Berat standar shuttlecock (kok) bulutangkis menurut BWF adalah...',o:['3,70 – 4,50 gram','4,74 – 5,50 gram','5,00 – 6,00 gram','2,50 – 3,00 gram'],a:1,e:'Berat kok standar adalah <strong>4,74 – 5,50 gram</strong>. Terbuat dari bulu angsa asli atau sintetis.'},
+  {s:'bulu',q:'Sistem penilaian bulutangkis modern yang digunakan BWF adalah...',o:['Tradisional 15 poin','Rally point 21 poin','Klasik 11 poin','Open 25 poin'],a:1,e:'BWF menggunakan <strong>rally point 21 poin</strong> sejak 2006. Setiap rally menghasilkan poin, best of 3 set.'},
+  {s:'bulu',q:'Tinggi net di bagian tengah lapangan bulutangkis adalah...',o:['1,55 meter','1,524 meter','1,50 meter','1,60 meter'],a:1,e:'Tinggi net di tengah <strong>1,524 meter</strong>. Di tiang/pinggir lapangan sedikit lebih tinggi yaitu 1,55 meter.'},
+  {s:'bulu',q:'Pukulan yang menghasilkan lintasan bola tinggi ke belakang lapangan lawan disebut...',o:['Smash','Drop shot','Lob / Clear','Drive'],a:2,e:'<strong>Lob (Clear)</strong> adalah pukulan tinggi ke belakang lapangan lawan, memaksa lawan mundur ke belakang.'},
+  {s:'bulu',q:'Smash paling keras dalam bulutangkis biasanya dihasilkan dari pukulan...',o:['Backhand bawah','Forehand overhead','Servis pendek','Net drop'],a:1,e:'<strong>Forehand overhead</strong> menghasilkan smash terkeras karena memanfaatkan seluruh kekuatan ayunan lengan dan rotasi tubuh.'},
+  {s:'bulu',q:'Servis pendek dalam bulutangkis harus melewati net dan jatuh di...',o:['Garis belakang lapangan','Dalam atau tepat pada garis servis depan lawan','Sembarang tempat di lapangan lawan','Garis samping lapangan'],a:1,e:'Kok harus jatuh <strong>di dalam atau tepat pada garis servis depan</strong> area lawan. Jika terlalu jauh maka fault.'},
+  {s:'bulu',q:'Badan dunia yang menaungi olahraga bulutangkis internasional adalah...',o:['FIFA','FIBA','BWF (Badminton World Federation)','IAAF'],a:2,e:'<strong>BWF (Badminton World Federation)</strong> adalah federasi internasional bulutangkis, berpusat di Kuala Lumpur.'},
+  {s:'bulu',q:'Ketika terjadi skor 20-20 (deuce), permainan dilanjutkan hingga...',o:['Unggul 1 poin','Unggul 2 poin atau salah satu mencapai 30','Unggul 3 poin','Tepat 25 poin'],a:1,e:'Jika 20-20, pemenang adalah yang pertama <strong>unggul 2 poin</strong> atau pertama mencapai <strong>30 poin</strong>.'},
+  {s:'bulu',q:'Cara memegang raket bulutangkis yang paling umum dan serbaguna adalah...',o:['Hammer grip','American grip','Forehand grip (shake hand)','Backhand grip penuh'],a:2,e:'<strong>Forehand grip (shake hand)</strong> adalah pegangan paling umum — seperti berjabat tangan — memungkinkan berbagai pukulan.'},
+  {s:'bulu',q:'Fungsi utama footwork (gerakan kaki) yang baik dalam bulutangkis adalah...',o:['Agar terlihat profesional','Menjaga keseimbangan dan mempercepat gerak ke segala arah','Hanya berguna untuk nomor ganda','Agar sepatu lebih awet'],a:1,e:'Footwork yang baik <strong>menjaga keseimbangan dan memungkinkan pergerakan cepat ke segala arah</strong> untuk menjangkau kok tepat waktu.'},
+  {s:'bulu',q:'Kejuaraan bulutangkis beregu putra paling bergengsi di dunia adalah...',o:['Piala Thomas','Piala Uber','Piala Sudirman','Piala Asia'],a:0,e:'<strong>Piala Thomas</strong> untuk beregu putra. Piala Uber untuk putri. Piala Sudirman untuk beregu campuran.'},
+  {s:'bulu',q:'Drop shot dalam bulutangkis bertujuan untuk...',o:['Memukul kok sekeras mungkin','Menjatuhkan kok sedekat mungkin di sisi net area lawan','Mengirim kok ke pojok belakang lapangan','Melakukan servis panjang'],a:1,e:'<strong>Drop shot</strong> menjatuhkan kok sedekat dan serendah mungkin di net lawan, memaksa lawan maju ke depan.'},
+  {s:'bulu',q:'Pada ganda, jika skor server adalah bilangan genap, maka servis dilakukan dari...',o:['Kotak servis kiri','Kotak servis kanan','Bebas dari mana saja','Belakang garis akhir'],a:1,e:'Skor <strong>genap → servis dari kotak kanan</strong>. Skor ganjil → servis dari kotak kiri. Berlaku untuk server.'},
+  {s:'bulu',q:'Istirahat dalam satu set pertandingan bulutangkis diberikan saat skor mencapai...',o:['Skor 10','Skor 11','Skor 15','Skor 18'],a:1,e:'Istirahat 60 detik diberikan saat skor mencapai <strong>11 poin</strong> dalam satu set. Antar set mendapat 120 detik.'},
+
+  {s:'lari',q:'Nomor lari jarak pendek (sprint) yang diperlombakan di Olimpiade adalah...',o:['100 m, 200 m, 400 m','50 m, 100 m, 200 m','100 m, 300 m, 500 m','200 m, 400 m, 800 m'],a:0,e:'Nomor sprint Olimpiade: <strong>100 m, 200 m, dan 400 m</strong>. Ketiganya mengandalkan kecepatan eksplosif.'},
+  {s:'lari',q:'Jenis start yang digunakan pada lari jarak pendek 100 meter adalah...',o:['Start berdiri','Start melayang','Start jongkok (crouch start)','Start duduk'],a:2,e:'<strong>Start jongkok (crouch start)</strong> digunakan pada sprint untuk memaksimalkan eksplosivitas dan akselerasi awal.'},
+  {s:'lari',q:'Lari jarak menengah mencakup nomor...',o:['100 m dan 200 m','800 m dan 1500 m','5000 m dan 10000 m','Marathon dan half-marathon'],a:1,e:'<strong>800 m dan 1500 m</strong> adalah nomor lari jarak menengah — butuh kombinasi kecepatan dan daya tahan.'},
+  {s:'lari',q:'Urutan aba-aba start yang benar dalam lari jarak pendek adalah...',o:['Mulai – Siap – Bersedia','Bersedia – Siap – Ya/Pistol','Siap – Bersedia – Mulai','Ya – Siap – Bersedia'],a:1,e:'Urutan benar: <strong>"Bersedia" → "Siap" → "Ya" (bunyi pistol)</strong>. Saat "Siap", pelari mengangkat pinggul.'},
+  {s:'lari',q:'Teknik pernapasan yang tepat saat lari jarak jauh adalah...',o:['Bernapas melalui hidung saja','Bernapas melalui mulut saja','Berirama kombinasi hidung dan mulut','Menahan napas sepanjang lari'],a:2,e:'Bernapas <strong>berirama dengan kombinasi hidung dan mulut</strong> paling efisien untuk mensuplai oksigen ke otot saat lari jauh.'},
+  {s:'lari',q:'Jarak tempuh lari maraton yang telah distandarisasi secara internasional adalah...',o:['21,097 km','42,195 km','30,000 km','50,000 km'],a:1,e:'Maraton berjarak <strong>42,195 km</strong>, distandarisasi sejak Olimpiade London 1908 dari Windsor Castle ke stadion.'},
+  {s:'lari',q:'Gerakan lengan yang benar saat lari sprint adalah...',o:['Lurus ke bawah tanpa mengayun','Diayun ke depan-belakang sejajar garis lari, siku ±90°','Diayun ke kiri dan kanan','Dilipat rapat di dada'],a:1,e:'Lengan diayun <strong>depan-belakang sejajar lari dengan siku sekitar 90°</strong> untuk keseimbangan dan tenaga dorongan.'},
+  {s:'lari',q:'Yang dimaksud "fase melayang" dalam teknik lari adalah...',o:['Berlari sambil melompat tinggi','Saat kedua kaki tidak menyentuh tanah secara bersamaan','Posisi saat start','Saat memasuki garis finish'],a:1,e:'<strong>Fase melayang</strong> adalah saat kedua kaki tidak menyentuh tanah sekaligus. Pada sprint, fase ini lebih lama.'},
+  {s:'lari',q:'Start melayang (flying start) biasanya digunakan dalam nomor...',o:['100 meter','Estafet (oleh pelari ke-2, ke-3, ke-4)','800 meter','Maraton'],a:1,e:'<strong>Start melayang</strong> dipakai pelari ke-2, ke-3, ke-4 dalam estafet karena mereka sudah bergerak saat terima tongkat.'},
+  {s:'lari',q:'Panjang zona perpindahan tongkat (exchange zone) dalam lari estafet adalah...',o:['10 meter','20 meter','30 meter','40 meter'],a:1,e:'Zona perpindahan tongkat panjangnya <strong>20 meter</strong>. Jika dilakukan di luar zona, tim akan didiskualifikasi.'},
+  {s:'lari',q:'Teknologi yang digunakan untuk menentukan pemenang sprint yang sangat berdekatan adalah...',o:['Pengamatan juri dengan mata','Photo finish camera','Stopwatch manual','Sensor di dada pelari'],a:1,e:'<strong>Photo finish camera</strong> menentukan pemenang dengan presisi seperseribu detik untuk hasil yang sangat dekat.'},
+  {s:'lari',q:'Penyebab utama "side stitch" (nyeri di sisi perut) saat berlari adalah...',o:['Kekurangan minum air','Kejang pada diafragma akibat pernapasan tidak teratur','Cedera otot paha','Kekurangan protein sebelum lari'],a:1,e:'<strong>Kejang otot diafragma</strong> akibat pernapasan tidak teratur atau kurang pemanasan adalah penyebab utama side stitch.'},
+  {s:'lari',q:'Nomor lari jarak jauh yang diperlombakan di trek atletik (bukan jalan raya) adalah...',o:['1500 m dan 3000 m','5000 m dan 10000 m','2000 m dan 4000 m','800 m dan 1500 m'],a:1,e:'Nomor lari jauh di trek: <strong>5000 m dan 10000 m</strong>. Maraton dan half-marathon di jalan raya.'},
+  {s:'lari',q:'Kecepatan lari ditentukan oleh kombinasi antara...',o:['Berat badan dan tinggi badan','Frekuensi langkah dan panjang langkah','Jenis sepatu dan lintasan','Usia dan pola makan'],a:1,e:'Kecepatan = <strong>frekuensi langkah × panjang langkah</strong>. Pelari elite mengoptimalkan keduanya untuk kecepatan maksimum.'},
+  {s:'lari',q:'Posisi tubuh yang benar saat berlari jarak jauh (marathon) adalah...',o:['Tegak lurus sempurna seperti berjalan','Sedikit condong ke depan, rileks, pandangan lurus ke depan','Sangat condong ke depan seperti sprint','Badan condong ke belakang'],a:1,e:'Posisi maraton: <strong>sedikit condong ke depan, rileks, pandangan lurus ke depan</strong> — efisienkan energi untuk jarak jauh.'},
+
+  {s:'bola',q:'Ukuran resmi lapangan sepak bola menurut FIFA untuk pertandingan internasional adalah...',o:['100 × 60 meter','100–110 m panjang × 64–75 m lebar','120 × 80 meter','90 × 50 meter'],a:1,e:'Ukuran FIFA: <strong>panjang 100–110 m, lebar 64–75 m</strong>. Rentang ini wajib dipenuhi untuk pertandingan internasional.'},
+  {s:'bola',q:'Durasi normal satu pertandingan sepak bola adalah...',o:['2 × 45 menit','2 × 40 menit','2 × 50 menit','4 × 25 menit'],a:0,e:'Pertandingan berlangsung <strong>2 × 45 menit</strong> (90 menit total) dengan istirahat 15 menit di antara babak.'},
+  {s:'bola',q:'Ukuran bola yang digunakan pemain dewasa dalam sepak bola resmi adalah...',o:['Ukuran 3','Ukuran 4','Ukuran 5','Ukuran 6'],a:2,e:'Bola standar dewasa adalah <strong>ukuran 5</strong>, keliling 68–70 cm, berat 410–450 gram.'},
+  {s:'bola',q:'Tendangan penalti dalam sepak bola dilakukan dari jarak...',o:['9 meter dari gawang','11 meter dari gawang','12 meter dari gawang','10 meter dari gawang'],a:1,e:'Titik penalti berjarak <strong>11 meter (12 yard)</strong> dari garis gawang. Hanya kiper yang boleh ada di garis gawang.'},
+  {s:'bola',q:'Wasit memberikan kartu merah kepada pemain apabila...',o:['Pemain melakukan pelanggaran ringan','Pemain menerima 2 kartu kuning atau melakukan pelanggaran berat','Pemain satu kali protes keputusan wasit','Pemain terlambat masuk lapangan'],a:1,e:'Kartu merah: <strong>2 kartu kuning dalam satu laga</strong>, atau pelanggaran sangat berat (tekel kasar, kekerasan fisik, dll).'},
+  {s:'bola',q:'Tendangan menggunakan punggung kaki dalam sepak bola menghasilkan...',o:['Operan pendek yang presisi','Tembakan/operan yang keras dan bertenaga','Bola lambung yang tinggi','Tendangan pisang melengkung'],a:1,e:'<strong>Punggung kaki</strong> menghasilkan tembakan keras dan bertenaga karena area perkenaan luas dengan kekuatan penuh.'},
+  {s:'bola',q:'Posisi offside dalam sepak bola terjadi saat pemain menerima bola dalam keadaan...',o:['Berada di luar garis lapangan','Lebih dekat ke gawang lawan dari bola DAN dari pemain bertahan terakhir (kecuali kiper)','Menghalangi pergerakan wasit','Berbicara keras di lapangan'],a:1,e:'Offside: pemain harus <strong>lebih dekat ke gawang dari bola DAN dari pemain bertahan terakhir (selain kiper)</strong> saat diumpan.'},
+  {s:'bola',q:'Formasi sepak bola 4-3-3 berarti susunan...',o:['4 striker, 3 gelandang, 3 bek','4 bek, 3 gelandang, 3 penyerang','4 kiper, 3 bek, 3 gelandang','4 gelandang, 3 bek, 3 penyerang'],a:1,e:'4-3-3: <strong>4 bek – 3 gelandang – 3 penyerang</strong>. Penjaga gawang tidak dihitung dalam formasi.'},
+  {s:'bola',q:'FIFA (Fédération Internationale de Football Association) didirikan pada tahun...',o:['1896','1904','1930','1950'],a:1,e:'FIFA didirikan <strong>21 Mei 1904</strong> di Paris, Prancis, oleh 7 negara pendiri. Kini memiliki 211 anggota.'},
+  {s:'bola',q:'Teknik menghentikan bola tinggi menggunakan dada (chest trap) bertujuan untuk...',o:['Langsung menyerang ke gawang','Mengontrol bola udara agar jatuh dekat dan terkendali di kaki','Mengoper ke penjaga gawang','Melakukan sundulan ke gawang'],a:1,e:'Chest trap: <strong>mengontrol bola dari udara agar jatuh terkendali dekat kaki</strong> sehingga mudah diteruskan.'},
+  {s:'bola',q:'Throw-in (lemparan ke dalam) dilakukan ketika...',o:['Bola keluar melewati garis gawang','Bola keluar melewati garis samping (touch line)','Pemain melakukan pelanggaran keras','Bola mengenai tiang gawang'],a:1,e:'Throw-in terjadi saat <strong>bola keluar melewati garis samping (touch line)</strong>. Dilakukan tim lawan dari yang terakhir menyentuh bola.'},
+  {s:'bola',q:'Bagian kepala yang benar digunakan untuk heading dalam sepak bola adalah...',o:['Samping kepala','Belakang kepala','Dahi (bagian depan kepala)','Ubun-ubun kepala'],a:2,e:'Heading yang benar menggunakan <strong>dahi</strong> — permukaan datar dan keras, arah bola akurat, risiko cedera minimal.'},
+  {s:'bola',q:'Jumlah pemain setiap tim yang ada di lapangan saat pertandingan berlangsung adalah...',o:['9 pemain','10 pemain','11 pemain','12 pemain'],a:2,e:'Setiap tim dimainkan oleh <strong>11 pemain</strong> termasuk kiper. Pertandingan tidak dapat lanjut jika kurang dari 7 pemain.'},
+  {s:'bola',q:'Corner kick (tendangan sudut) diberikan ketika...',o:['Bola keluar dari garis samping','Bola keluar melewati garis gawang dan terakhir disentuh pemain bertahan','Penyerang melakukan offside','Kiper memegang bola lebih dari 6 detik'],a:1,e:'Corner kick: <strong>bola keluar melewati garis gawang dan terakhir disentuh pemain bertahan</strong> dari tim yang menjaga gawang itu.'},
+  {s:'bola',q:'Teknik dribbling (menggiring bola) yang benar dilakukan dengan...',o:['Menendang bola keras lalu dikejar','Sentuhan kecil dan berulang agar bola tetap dekat kaki','Berlari kencang tanpa menyentuh bola','Mendorong bola dengan tangan'],a:1,e:'Dribbling yang baik: <strong>sentuhan kecil dan cepat agar bola tetap dekat kaki</strong>, memungkinkan perubahan arah yang lincah.'},
+];
+
+const SI = {
+  bulu: {label:'🏸 BULUTANGKIS', cls:'sb-bulu'},
+  lari: {label:'🏃 LARI JARAK PENDEK / MENENGAH / JAUH', cls:'sb-lari'},
+  bola: {label:'⚽ SEPAK BOLA', cls:'sb-bola'},
+};
+const LETS = ['A','B','C','D'];
+
+let cur = 0;
+let ans = new Array(45).fill(null);
+
+function startQuiz() {
+  document.getElementById('heroScreen').style.display = 'none';
+  document.getElementById('quizHeader').style.display = 'block';
+  const qa = document.getElementById('quizArea');
+  qa.style.display = 'flex';
+  const dn = document.getElementById('dotNav');
+  dn.style.display = 'flex';
+  buildDots();
+  render(0);
+}
+
+function buildDots() {
+  const dn = document.getElementById('dotNav');
+  dn.innerHTML = '';
+  for (let i = 0; i < 45; i++) {
+    const d = document.createElement('div');
+    d.className = 'dot'; d.id = 'dot'+i; d.title = 'Soal '+(i+1);
+    d.onclick = () => go(i);
+    dn.appendChild(d);
+  }
+}
+
+function render(idx) {
+  cur = idx;
+  const q = QS[idx];
+
+  // Section badge
+  const sb = document.getElementById('secBadge');
+  sb.className = 'section-badge ' + SI[q.s].cls;
+  sb.textContent = SI[q.s].label;
+
+  // Question card re-animate
+  const card = document.getElementById('qCard');
+  card.style.animation = 'none'; card.offsetHeight; card.style.animation = '';
+
+  document.getElementById('qNumLbl').textContent = 'SOAL ' + String(idx+1).padStart(2,'0');
+  document.getElementById('qText').textContent = q.q;
+
+  // Options
+  const wrap = document.getElementById('optsWrap');
+  wrap.innerHTML = '';
+  q.o.forEach((o, j) => {
+    const btn = document.createElement('button');
+    btn.className = 'option'; btn.id = 'op'+j;
+    btn.innerHTML = `<span class="opt-ltr">${LETS[j]}</span><span class="opt-txt">${o}</span>`;
+    btn.onclick = () => pick(j);
+    wrap.appendChild(btn);
+  });
+
+  // Clear feedback
+  const rb = document.getElementById('resBadge');
+  rb.className = 'result-badge'; rb.innerHTML = '';
+  const ex = document.getElementById('expEl');
+  ex.className = 'explanation'; ex.innerHTML = '';
+
+  if (ans[idx] !== null) applyState(idx);
+
+  updateProg(); updateDots(); updateNav();
+}
+
+function pick(j) {
+  if (ans[cur] !== null) return;
+  ans[cur] = j;
+  applyState(cur);
+  updateDots(); updateNav();
+  if (ans.every(a => a !== null)) setTimeout(showResult, 1200);
+}
+
+function applyState(idx) {
+  const q = QS[idx]; const chosen = ans[idx]; const ok = chosen === q.a;
+  for (let j = 0; j < 4; j++) {
+    const btn = document.getElementById('op'+j);
+    if (!btn) continue;
+    btn.disabled = true;
+    if (j === q.a) btn.classList.add('correct-ans');
+    if (j === chosen && !ok) btn.classList.add('wrong-ans');
+  }
+  const rb = document.getElementById('resBadge');
+  rb.className = 'result-badge show ' + (ok ? 'ok' : 'no');
+  rb.innerHTML = ok ? '✅ &nbsp;BENAR!' : '❌ &nbsp;SALAH — jawaban benar: <strong>' + LETS[q.a] + '</strong>';
+  const ex = document.getElementById('expEl');
+  ex.innerHTML = '<div class="exp-label">💡 PENJELASAN</div>' + q.e;
+  ex.classList.add('show');
+}
+
+function go(idx) { if (idx >= 0 && idx < 45) render(idx); }
+
+function nextOrEnd() {
+  if (cur < 44) render(cur + 1);
+  else showResult();
+}
+
+function updateProg() {
+  const done = ans.filter(a => a !== null).length;
+  document.getElementById('progFill').style.width = (done/45*100) + '%';
+  document.getElementById('ctrNum').textContent = cur + 1;
+}
+
+function updateDots() {
+  for (let i = 0; i < 45; i++) {
+    const d = document.getElementById('dot'+i);
+    d.className = 'dot';
+    if (i === cur) d.classList.add('cur');
+    else if (ans[i] !== null) d.classList.add(ans[i] === QS[i].a ? 'ac' : 'aw');
+  }
+}
+
+function updateNav() {
+  document.getElementById('btnPrev').disabled = cur === 0;
+  const nb = document.getElementById('btnNext');
+  if (cur === 44) { nb.textContent = ans.every(a=>a!==null) ? 'LIHAT HASIL 🏆' : 'SELESAI ✓'; }
+  else nb.textContent = 'LANJUT →';
+  nb.disabled = false;
+}
+
+function showResult() {
+  document.getElementById('quizHeader').style.display = 'none';
+  document.getElementById('quizArea').style.display = 'none';
+  document.getElementById('dotNav').style.display = 'none';
+  let benar = 0;
+  ans.forEach((a,i) => { if (a !== null && a === QS[i].a) benar++; });
+  const total = ans.filter(a=>a!==null).length;
+  const salah = total - benar;
+  const nilai = Math.round(benar/45*100);
+  document.getElementById('resNilai').textContent = nilai;
+  document.getElementById('resB').textContent = benar;
+  document.getElementById('resS').textContent = salah;
+  let emoji='💀', msg='"Wah, masih perlu belajar banyak nih. Coba lagi ya! 💪"';
+  if(nilai>=90){emoji='🏆';msg='"GILA! Udah siap ujian banget. Tinggal tidur yang cukup!"';}
+  else if(nilai>=75){emoji='🎯';msg='"Oke banget! Ada beberapa yang perlu diulang, tapi hampir siap."';}
+  else if(nilai>=60){emoji='😤';msg='"Lumayan! Review lagi bagian yang salah, hampir cukup tuh."';}
+  else if(nilai>=40){emoji='😬';msg='"Masih banyak yang perlu dipelajari bro. Jangan nyerah!"';}
+  document.getElementById('resEmoji').textContent = emoji;
+  document.getElementById('resMsg').textContent = msg;
+  const rs = document.getElementById('resultScreen');
+  rs.classList.add('show');
+  rs.scrollIntoView({behavior:'smooth', block:'start'});
+}
+
+function resetAll() {
+  ans = new Array(45).fill(null); cur = 0;
+  document.getElementById('resultScreen').classList.remove('show');
+  document.getElementById('quizHeader').style.display = 'block';
+  const qa = document.getElementById('quizArea');
+  qa.style.display = 'flex';
+  document.getElementById('dotNav').style.display = 'flex';
+  buildDots(); render(0);
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+</script>
+</body>
+</html>
