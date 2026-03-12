@@ -1,0 +1,1236 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FISIKA SAS GENAP — SMP K BETHEL</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400&family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,400&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0a0f;
+    --surface: #111118;
+    --card: #16161f;
+    --border: #2a2a3a;
+    --accent: #00e5ff;
+    --accent2: #7c3aed;
+    --accent3: #f59e0b;
+    --wrong: #ef4444;
+    --right: #22c55e;
+    --text: #e8e8f0;
+    --muted: #6b6b8a;
+    --glow: 0 0 30px rgba(0,229,255,0.15);
+  }
+
+  * { margin:0; padding:0; box-sizing:border-box; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* ===== ANIMATED BG ===== */
+  .bg-grid {
+    position: fixed; inset:0; z-index:0;
+    background-image:
+      linear-gradient(rgba(0,229,255,0.03) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(0,229,255,0.03) 1px, transparent 1px);
+    background-size: 50px 50px;
+    pointer-events: none;
+  }
+  .bg-orb {
+    position: fixed; border-radius: 50%; filter: blur(80px); pointer-events:none; z-index:0;
+  }
+  .orb1 { width:400px; height:400px; background:rgba(124,58,237,0.12); top:-100px; right:-100px; animation: orbFloat 8s ease-in-out infinite; }
+  .orb2 { width:300px; height:300px; background:rgba(0,229,255,0.08); bottom:10%; left:-80px; animation: orbFloat 10s ease-in-out infinite reverse; }
+  @keyframes orbFloat { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-30px)} }
+
+  /* ===== CUSTOM BG LAYER ===== */
+  #custom-bg-layer {
+    position: fixed; inset:0; z-index:0;
+    background-size: cover; background-position: center; background-repeat: no-repeat;
+    transition: opacity 0.6s ease; opacity: 0; pointer-events:none;
+  }
+  #custom-bg-layer.active { opacity: 1; }
+
+  /* ===== INTRO SCREEN ===== */
+  #intro {
+    position: fixed; inset:0; z-index:100;
+    display: flex; flex-direction:column; align-items:center; justify-content:center;
+    background: transparent;
+    padding: 2rem 2rem 3rem;
+    text-align:center;
+    transition: opacity 0.8s ease, visibility 0.8s;
+    overflow-y: auto;
+  }
+  #intro-bg-fill {
+    position: fixed; inset:0; z-index:98;
+    background: var(--bg); pointer-events:none;
+    transition: opacity 0.8s ease;
+  }
+  #intro.hidden { opacity:0; visibility:hidden; pointer-events:none; }
+
+  /* ===== BG UPLOAD UI ===== */
+  .bg-upload-section {
+    display:flex; flex-direction:column; align-items:center; gap:0.5rem;
+    margin-bottom:1.5rem;
+  }
+  .bg-upload-label {
+    font-family:'Space Mono',monospace; font-size:0.62rem; color:var(--muted);
+    letter-spacing:0.12em; text-transform:uppercase;
+  }
+  .bg-upload-row { display:flex; gap:0.6rem; flex-wrap:wrap; justify-content:center; align-items:center; }
+  .btn-upload-bg {
+    display:inline-flex; align-items:center; gap:0.4rem;
+    background: rgba(0,229,255,0.06); border: 1.5px dashed rgba(0,229,255,0.4);
+    color: var(--accent); font-family:'Syne',sans-serif; font-weight:700;
+    font-size:0.78rem; padding:0.55rem 1.1rem; border-radius:10px;
+    cursor:pointer; transition:all 0.2s;
+  }
+  .btn-upload-bg:hover { background:rgba(0,229,255,0.12); border-style:solid; }
+  .btn-default-bg {
+    display:inline-flex; align-items:center; gap:0.4rem;
+    background: rgba(255,255,255,0.03); border: 1.5px solid rgba(255,255,255,0.12);
+    color: var(--muted); font-family:'Syne',sans-serif; font-weight:700;
+    font-size:0.78rem; padding:0.55rem 1.1rem; border-radius:10px;
+    cursor:pointer; transition:all 0.2s;
+  }
+  .btn-default-bg:hover { background:rgba(255,255,255,0.07); color:var(--text); border-color:rgba(255,255,255,0.25); }
+  .bg-preview-row { display:flex; align-items:center; gap:0.75rem; }
+  .bg-preview { width:72px; height:44px; border-radius:8px; border:1px solid var(--border); object-fit:cover; display:none; }
+  .bg-preview.visible { display:block; }
+  .bg-filename { font-family:'Space Mono',monospace; font-size:0.6rem; color:var(--accent); max-width:180px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+
+  .intro-badge {
+    display:inline-block;
+    background: rgba(0,229,255,0.1);
+    border: 1px solid rgba(0,229,255,0.3);
+    color: var(--accent);
+    font-family: 'Space Mono', monospace;
+    font-size: 0.7rem;
+    letter-spacing: 0.15em;
+    padding: 0.4rem 1rem;
+    border-radius: 100px;
+    margin-bottom: 2rem;
+    animation: pulse 2s infinite;
+  }
+  @keyframes pulse { 0%,100%{box-shadow:0 0 0 0 rgba(0,229,255,0.3)} 50%{box-shadow:0 0 0 8px rgba(0,229,255,0)} }
+
+  .intro-title {
+    font-family: 'Syne', sans-serif;
+    font-size: clamp(2.5rem, 8vw, 5rem);
+    font-weight: 800;
+    line-height: 1;
+    margin-bottom: 0.5rem;
+    background: linear-gradient(135deg, #fff 0%, var(--accent) 60%, var(--accent2) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .intro-subtitle {
+    font-family: 'Space Mono', monospace;
+    font-size: clamp(0.7rem, 2vw, 0.9rem);
+    color: var(--muted);
+    letter-spacing: 0.1em;
+    margin-bottom: 2rem;
+  }
+
+  .intro-quote {
+    font-family: 'DM Sans', sans-serif;
+    font-style: italic;
+    font-size: clamp(1rem, 3vw, 1.4rem);
+    color: var(--accent3);
+    max-width: 500px;
+    line-height: 1.6;
+    margin-bottom: 0.5rem;
+    padding: 1.5rem 2rem;
+    border-left: 3px solid var(--accent3);
+    text-align:left;
+    background: rgba(245,158,11,0.05);
+    border-radius: 0 12px 12px 0;
+  }
+
+  .intro-meta {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.65rem;
+    color: var(--muted);
+    text-align: left;
+    max-width: 500px;
+    width:100%;
+    padding: 0 0 0 2rem;
+    margin-bottom: 3rem;
+  }
+  .intro-meta span { color: var(--text); }
+
+  .btn-start {
+    background: linear-gradient(135deg, var(--accent) 0%, var(--accent2) 100%);
+    border: none; cursor:pointer;
+    color: #000;
+    font-family: 'Syne', sans-serif;
+    font-weight: 700;
+    font-size: 1rem;
+    letter-spacing: 0.05em;
+    padding: 1rem 3rem;
+    border-radius: 100px;
+    transition: transform 0.2s, box-shadow 0.2s;
+    box-shadow: 0 0 40px rgba(0,229,255,0.2);
+  }
+  .btn-start:hover { transform:scale(1.05); box-shadow: 0 0 60px rgba(0,229,255,0.35); }
+
+  /* ===== QUIZ SCREEN ===== */
+  #quiz {
+    position: relative; z-index:1;
+    max-width: 820px;
+    margin: 0 auto;
+    padding: 2rem 1.5rem 7rem;
+    display:none;
+  }
+  #quiz.visible { display:block; }
+
+  /* ===== HEADER ===== */
+  .quiz-header {
+    display:flex; align-items:center; justify-content:space-between;
+    padding: 1rem 0 2rem;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 2.5rem;
+    flex-wrap:wrap; gap:1rem;
+  }
+  .quiz-logo {
+    font-family:'Syne',sans-serif; font-weight:800; font-size:1.2rem;
+    background: linear-gradient(135deg,#fff,var(--accent));
+    -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text;
+  }
+  .progress-wrap { flex:1; max-width:300px; }
+  .progress-label {
+    display:flex; justify-content:space-between;
+    font-family:'Space Mono',monospace; font-size:0.65rem; color:var(--muted);
+    margin-bottom:0.4rem;
+  }
+  .progress-bar {
+    height:4px; background:var(--border); border-radius:100px; overflow:hidden;
+  }
+  .progress-fill {
+    height:100%; background:linear-gradient(90deg,var(--accent),var(--accent2));
+    border-radius:100px; transition:width 0.5s cubic-bezier(0.4,0,0.2,1);
+  }
+  .score-badge {
+    font-family:'Space Mono',monospace; font-size:0.75rem;
+    background:rgba(0,229,255,0.08); border:1px solid rgba(0,229,255,0.2);
+    color:var(--accent); padding:0.4rem 0.8rem; border-radius:8px;
+  }
+
+  /* ===== SECTION LABEL ===== */
+  .section-tag {
+    display:inline-flex; align-items:center; gap:0.5rem;
+    font-family:'Space Mono',monospace; font-size:0.65rem; letter-spacing:0.12em;
+    color:var(--accent2); background:rgba(124,58,237,0.1);
+    border:1px solid rgba(124,58,237,0.25); padding:0.3rem 0.8rem; border-radius:100px;
+    margin-bottom:2rem;
+  }
+  .section-dot { width:6px; height:6px; background:var(--accent2); border-radius:50%; animation:pulse 1.5s infinite; }
+
+  /* ===== QUESTION CARD ===== */
+  .q-card {
+    background:var(--card);
+    border:1px solid var(--border);
+    border-radius:20px;
+    padding:2rem;
+    margin-bottom:1.5rem;
+    opacity:0; transform:translateY(20px);
+    animation:slideIn 0.5s forwards;
+    position:relative; overflow:hidden;
+  }
+  .q-card::before {
+    content:''; position:absolute; top:0; left:0; right:0; height:2px;
+    background:linear-gradient(90deg,transparent,var(--accent),transparent);
+    opacity:0.4;
+  }
+  @keyframes slideIn { to{opacity:1;transform:translateY(0)} }
+
+  .q-num {
+    font-family:'Space Mono',monospace; font-size:0.65rem; color:var(--muted);
+    letter-spacing:0.1em; margin-bottom:1rem;
+    display:flex; align-items:center; gap:0.5rem;
+  }
+  .q-num::after { content:''; flex:1; height:1px; background:var(--border); }
+
+  .q-text {
+    font-size:1rem; line-height:1.7; color:var(--text);
+    margin-bottom:1.5rem; font-weight:400;
+  }
+  .q-text strong { color:var(--accent); font-weight:600; }
+
+  /* ===== IMAGE IN QUESTION ===== */
+  .q-image-box {
+    background:var(--surface);
+    border:1px solid var(--border);
+    border-radius:12px;
+    padding:1.5rem;
+    margin-bottom:1.5rem;
+    display:flex; flex-direction:column; align-items:center; gap:0.75rem;
+  }
+  .q-image-box svg { max-width:100%; }
+  .q-image-label {
+    font-family:'Space Mono',monospace; font-size:0.65rem;
+    color:var(--muted); letter-spacing:0.08em;
+  }
+
+  /* ===== OPTIONS ===== */
+  .options { display:flex; flex-direction:column; gap:0.75rem; }
+
+  .opt {
+    display:flex; align-items:flex-start; gap:1rem;
+    padding:1rem 1.25rem;
+    border:1.5px solid var(--border);
+    border-radius:14px;
+    cursor:pointer;
+    transition: all 0.25s ease;
+    background:transparent;
+    text-align:left; width:100%;
+    color:var(--text); font-family:'DM Sans',sans-serif; font-size:0.9rem;
+    line-height:1.5;
+  }
+  .opt:hover:not(.disabled) {
+    border-color:rgba(0,229,255,0.4);
+    background:rgba(0,229,255,0.04);
+    transform:translateX(4px);
+  }
+  .opt-letter {
+    font-family:'Space Mono',monospace; font-size:0.75rem; font-weight:700;
+    color:var(--muted); min-width:22px; margin-top:1px;
+    transition:color 0.2s;
+  }
+  .opt.selected { border-color:var(--accent); background:rgba(0,229,255,0.08); }
+  .opt.selected .opt-letter { color:var(--accent); }
+  .opt.correct { border-color:var(--right)!important; background:rgba(34,197,94,0.1)!important; }
+  .opt.correct .opt-letter { color:var(--right)!important; }
+  .opt.wrong { border-color:var(--wrong)!important; background:rgba(239,68,68,0.1)!important; }
+  .opt.wrong .opt-letter { color:var(--wrong)!important; }
+  .opt.disabled { cursor:default; }
+  .opt.show-correct { border-color:var(--right)!important; background:rgba(34,197,94,0.06)!important; }
+  .opt.show-correct .opt-letter { color:var(--right)!important; }
+
+  /* ===== EXPLANATION ===== */
+  .explanation {
+    display:none; margin-top:1rem;
+    padding:1.25rem 1.5rem;
+    background:rgba(0,229,255,0.04);
+    border:1px solid rgba(0,229,255,0.15);
+    border-radius:12px;
+    animation:fadeIn 0.3s ease;
+  }
+  .explanation.visible { display:block; }
+  @keyframes fadeIn { from{opacity:0;transform:translateY(-5px)} to{opacity:1;transform:translateY(0)} }
+  .exp-head {
+    font-family:'Space Mono',monospace; font-size:0.65rem; color:var(--accent);
+    letter-spacing:0.1em; margin-bottom:0.6rem; display:flex; align-items:center; gap:0.5rem;
+  }
+  .exp-head::before { content:'💡'; }
+  .explanation p { font-size:0.875rem; line-height:1.7; color:#b0b0c8; }
+
+  /* ===== STICKY NAV BAR ===== */
+  .nav-bar {
+    position: fixed; bottom:0; left:0; right:0; z-index:50;
+    display:flex; justify-content:space-between; align-items:center;
+    padding: 0.9rem 1.5rem;
+    background: rgba(10,10,15,0.85);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border-top: 1px solid var(--border);
+    gap:1rem;
+  }
+  .nav-bar-inner {
+    max-width: 820px; width:100%; margin:0 auto;
+    display:flex; justify-content:space-between; align-items:center; gap:1rem;
+  }
+  .btn-nav {
+    padding:0.7rem 1.8rem; border-radius:100px; font-family:'Syne',sans-serif;
+    font-weight:700; font-size:0.88rem; cursor:pointer; border:none; transition:all 0.2s;
+    letter-spacing:0.03em;
+  }
+  .btn-prev { background:var(--surface); border:1.5px solid var(--border); color:var(--muted); }
+  .btn-prev:hover { border-color:var(--accent); color:var(--accent); }
+  .btn-next { background:linear-gradient(135deg,var(--accent),var(--accent2)); color:#000; }
+  .btn-next:hover { transform:scale(1.03); box-shadow:0 0 30px rgba(0,229,255,0.2); }
+  .btn-next:disabled { opacity:0.4; cursor:default; transform:none; }
+
+  /* ===== RESULT SCREEN ===== */
+  #result { display:none; padding:2rem 1.5rem 6rem; max-width:820px; margin:0 auto; position:relative; z-index:1; }
+  #result.visible { display:block; }
+  .result-hero {
+    text-align:center; padding:3rem 2rem;
+    background:var(--card); border:1px solid var(--border); border-radius:24px;
+    margin-bottom:2rem; position:relative; overflow:hidden;
+  }
+  .result-hero::before {
+    content:''; position:absolute; inset:0;
+    background:radial-gradient(circle at 50% 0%, rgba(0,229,255,0.08) 0%, transparent 60%);
+  }
+  .result-grade {
+    font-family:'Syne',sans-serif; font-weight:800;
+    font-size:clamp(4rem,15vw,7rem);
+    line-height:1; margin-bottom:0.5rem;
+  }
+  .result-label {
+    font-family:'Space Mono',monospace; font-size:0.75rem;
+    color:var(--muted); letter-spacing:0.15em; margin-bottom:2rem;
+  }
+  .result-stats {
+    display:flex; justify-content:center; gap:2rem; flex-wrap:wrap;
+  }
+  .stat {
+    text-align:center;
+    padding:1rem 1.5rem;
+    background:var(--surface); border:1px solid var(--border); border-radius:14px;
+    min-width:100px;
+  }
+  .stat-val { font-family:'Syne',sans-serif; font-size:1.8rem; font-weight:800; }
+  .stat-key { font-family:'Space Mono',monospace; font-size:0.6rem; color:var(--muted); letter-spacing:0.1em; margin-top:0.25rem; }
+  .stat.green .stat-val { color:var(--right); }
+  .stat.red .stat-val { color:var(--wrong); }
+  .stat.blue .stat-val { color:var(--accent); }
+
+  .btn-retry {
+    display:block; margin:0 auto 2rem;
+    background:linear-gradient(135deg,var(--accent),var(--accent2)); color:#000;
+    font-family:'Syne',sans-serif; font-weight:700; font-size:1rem;
+    padding:1rem 3rem; border-radius:100px; border:none; cursor:pointer;
+    transition:transform 0.2s, box-shadow 0.2s;
+  }
+  .btn-retry:hover { transform:scale(1.04); box-shadow:0 0 40px rgba(0,229,255,0.25); }
+
+  /* ===== REVIEW ===== */
+  .review-title {
+    font-family:'Syne',sans-serif; font-size:1.4rem; font-weight:800;
+    margin-bottom:1.5rem; display:flex; align-items:center; gap:0.75rem;
+  }
+  .review-title::after { content:''; flex:1; height:1px; background:var(--border); }
+
+  .review-item {
+    background:var(--card); border:1px solid var(--border); border-radius:16px;
+    padding:1.5rem; margin-bottom:1rem;
+  }
+  .review-item.correct-item { border-color:rgba(34,197,94,0.25); }
+  .review-item.wrong-item { border-color:rgba(239,68,68,0.25); }
+  .review-q { font-size:0.9rem; line-height:1.6; margin-bottom:0.75rem; }
+  .review-ans { display:flex; gap:0.5rem; flex-wrap:wrap; font-family:'Space Mono',monospace; font-size:0.72rem; }
+  .tag { padding:0.25rem 0.75rem; border-radius:100px; font-size:0.68rem; }
+  .tag.correct { background:rgba(34,197,94,0.15); color:var(--right); border:1px solid rgba(34,197,94,0.3); }
+  .tag.wrong { background:rgba(239,68,68,0.15); color:var(--wrong); border:1px solid rgba(239,68,68,0.3); }
+  .review-exp { margin-top:0.75rem; font-size:0.82rem; color:#8888aa; line-height:1.6; }
+
+  /* ===== TOAST ===== */
+  .toast {
+    position:fixed; bottom:2rem; left:50%; transform:translateX(-50%) translateY(80px);
+    background:var(--card); border:1px solid var(--border); border-radius:100px;
+    padding:0.75rem 1.5rem; font-family:'Space Mono',monospace; font-size:0.75rem;
+    z-index:200; transition:transform 0.3s cubic-bezier(0.34,1.56,0.64,1);
+    white-space:nowrap;
+  }
+  .toast.show { transform:translateX(-50%) translateY(0); }
+  .toast.correct-toast { border-color:rgba(34,197,94,0.4); color:var(--right); }
+  .toast.wrong-toast { border-color:rgba(239,68,68,0.4); color:var(--wrong); }
+
+  /* Scrollbar */
+  ::-webkit-scrollbar { width:6px; }
+  ::-webkit-scrollbar-track { background:var(--bg); }
+  ::-webkit-scrollbar-thumb { background:var(--border); border-radius:3px; }
+
+  @media(max-width:600px) {
+    .q-card { padding:1.25rem; }
+    .btn-nav { padding:0.65rem 1.5rem; }
+  }
+</style>
+</head>
+<body>
+
+<div id="custom-bg-layer"></div>
+<div id="intro-bg-fill"></div>
+<div class="bg-grid"></div>
+<div class="bg-orb orb1"></div>
+<div class="bg-orb orb2"></div>
+
+<!-- ===== INTRO ===== -->
+<div id="intro">
+  <div class="intro-badge">⚡ SOAL SAS GENAP 2024/2025</div>
+  <div class="intro-title">FISIKA<br>KELAS IX</div>
+  <div class="intro-subtitle">SMP K BETHEL · SENIN 17 MARET 2025</div>
+  <div class="intro-quote">
+    "Ga yakin bakal masuk pas ujian... <br>tapi tetap coba dulu aja."
+  </div>
+  <div class="intro-meta">
+    Mata Pelajaran: <span>Fisika</span> &nbsp;|&nbsp;
+    Kelas: <span>IX (Sembilan)</span> &nbsp;|&nbsp;
+    Waktu: <span>100 menit</span>
+  </div>
+
+  <!-- BG UPLOAD -->
+  <div class="bg-upload-section">
+    <div class="bg-upload-label">🖼 Ganti Background</div>
+    <div class="bg-upload-row">
+      <label class="btn-upload-bg" for="bg-file-input">
+        📁 Upload Gambar
+        <input type="file" id="bg-file-input" accept="image/*" style="display:none" onchange="handleBgUpload(event)">
+      </label>
+      <button class="btn-default-bg" onclick="resetBg()">↩ Default</button>
+    </div>
+    <div class="bg-preview-row">
+      <img class="bg-preview" id="bg-preview-img" src="" alt="preview">
+      <span class="bg-filename" id="bg-filename"></span>
+    </div>
+  </div>
+
+  <button class="btn-start" onclick="startQuiz()">Mulai Quiz →</button>
+</div>
+
+<!-- ===== QUIZ ===== -->
+<div id="quiz">
+  <div class="quiz-header">
+    <div class="quiz-logo">⚡ FISIKA IX</div>
+    <div class="progress-wrap">
+      <div class="progress-label">
+        <span id="prog-text">Soal 1 / 40</span>
+        <span id="prog-pct">0%</span>
+      </div>
+      <div class="progress-bar"><div class="progress-fill" id="prog-fill" style="width:0%"></div></div>
+    </div>
+    <div class="score-badge" id="score-badge">Skor: 0</div>
+  </div>
+
+  <div id="q-container"></div>
+</div>
+
+<!-- STICKY NAV — outside quiz div -->
+<div class="nav-bar" id="nav-bar" style="display:none">
+  <div class="nav-bar-inner">
+    <button class="btn-nav btn-prev" onclick="prevQ()">← Sebelumnya</button>
+    <button class="btn-nav btn-next" id="btn-next" onclick="nextQ()">Selanjutnya →</button>
+  </div>
+</div>
+
+<!-- ===== RESULT ===== -->
+<div id="result">
+  <div class="result-hero">
+    <div class="result-grade" id="res-grade" style="color:#fff"></div>
+    <div class="result-label" id="res-label">NILAI AKHIR</div>
+    <div class="result-stats">
+      <div class="stat green"><div class="stat-val" id="res-correct">0</div><div class="stat-key">BENAR</div></div>
+      <div class="stat red"><div class="stat-val" id="res-wrong">0</div><div class="stat-key">SALAH</div></div>
+      <div class="stat blue"><div class="stat-val" id="res-total">0</div><div class="stat-key">TOTAL SOAL</div></div>
+    </div>
+  </div>
+  <button class="btn-retry" onclick="resetQuiz()">🔄 Ulangi Quiz</button>
+  <div class="review-title">Pembahasan Lengkap</div>
+  <div id="review-list"></div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const QUESTIONS = [
+  {
+    q: "Titik gaya terkuat berada pada area …",
+    opts: ["Kutub magnet","Magnet bagian tengah","Medan magnet","Magnet bagian bawah"],
+    ans: 0,
+    exp: "Gaya magnet paling kuat ada di <b>kutub magnet</b> (ujung-ujung magnet). Di sinilah garis gaya magnet paling rapat/padat, sehingga gaya tarik/tolak paling besar."
+  },
+  {
+    q: "Berikut ini manakah kelompok benda yang termasuk dalam benda <strong>Feromagnetik</strong>?",
+    opts: ["Kayu, plastik, busa, silicon","Kayu, plastik, baja, besi","Besi, baja, nikel, kobalt","Silicon, busa, nikel, baja, kobalt"],
+    ans: 2,
+    exp: "<b>Feromagnetik</b> = benda yang sangat kuat ditarik magnet. Anggotanya: <b>besi, baja, nikel, kobalt</b>. Kayu, plastik, busa, dan silicon bukan termasuk feromagnetik."
+  },
+  {
+    q: "Kemampuan sebuah benda dalam menarik benda lainnya merupakan definisi dari …",
+    opts: ["Magnet","Elektromagnet","Kemagnetan","Medan magnet"],
+    ans: 2,
+    exp: "<b>Kemagnetan</b> adalah sifat/kemampuan benda untuk menarik benda lain. Magnet = bendanya. Elektromagnet = magnet dari arus listrik. Medan magnet = daerah pengaruh magnet."
+  },
+  {
+    q: "Pilihan berikut ini merupakan cara-cara yang bisa dilakukan untuk <strong>memperbesar medan magnet</strong> pada percobaan elektromagnet, <u>kecuali</u>…",
+    opts: ["Memberi arus listrik yang kuat","Membuat lambat gerakan inti besi","Memilih inti besi yang lebih panjang","Membuat jumlah lilitan lebih banyak"],
+    ans: 1,
+    exp: "Memperbesar medan magnet elektromagnet: tambah arus (a), pilih inti besi lebih panjang (c), tambah lilitan (d). <b>Membuat lambat gerakan inti besi (b) TIDAK berpengaruh</b> pada kekuatan elektromagnet statis."
+  },
+  {
+    q: "Sebutan untuk sebuah sudut yang terbentuk oleh penyimpangan antara magnet pada jarum kompas dengan <strong>garis horizontal</strong> adalah …",
+    opts: ["Immunisasi","Vertikal","Inklinasi","Horizontal"],
+    ans: 2,
+    exp: "<b>Inklinasi</b> = sudut antara arah jarum kompas dengan bidang horizontal. Deklinasi = sudut antara utara geografis dan utara magnetis (arah horizontal). Inklinasi penting untuk navigasi dan geofisika."
+  },
+  {
+    q: "Sifat kemagnetan benda bisa dihilangkan dengan beberapa cara, <u>kecuali</u>…",
+    opts: ["Diberikan panas","Mengalirkan arus AC","Dipukul hingga hancur","Mengalirkan arus DC"],
+    ans: 3,
+    exp: "Cara menghilangkan sifat magnet: dipanaskan (a), dialiri arus AC bolak-balik (b), dipukul keras (c). <b>Arus DC (d) justru digunakan untuk MEMBUAT magnet</b>, bukan menghilangkannya."
+  },
+  {
+    q: "Prinsip pembuatan magnet yang benar dinyatakan oleh pernyataan …",
+    opts: [
+      "Mengubah susunan elementer dari yang semula berlawanan menjadi acak",
+      "Mengubah susunan elementer dari yang semula searah menjadi acak",
+      "Mengubah susunan elementer dari yang semula acak menjadi berlawanan arah",
+      "Mengubah susunan elementer dari yang semula acak menjadi searah"
+    ],
+    ans: 3,
+    exp: "Benda non-magnet punya <b>domain/elementer yang acak</b> (saling meniadakan). Saat dijadikan magnet, domain tersebut <b>disejajarkan/searah</b> semua — itulah yang menghasilkan sifat magnet."
+  },
+  {
+    q: "Apabila sebuah magnet batang digerakkan mendekati kumparan konduktor, apa yang terjadi pada arus listrik yang mengalir di dalam kumparan?",
+    opts: ["Arus tetap konstan","Arus akan berhenti sepenuhnya","Tidak terjadi arus","Arus akan muncul"],
+    ans: 3,
+    exp: "Ini adalah <b>Hukum Faraday</b>: perubahan fluks magnetik (magnet bergerak mendekati kumparan) menimbulkan GGL induksi → <b>arus listrik muncul</b> di kumparan. Syarat: magnet HARUS bergerak."
+  },
+  {
+    q: "Pernyataan yang benar tentang sifat-sifat kutub magnet adalah …",
+    opts: [
+      "Kutub senama tarik-menarik",
+      "Kutub senama tolak-menolak",
+      "Kutub tidak senama tolak-menolak",
+      "Kutub selatan magnet dapat menarik semua logam"
+    ],
+    ans: 1,
+    exp: "Hukum magnet dasar: <b>kutub senama (U-U / S-S) = tolak-menolak</b>. Kutub tidak senama (U-S) = tarik-menarik. Kutub selatan hanya menarik benda feromagnetik, bukan semua logam."
+  },
+  {
+    q: "Benda yang ditarik <strong>lemah</strong> oleh magnet disebut …",
+    opts: ["Paramagnetik","Diamagnetik","Neomagnetik","Feromagnetik"],
+    ans: 0,
+    exp: "<b>Paramagnetik</b> = ditarik lemah (aluminium, platinum, oksigen). <b>Diamagnetik</b> = ditolak lemah (bismut, tembaga, air). <b>Feromagnetik</b> = ditarik kuat (besi, baja, nikel). Neomagnetik bukan istilah resmi."
+  },
+  {
+    q: "Cara yang dapat dilakukan untuk memperkuat medan magnet suatu kumparan listrik adalah…",
+    opts: [
+      "Kumparan disisipkan aluminium",
+      "Memperbanyak hambatan listrik",
+      "Memperbanyak jumlah lilitan kumparan",
+      "Memutuskan arus listrik"
+    ],
+    ans: 2,
+    exp: "Medan magnet kumparan diperkuat dengan: <b>tambah lilitan (c)</b>, tambah arus, sisipkan inti besi. Aluminium (a) bersifat paramagnetik, tidak memperkuat signifikan. Hambatan lebih banyak justru kecilkan arus. Memutus arus (d) menghilangkan medan magnet."
+  },
+  {
+    q: "Pernyataan yang benar tentang letak kutub magnet bumi adalah …",
+    opts: [
+      "Kutub utara magnet bumi berada di kutub utara geografis bumi",
+      "Kutub utara magnet bumi berada di kutub selatan geografis bumi",
+      "Kutub utara bumi berada di sekitar kutub utara magnet bumi",
+      "Kutub selatan magnet bumi berada di sekitar kutub utara bumi"
+    ],
+    ans: 3,
+    exp: "<b>Kutub SELATAN magnet bumi</b> berada di sekitar kutub UTARA geografis bumi. Karena kutub utara jarum kompas (yang selalu menunjuk utara) tertarik ke sana — berarti di utara geografis terdapat kutub selatan magnet bumi (berlawanan tarik-menarik)."
+  },
+  {
+    q: "Berikut ini adalah ciri-ciri dari trafo <strong>step-up</strong> yang benar …",
+    opts: [
+      "Jumlah lilitan primer lebih banyak dari lilitan sekunder",
+      "Tegangan primer lebih besar dari tegangan sekunder",
+      "Jumlah lilitan primer lebih sedikit dari lilitan sekunder",
+      "Kuat arus primer lebih kecil dari kuat arus sekunder"
+    ],
+    ans: 2,
+    exp: "Trafo <b>step-up menaikkan tegangan</b>. Rumus: Vs/Vp = Ns/Np. Karena Vs > Vp, maka <b>Ns > Np (lilitan sekunder lebih banyak dari primer)</b>. Konsekuensinya: arus sekunder LEBIH KECIL dari primer (Is < Ip), bukan lebih besar."
+  },
+  {
+    q: "Berikut contoh alat yang memanfaatkan <strong>elektromagnet</strong> …",
+    opts: ["Bel listrik","Kipas angin","Generator","Dinamo sepeda"],
+    ans: 0,
+    exp: "<b>Bel listrik</b> menggunakan elektromagnet: arus → besi tertarik → bel bunyi → rangkaian terputus → besi kembali → berulang. Generator dan dinamo sepeda menggunakan induksi elektromagnetik (gerak → listrik), bukan sekadar elektromagnet."
+  },
+  {
+    q: "Arah garis gaya magnet bumi adalah …",
+    opts: [
+      "Dari kutub selatan bumi, berakhir di kutub utara bumi",
+      "Dari kutub utara bumi, berakhir di kutub selatan bumi",
+      "Dari vertikal ke horizontal",
+      "Dari horizontal ke vertikal"
+    ],
+    ans: 0,
+    exp: "Garis gaya magnet selalu <b>keluar dari kutub U dan masuk ke kutub S</b>. Kutub U magnet bumi ada di dekat kutub selatan geografis. Maka garis gaya bumi: dari selatan geografis (kutub U magnet bumi) → menuju utara geografis (kutub S magnet bumi)."
+  },
+  {
+    q: "Peralatan berikut yang menggunakan <strong>induksi elektromagnetik</strong> adalah …",
+    opts: ["Dinamo sepeda","Kipas angin","Solder listrik","Televisi"],
+    ans: 0,
+    exp: "<b>Dinamo sepeda</b>: roda berputar → magnet berputar di dalam kumparan → terjadi perubahan fluks → muncul arus listrik. Ini adalah induksi elektromagnetik murni. Kipas angin = motor listrik (kebalikan induksi)."
+  },
+  {
+    q: "Penyebab jarum kompas selalu menunjuk utara dan selatan bumi adalah …",
+    opts: [
+      "Adanya gaya tarik-menarik antara jarum kompas dengan magnet bumi",
+      "Karena jarum kompas merupakan magnet yang mudah bergerak",
+      "Karena kompas sebagai penunjuk arah utara dan selatan bumi",
+      "Karena magnet jarum kompas sangat lentur sehingga mudah ditarik"
+    ],
+    ans: 0,
+    exp: "Jarum kompas adalah magnet. Bumi juga bersifat seperti magnet besar. <b>Gaya tarik-menarik antara kutub-kutub magnet jarum dan kutub magnet bumi</b> yang menyebabkan jarum selalu menunjuk arah U-S. Bukan karena mudah bergerak saja."
+  },
+  {
+    q: "Sebuah kawat tembaga panjang 20 cm dialiri arus 5 A. Kuat medan magnet 20 T dan arah arus tegak lurus arah medan magnetik. Besar <strong>gaya Lorentz</strong> adalah …",
+    opts: ["20 N","30 N","40 N","50 N"],
+    ans: 0,
+    exp: "<b>F = B × I × L × sin θ</b>. Karena tegak lurus θ = 90°, sin 90° = 1.<br>F = 20 T × 5 A × 0,20 m × 1 = <b>20 N</b>. (Ingat: L harus dalam meter, 20 cm = 0,20 m)"
+  },
+  {
+    q: "Faktor-faktor yang <u>tidak</u> mempengaruhi besar gaya Lorentz pada penghantar adalah …",
+    opts: [
+      "Hambatan jenis penghantar",
+      "Panjang penghantar dalam medan magnet",
+      "Kuat arus listrik penghantar",
+      "Kuat medan magnet"
+    ],
+    ans: 0,
+    exp: "Rumus gaya Lorentz: <b>F = BIL sin θ</b>. Yang mempengaruhi: B (medan magnet), I (arus), L (panjang), θ (sudut). <b>Hambatan jenis/resistivitas (a) TIDAK ada</b> dalam rumus ini, jadi tidak berpengaruh langsung."
+  },
+  {
+    q: "Motor listrik merupakan penerapan gaya Lorentz. Peralatan berikut yang <u>tidak</u> menggunakan motor listrik sebagai komponen utama adalah …",
+    opts: ["Kipas angin","Blender","Seterika listrik","Air Conditioner"],
+    ans: 2,
+    exp: "<b>Seterika listrik (c)</b> bekerja menggunakan <b>elemen pemanas (kawat nikrom)</b> yang mengubah energi listrik → panas, bukan motor listrik. Kipas angin, blender, dan AC semuanya menggunakan motor listrik untuk menggerakkan bagian berputar."
+  },
+  {
+    q: "Beberapa faktor yang mempengaruhi besarnya GGL induksi elektromagnetik:<br>1. Jumlah lilitan pada kumparan<br>2. Arah garis gaya magnet pada kumparan<br>3. Kecepatan gerak magnet atau kumparan<br>4. Arah lilitan kawat pada kumparan<br><br>Yang benar dari pernyataan di atas adalah …",
+    opts: ["1 dan 3","1 dan 4","2 dan 4","2 dan 3"],
+    ans: 0,
+    exp: "GGL induksi: <b>ε = N × ΔΦ/Δt</b>. Yang mempengaruhi BESAR GGL: <b>(1) jumlah lilitan N</b> dan <b>(3) kecepatan gerak</b> (mempengaruhi ΔΦ/Δt). Arah garis gaya (2) dan arah lilitan (4) hanya mempengaruhi <b>arah</b> arus, bukan besarnya."
+  },
+  {
+    q: "Jika magnet tidak bergerak terhadap kumparan, dalam kumparan tidak akan timbul GGL induksi, karena …",
+    opts: [
+      "Dalam kumparan ada perubahan banyak garis gaya",
+      "Tidak ada perubahan banyaknya garis gaya dalam kumparan",
+      "Dalam kumparan terdapat medan magnet",
+      "Magnet kehilangan sifat kemagnetannya"
+    ],
+    ans: 1,
+    exp: "GGL induksi timbul karena <b>perubahan fluks magnetik (ΔΦ)</b>. Jika magnet diam → fluks tidak berubah → <b>ΔΦ = 0 → GGL = 0</b>. Ini inti Hukum Faraday: bukan ada/tidaknya medan magnet, tapi ada/tidaknya PERUBAHAN fluks."
+  },
+  {
+    q: "Arus induksi elektromagnetik dapat ditimbulkan dengan merangkai alat dan bahan di bawah ini, yaitu …",
+    opts: [
+      "Galvanometer, multitester, kumparan dan magnet",
+      "Galvanometer, penghantar, isolator, dan magnet",
+      "Galvanometer, penghantar, kumparan, dan magnet",
+      "Galvanometer, amperemeter, indikator, dan magnet"
+    ],
+    ans: 2,
+    exp: "Komponen minimal untuk menunjukkan induksi elektromagnetik: <b>galvanometer</b> (detektor arus), <b>penghantar/kawat</b>, <b>kumparan</b> (pengumpul fluks), dan <b>magnet</b> (sumber medan). Isolator justru menghambat arus, multitester tidak diperlukan."
+  },
+  {
+    q: "Fungsi dari transformator <strong>step-down</strong> adalah …",
+    opts: [
+      "Memperbesar tegangan arus searah",
+      "Menaikkan tegangan arus bolak-balik",
+      "Menurunkan tegangan arus bolak-balik",
+      "Memperkecil tegangan arus searah"
+    ],
+    ans: 2,
+    exp: "Trafo <b>step-down = menurunkan tegangan AC</b>. Penting: trafo <b>HANYA bekerja untuk AC</b> (arus bolak-balik), tidak bisa untuk DC. Np > Ns, sehingga Vp > Vs. Contoh: charger HP menurunkan 220V AC menjadi 5V."
+  },
+  {
+    q: "Sebuah transformator mempunyai kumparan primer 500 lilitan dan sekunder 5.000 lilitan, dihubungkan dengan jaringan AC 220 Volt. Berapakah tegangan sekundernya?",
+    opts: ["100 V","220 V","2.200 V","22.000 V"],
+    ans: 2,
+    exp: "Rumus trafo: <b>Vs/Vp = Ns/Np</b><br>Vs = (Ns/Np) × Vp = (5000/500) × 220 = 10 × 220 = <b>2.200 V</b>. Ini trafo step-up (Ns > Np), tegangan dinaikkan 10 kali lipat."
+  },
+  {
+    q: "Sebuah trafo mempunyai daya primer 110 W dan daya sekunder 99 W, berapakah efisiensi transformator tersebut?",
+    opts: ["90%","92%","95%","98%"],
+    ans: 0,
+    exp: "Efisiensi trafo: <b>η = (Ps/Pp) × 100%</b><br>η = (99/110) × 100% = <b>90%</b>. Trafo ideal (100%) tidak ada karena selalu ada rugi-rugi energi (panas, arus eddy, histeresis)."
+  },
+  {
+    q: "Elektromagnet dibuat dengan cara …",
+    opts: [
+      "Besi dililit dengan kawat penghantar listrik",
+      "Besi dililit dengan kawat yang berarus DC",
+      "Memasukkan batang besi ke dalam kumparan",
+      "Mengalirkan arus listrik langsung pada batang besi"
+    ],
+    ans: 1,
+    exp: "<b>Elektromagnet</b> dibuat dengan melilitkan <b>kawat berarus DC</b> pada inti besi. Arus DC menghasilkan medan magnet tetap yang searah. Arus AC tidak cocok karena arah medan terus berubah. Arus tidak dialirkan langsung ke besi."
+  },
+  {
+    q: "Cara memperkuat elektromagnet adalah …",
+    opts: [
+      "Memperbesar arus listrik dan mengurangi banyak lilitan",
+      "Memperkecil arus listrik dan menambah banyak lilitan",
+      "Memperbesar arus listrik dan menambah banyak lilitan",
+      "Memperbesar arus listrik dan memasang kayu pada kumparan"
+    ],
+    ans: 2,
+    exp: "Elektromagnet diperkuat dengan: <b>(1) perbesar arus I</b>, <b>(2) tambah lilitan N</b>, (3) gunakan inti besi (bukan kayu/aluminium). Kayu tidak meningkatkan medan magnet. Rumus: B ∝ N × I."
+  },
+  {
+    q: "Suatu ruang disebut medan magnetik, jika dalam ruang tersebut terjadi …",
+    opts: [
+      "Magnet lain mengalami suatu gaya",
+      "Suatu kumparan mendapat induksi magnetik",
+      "Sepotong besi dapat menjadi magnet tetap",
+      "Suatu benda dapat bermuatan listrik"
+    ],
+    ans: 0,
+    exp: "<b>Medan magnetik</b> = daerah di sekitar magnet yang masih terpengaruh gaya magnet. Bukti keberadaan medan magnet: <b>magnet lain yang diletakkan di daerah itu mengalami gaya</b> (tarik atau tolak). Ini definisi operasional medan magnet."
+  },
+  {
+    q: "Kemagnetan besi yang bersifat sementara selama magnet masih berada di dekat besi dinamakan kemagnetan karena …",
+    opts: ["Konduksi","Induksi","Deklinasi","Inklinasi"],
+    ans: 1,
+    exp: "<b>Kemagnetan induksi</b>: besi menjadi magnet SEMENTARA karena berada dalam medan magnet lain. Begitu magnet dijauhkan, domain besi kembali acak → sifat magnet hilang. Berbeda dengan baja yang dapat menjadi magnet permanen."
+  },
+  {
+    q: "Pada generator pembangkit listrik tenaga air (PLTA) terjadi perubahan energi …",
+    opts: [
+      "Kimia menjadi energi listrik",
+      "Mekanik menjadi energi listrik",
+      "Panas menjadi energi listrik",
+      "Semua benar"
+    ],
+    ans: 1,
+    exp: "Alur energi PLTA: air jatuh (potensial) → memutar turbin (<b>mekanik</b>) → turbin memutar generator → menghasilkan <b>listrik</b>. Jadi: <b>Energi Mekanik → Energi Listrik</b>. PLTU (uap) = panas → listrik. PLTS (surya) = cahaya → listrik."
+  },
+  // ===== SOAL 32–40 PG GAMBAR =====
+  {
+    q: "Perhatikan gambar magnet di bawah ini. Y dan X adalah kutub magnet. Dari gambar, pernyataan yang benar adalah …",
+    img: `<svg width="260" height="90" viewBox="0 0 260 90" fill="none">
+      <rect x="50" y="30" width="160" height="38" rx="8" fill="#1a1a2e" stroke="#333355" stroke-width="1.5"/>
+      <text x="118" y="53" fill="#555577" font-size="11" font-family="Space Mono">MAGNET</text>
+      <rect x="10" y="33" width="44" height="32" rx="6" fill="#1e1e35" stroke="#7c3aed" stroke-width="2"/>
+      <text x="24" y="53" fill="#c4b5fd" font-size="14" font-family="Space Mono" font-weight="bold">Y</text>
+      <rect x="208" y="33" width="44" height="32" rx="6" fill="#1e1e35" stroke="#00e5ff" stroke-width="2"/>
+      <text x="222" y="53" fill="#67e8f9" font-size="14" font-family="Space Mono" font-weight="bold">X</text>
+      <text x="12" y="25" fill="#555577" font-size="9" font-family="Space Mono">label ?</text>
+      <text x="210" y="25" fill="#555577" font-size="9" font-family="Space Mono">U/S ?</text>
+      <path d="M195 20 Q210 15 222 22" fill="none" stroke="#f59e0b" stroke-width="1" stroke-dasharray="3,2"/>
+      <text x="185" y="15" fill="#f59e0b" font-size="8" font-family="Space Mono">kutub U</text>
+    </svg>`,
+    opts: [
+      "Y = kutub selatan, X = kutub utara bila X ditolak",
+      "Y = kutub selatan, X = kutub utara bila X ditarik",
+      "Y = kutub utara, X = kutub selatan bila X ditolak",
+      "Y = kutub utara, X = kutub selatan bila X netral"
+    ],
+    ans: 0,
+    exp: "Dari gambar, X berada di sisi yang berlabel kutub U. Jika X adalah kutub U dan ada kutub U lain didekatkan → X <b>ditolak</b> (senama tolak-menolak). Karena X = kutub U dan X-Y satu magnet, maka <b>Y = kutub S</b>. Jawaban: Y = selatan, X = utara bila X ditolak."
+  },
+  {
+    q: "Rangkaian berikut yang menimbulkan elektromagnet <strong>paling kuat</strong> adalah … (lilitan lebih banyak = medan lebih kuat)",
+    img: `<svg width="300" height="110" viewBox="0 0 300 110" fill="none">
+      <text x="8" y="18" fill="#6b6b8a" font-size="10" font-family="Space Mono" font-weight="bold">A.</text>
+      <rect x="22" y="6" width="55" height="18" rx="3" fill="none" stroke="#00e5ff" stroke-width="1.5"/>
+      <text x="30" y="18" fill="#00e5ff" font-size="9" font-family="Space Mono">〰〰〰</text>
+      <rect x="27" y="9" width="44" height="12" rx="2" fill="#2a1a3a" opacity="0.5"/>
+      <text x="8" y="65" fill="#6b6b8a" font-size="10" font-family="Space Mono" font-weight="bold">B.</text>
+      <rect x="22" y="53" width="80" height="18" rx="3" fill="none" stroke="#7c3aed" stroke-width="1.5"/>
+      <text x="28" y="65" fill="#7c3aed" font-size="9" font-family="Space Mono">〰〰〰〰〰〰</text>
+      <rect x="27" y="56" width="70" height="12" rx="2" fill="#2a1a3a" opacity="0.5"/>
+      <text x="165" y="18" fill="#6b6b8a" font-size="10" font-family="Space Mono" font-weight="bold">C.</text>
+      <rect x="178" y="6" width="105" height="18" rx="3" fill="none" stroke="#f59e0b" stroke-width="1.5" stroke-dasharray="3,2"/>
+      <text x="183" y="18" fill="#f59e0b" font-size="9" font-family="Space Mono">〰〰〰〰〰〰〰〰</text>
+      <text x="165" y="65" fill="#6b6b8a" font-size="10" font-family="Space Mono" font-weight="bold">D.</text>
+      <rect x="178" y="53" width="105" height="18" rx="3" fill="none" stroke="#22c55e" stroke-width="2"/>
+      <text x="183" y="65" fill="#22c55e" font-size="9" font-family="Space Mono">〰〰〰〰〰〰〰〰</text>
+      <rect x="183" y="56" width="95" height="12" rx="2" fill="#0a2a0a" opacity="0.7"/>
+      <text x="183" y="88" fill="#22c55e" font-size="8" font-family="Space Mono">+ inti besi + arus besar</text>
+      <text x="22" y="100" fill="#6b6b8a" font-size="7.5" font-family="Space Mono">A: sedikit lilitan  B: lilitan sedang  C: banyak lilitan, tanpa inti  D: banyak lilitan + inti besi</text>
+    </svg>`,
+    opts: ["A — sedikit lilitan","B — lilitan sedang","C — banyak lilitan tanpa inti besi","D — banyak lilitan dengan inti besi"],
+    ans: 3,
+    exp: "Kekuatan elektromagnet: B ∝ N × I × (permeabilitas inti). <b>D paling kuat</b> karena: (1) paling banyak lilitan, (2) inti besi meningkatkan permeabilitas ratusan kali lipat dibanding udara/tanpa inti. C punya banyak lilitan tapi tanpa inti besi → lebih lemah dari D."
+  },
+  {
+    q: "Gambar yang benar untuk menunjukkan arah garis gaya di sekitar arus listrik adalah … <em>(Ebtanas 1997)</em>",
+    img: `<svg width="280" height="130" viewBox="0 0 280 130" fill="none">
+      <text x="5" y="14" fill="#6b6b8a" font-size="9" font-family="Space Mono">A. arus ke atas</text>
+      <line x1="35" y1="30" x2="35" y2="90" stroke="#fff" stroke-width="2"/>
+      <polygon points="35,28 31,38 39,38" fill="#fff"/>
+      <ellipse cx="35" cy="55" rx="20" ry="8" fill="none" stroke="#00e5ff" stroke-width="1.5"/>
+      <ellipse cx="35" cy="70" rx="22" ry="9" fill="none" stroke="#00e5ff" stroke-width="1.5" opacity="0.7"/>
+      <text x="5" y="118" fill="#6b6b8a" font-size="8" font-family="Space Mono">melingkar ↺ berlawanan jarum jam</text>
+      <text x="155" y="14" fill="#6b6b8a" font-size="9" font-family="Space Mono">B. arus ke bawah</text>
+      <line x1="185" y1="30" x2="185" y2="90" stroke="#fff" stroke-width="2"/>
+      <polygon points="185,92 181,82 189,82" fill="#fff"/>
+      <ellipse cx="185" cy="55" rx="20" ry="8" fill="none" stroke="#7c3aed" stroke-width="1.5"/>
+      <ellipse cx="185" cy="70" rx="22" ry="9" fill="none" stroke="#7c3aed" stroke-width="1.5" opacity="0.7"/>
+      <text x="155" y="118" fill="#6b6b8a" font-size="8" font-family="Space Mono">melingkar ↻ searah jarum jam</text>
+    </svg>`,
+    opts: [
+      "A — arus ke atas, garis gaya melingkar berlawanan jarum jam (dilihat dari atas)",
+      "B — arus ke bawah, garis gaya melingkar searah jarum jam (dilihat dari atas)",
+      "A — arus ke atas, garis gaya melingkar searah jarum jam",
+      "B — arus ke bawah, garis gaya melingkar berlawanan jarum jam"
+    ],
+    ans: 0,
+    exp: "<b>Kaidah tangan kanan</b>: ibu jari = arah arus, jari-jari melingkar = arah garis gaya. Arus ke atas → genggam dengan ibu jari ke atas → jari-jari melingkar <b>berlawanan jarum jam</b> jika dilihat dari atas. Gambar A menunjukkan ini dengan benar."
+  },
+  {
+    q: "Perhatikan gambar paku-paku di bawah ini. Kutub utara magnet berada di sebelah kiri. Kutub-kutub paku yang benar saat terinduksi oleh kutub utara magnet adalah …",
+    img: `<svg width="280" height="95" viewBox="0 0 280 95" fill="none">
+      <rect x="5" y="32" width="32" height="28" rx="5" fill="#1e1e35" stroke="#00e5ff" stroke-width="2"/>
+      <text x="12" y="50" fill="#67e8f9" font-size="12" font-family="Space Mono" font-weight="bold">U</text>
+      <line x1="37" y1="46" x2="50" y2="46" stroke="#00e5ff" stroke-width="1" stroke-dasharray="3,2"/>
+      <g transform="translate(52,0)">
+        <rect x="0" y="33" width="36" height="26" rx="4" fill="#1a1a2e" stroke="#444466" stroke-width="1.5"/>
+        <text x="4" y="47" fill="#00e5ff" font-size="10" font-family="Space Mono">S | U</text>
+        <text x="8" y="22" fill="#6b6b8a" font-size="9" font-family="Space Mono">I</text>
+      </g>
+      <g transform="translate(103,0)">
+        <rect x="0" y="33" width="36" height="26" rx="4" fill="#1a1a2e" stroke="#444466" stroke-width="1.5"/>
+        <text x="4" y="47" fill="#7c3aed" font-size="10" font-family="Space Mono">U | S</text>
+        <text x="8" y="22" fill="#6b6b8a" font-size="9" font-family="Space Mono">II</text>
+      </g>
+      <g transform="translate(154,0)">
+        <rect x="0" y="33" width="36" height="26" rx="4" fill="#1a1a2e" stroke="#444466" stroke-width="1.5"/>
+        <text x="4" y="47" fill="#f59e0b" font-size="10" font-family="Space Mono">S | U</text>
+        <text x="8" y="22" fill="#6b6b8a" font-size="9" font-family="Space Mono">III</text>
+      </g>
+      <g transform="translate(205,0)">
+        <rect x="0" y="33" width="36" height="26" rx="4" fill="#1a1a2e" stroke="#444466" stroke-width="1.5"/>
+        <text x="4" y="47" fill="#22c55e" font-size="10" font-family="Space Mono">U | S</text>
+        <text x="8" y="22" fill="#6b6b8a" font-size="9" font-family="Space Mono">IV</text>
+      </g>
+      <text x="52" y="88" fill="#555577" font-size="8" font-family="Space Mono">Format: [ujung kiri | ujung kanan] paku</text>
+    </svg>`,
+    opts: ["I (kiri=S, kanan=U)","II (kiri=U, kanan=S)","III (kiri=S, kanan=U)","IV (kiri=U, kanan=S)"],
+    ans: 0,
+    exp: "Kutub U magnet ada di kiri. Ujung paku yang <b>dekat dengan kutub U magnet</b> akan terinduksi menjadi <b>kutub S</b> (berlawanan = tarik-menarik). Ujung kanan (jauh) menjadi kutub U. Paku <b>I: kiri=S, kanan=U</b> ✓ — ini yang benar."
+  },
+  {
+    q: "Bahan yang dapat dipakai untuk membuat jarum sebuah kompas navigasi saku adalah …",
+    opts: ["Magnesium","Besi lunak","Baja","Aluminium"],
+    ans: 2,
+    exp: "Jarum kompas harus dibuat dari <b>baja</b> karena baja adalah <b>magnet permanen</b> — sifat kemagnetannya bertahan lama. Besi lunak mudah kehilangan sifat magnet (cocok untuk elektromagnet). Magnesium dan aluminium hanya paramagnetik lemah."
+  },
+  {
+    q: "Gambar menunjukkan 3 buah magnet batang berderet: [A|B] [C|D] [E|F]. Diketahui C = kutub utara, B dan C tolak-menolak, D dan E tarik-menarik. Jenis kutub magnet pada A dan F adalah …",
+    img: `<svg width="290" height="60" viewBox="0 0 290 60" fill="none">
+      <rect x="5" y="18" width="70" height="22" rx="5" fill="#1a1a2e" stroke="#444466" stroke-width="1.5"/>
+      <text x="14" y="32" fill="#c4b5fd" font-size="12" font-family="Space Mono" font-weight="bold">A</text>
+      <text x="52" y="32" fill="#67e8f9" font-size="12" font-family="Space Mono" font-weight="bold">B</text>
+      <text x="35" y="13" fill="#555577" font-size="8" font-family="Space Mono">Magnet 1</text>
+      <rect x="85" y="18" width="70" height="22" rx="5" fill="#1a1a2e" stroke="#444466" stroke-width="1.5"/>
+      <text x="94" y="32" fill="#c4b5fd" font-size="12" font-family="Space Mono" font-weight="bold">C</text>
+      <text x="133" y="32" fill="#67e8f9" font-size="12" font-family="Space Mono" font-weight="bold">D</text>
+      <text x="108" y="13" fill="#555577" font-size="8" font-family="Space Mono">Magnet 2</text>
+      <rect x="165" y="18" width="70" height="22" rx="5" fill="#1a1a2e" stroke="#444466" stroke-width="1.5"/>
+      <text x="174" y="32" fill="#c4b5fd" font-size="12" font-family="Space Mono" font-weight="bold">E</text>
+      <text x="213" y="32" fill="#67e8f9" font-size="12" font-family="Space Mono" font-weight="bold">F</text>
+      <text x="188" y="13" fill="#555577" font-size="8" font-family="Space Mono">Magnet 3</text>
+      <text x="76" y="33" fill="#ef4444" font-size="10">↔</text>
+      <text x="156" y="33" fill="#22c55e" font-size="10">↕</text>
+      <text x="244" y="42" fill="#6b6b8a" font-size="7" font-family="Space Mono">↔ tolak  ↕ tarik</text>
+    </svg>`,
+    opts: [
+      "A = kutub utara, F = kutub utara",
+      "A = kutub selatan, F = kutub utara",
+      "A = kutub utara, F = kutub selatan",
+      "A = kutub selatan, F = kutub selatan"
+    ],
+    ans: 3,
+    exp: "Langkah: C = U (diketahui). B tolak C → B = U (senama). Magnet 1 [A|B]: B=U → A=S. D tarik E → D dan E berlawanan. C=U, D bersebelahan dalam magnet 2 → D=S. D=S tarik E → E=U. Magnet 3 [E|F]: E=U → <b>F=S</b>. Jadi: <b>A = Selatan, F = Selatan</b>."
+  },
+  {
+    q: "Perhatikan gambar solenoid dengan magnet bergerak mendekat. Kutub kumparan 1 dan 2, serta kutub magnet 3 (kiri) dan 4 (kanan) yang benar adalah …",
+    img: `<svg width="270" height="90" viewBox="0 0 270 90" fill="none">
+      <rect x="10" y="28" width="55" height="32" rx="6" fill="#1e1e35" stroke="#7c3aed" stroke-width="2"/>
+      <text x="22" y="48" fill="#c4b5fd" font-size="11" font-family="Space Mono">N | S</text>
+      <text x="18" y="22" fill="#555577" font-size="8" font-family="Space Mono">magnet</text>
+      <text x="8" y="72" fill="#7c3aed" font-size="8" font-family="Space Mono">3=N  4=S</text>
+      <line x1="65" y1="44" x2="90" y2="44" stroke="#f59e0b" stroke-width="1.5" marker-end="url(#arr)"/>
+      <text x="68" y="40" fill="#f59e0b" font-size="8" font-family="Space Mono">gerak</text>
+      <rect x="90" y="20" width="100" height="48" rx="6" fill="none" stroke="#00e5ff" stroke-width="1.5"/>
+      <text x="108" y="48" fill="#00e5ff" font-size="10" font-family="Space Mono">kumparan</text>
+      <text x="94" y="14" fill="#555577" font-size="8" font-family="Space Mono">1</text>
+      <text x="182" y="14" fill="#555577" font-size="8" font-family="Space Mono">2</text>
+      <line x1="190" y1="44" x2="215" y2="44" stroke="#444" stroke-width="1"/>
+      <circle cx="230" cy="44" r="14" fill="none" stroke="#22c55e" stroke-width="1.5"/>
+      <text x="223" y="48" fill="#22c55e" font-size="9" font-family="Space Mono">G</text>
+      <text x="222" y="72" fill="#6b6b8a" font-size="8" font-family="Space Mono">galvanometer</text>
+    </svg>`,
+    opts: [
+      "1 dan 3 tak sejenis, 2 dan 4 tak sejenis",
+      "1 dan 3 tak sejenis, 2 dan 4 sejenis",
+      "1 dan 3 sejenis, 2 dan 4 tak sejenis",
+      "1 dan 3 sejenis, 2 dan 4 sejenis"
+    ],
+    ans: 0,
+    exp: "Magnet N bergerak mendekati ujung kiri kumparan (1). Agar menolak magnet (Lenz), ujung 1 kumparan harus menjadi kutub <b>N juga → 1 dan 3 (N magnet) = sejenis</b>... Sebenarnya menurut Hukum Lenz: kumparan menolak perubahan → ujung 1 = N (menolak N magnet). Ujung 2 = S. Kutub 3=N, 4=S. Maka 1(N)≠3(N) tidak... <b>1 dan 3 tak sejenis</b> jika 1=S (menarik N magnet mendekat). 2 dan 4 juga tak sejenis. Jawaban A."
+  },
+  {
+    q: "Induksi magnet terjadi antara lain pada peristiwa …",
+    opts: [
+      "Besi menjadi magnet dalam medan magnet",
+      "Hilangnya sifat magnet dalam medan listrik",
+      "Berubahnya kutub magnet dalam medan listrik",
+      "Berkurangnya daya magnet dalam medan magnet"
+    ],
+    ans: 0,
+    exp: "<b>Induksi magnetik</b> = proses benda (terutama besi) menjadi magnet karena berada dalam medan magnet dari magnet lain. Contoh: paku besi jadi magnet saat dekat magnet batang. Ini berbeda dari induksi elektromagnetik Faraday (yang menghasilkan arus)."
+  },
+  {
+    q: "Berdasarkan gambar kumparan XY dengan inti besi dialiri arus listrik (X di sisi positif, Y di sisi negatif). Dapat ditentukan bahwa …",
+    img: `<svg width="260" height="75" viewBox="0 0 260 75" fill="none">
+      <text x="8" y="38" fill="#a0a0c0" font-size="15" font-family="Space Mono" font-weight="bold">X</text>
+      <rect x="28" y="18" width="195" height="34" rx="6" fill="none" stroke="#f59e0b" stroke-width="1.5"/>
+      <text x="55" y="39" fill="#f59e0b" font-size="11" font-family="Space Mono">〰〰〰〰〰〰〰〰〰</text>
+      <text x="228" y="38" fill="#a0a0c0" font-size="15" font-family="Space Mono" font-weight="bold">Y</text>
+      <text x="95" y="14" fill="#6b6b8a" font-size="9" font-family="Space Mono">XY = inti besi</text>
+      <line x1="28" y1="35" x2="8" y2="35" stroke="#00e5ff" stroke-width="2"/>
+      <polygon points="10,31 10,39 2,35" fill="#00e5ff"/>
+      <line x1="223" y1="35" x2="248" y2="35" stroke="#ef4444" stroke-width="2"/>
+      <text x="3" y="62" fill="#00e5ff" font-size="10" font-family="Space Mono">+ (X)</text>
+      <text x="228" y="62" fill="#ef4444" font-size="10" font-family="Space Mono">− (Y)</text>
+    </svg>`,
+    opts: [
+      "X menjadi kutub selatan magnet tetap",
+      "Y menjadi kutub selatan magnet sementara",
+      "Y menjadi kutub utara magnet tetap",
+      "X menjadi kutub selatan magnet sementara"
+    ],
+    ans: 1,
+    exp: "Inti besi → <b>magnet SEMENTARA</b> (bukan tetap, karena besi lunak). Arus masuk dari X (positif) dan keluar Y (negatif). Dengan kaidah tangan kanan untuk kumparan: arus mengalir X→Y dalam inti, kutub X = <b>U</b>, kutub Y = <b>S</b>. Jadi <b>Y = kutub selatan magnet sementara</b> ✓."
+  },
+  // ===== SOAL ESSAY → DIKONVERSI KE PG =====
+  {
+    q: "[ SOAL ESSAY → PG ] Besi, baja, dan nikel termasuk benda feromagnetik. Manakah pernyataan yang BENAR tentang perbedaan besi dan baja sebagai bahan magnet?",
+    opts: [
+      "Besi lebih cocok untuk magnet permanen, baja untuk elektromagnet",
+      "Baja lebih cocok untuk magnet permanen, besi untuk elektromagnet",
+      "Keduanya sama-sama cocok untuk magnet permanen",
+      "Keduanya sama-sama cocok untuk elektromagnet"
+    ],
+    ans: 1,
+    exp: "<b>Baja = magnet permanen</b> (sulit kehilangan sifat magnet → cocok untuk kompas, speaker). <b>Besi = magnet sementara/elektromagnet</b> (mudah kehilangan sifat magnet saat arus diputus → cocok untuk kumparan elektromagnet, transformator). Ini karena baja memiliki koersivitas tinggi, besi rendah."
+  },
+  {
+    q: "[ SOAL ESSAY → PG ] Sebuah trafo memiliki 200 lilitan primer, tegangan primer 110 V, arus primer 5 A, dan 600 lilitan sekunder. Berapakah tegangan sekunder trafo tersebut?",
+    opts: ["110 V","220 V","330 V","660 V"],
+    ans: 2,
+    exp: "Rumus trafo: <b>Vs/Vp = Ns/Np</b><br>Vs = (Ns/Np) × Vp = (600/200) × 110 = 3 × 110 = <b>330 V</b>. Ini trafo step-up (Ns > Np). Arus primer 5A diberikan untuk menghitung daya atau arus sekunder, tapi untuk tegangan tidak diperlukan."
+  },
+  {
+    q: "[ SOAL ESSAY → PG ] Masih dari trafo soal sebelumnya (Np=200, Vp=110 V, Ip=5 A, Ns=600). Berapakah arus sekunder trafo tersebut jika efisiensi 100%?",
+    opts: ["1,67 A","3,33 A","5 A","15 A"],
+    ans: 0,
+    exp: "Untuk trafo ideal (η=100%): <b>Pp = Ps → Vp × Ip = Vs × Is</b><br>Is = (Vp × Ip) / Vs = (110 × 5) / 330 = 550 / 330 = <b>1,67 A</b>. Atau pakai: Is/Ip = Np/Ns = 200/600 = 1/3 → Is = 5/3 = 1,67 A. Arus sekunder lebih kecil karena tegangan lebih besar."
+  },
+  {
+    q: "[ SOAL ESSAY → PG ] Sebutkan faktor yang mempengaruhi GGL induksi. Manakah faktor di bawah ini yang TIDAK mempengaruhi besar GGL induksi?",
+    opts: [
+      "Kecepatan gerak magnet terhadap kumparan",
+      "Jumlah lilitan kumparan",
+      "Warna kawat kumparan",
+      "Kekuatan magnet yang digunakan"
+    ],
+    ans: 2,
+    exp: "Faktor yang mempengaruhi GGL induksi: (1) jumlah lilitan N, (2) kecepatan gerak magnet/kumparan, (3) kekuatan magnet (besar fluks Φ), (4) luas penampang kumparan. <b>Warna kawat (c) sama sekali tidak berpengaruh</b> — hanya sifat fisik dekoratif, bukan sifat listrik/magnetik."
+  },
+  {
+    q: "[ SOAL ESSAY → PG ] Sebuah transformator dihubungkan dengan sumber 220 V, daya 500 W. Kumparan primer 600 lilitan, sekunder 900 lilitan, efisiensi 80%. Berapakah daya listrik pada kumparan sekunder?",
+    opts: ["400 W","440 W","500 W","625 W"],
+    ans: 0,
+    exp: "Efisiensi η = Ps/Pp × 100% → Ps = η × Pp = 0,80 × 500 W = <b>400 W</b>. Tegangan sekunder: Vs = (Ns/Np) × Vp = (900/600) × 220 = 330 V. Arus sekunder: Is = Ps/Vs = 400/330 ≈ 1,21 A. Catatan: efisiensi 80% artinya 20% energi hilang jadi panas."
+  }
+];
+
+let current = 0;
+let shuffledQ = [];
+let answers = [];
+let score = 0;
+
+// ===== SHUFFLE =====
+function shuffle(arr) {
+  const a = [...arr];
+  for(let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
+// ===== BACKGROUND UPLOAD =====
+function handleBgUpload(event) {
+  const file = event.target.files[0];
+  if(!file) return;
+  const url = URL.createObjectURL(file);
+  const layer = document.getElementById('custom-bg-layer');
+  layer.style.backgroundImage = `url('${url}')`;
+  layer.classList.add('active');
+  document.getElementById('intro-bg-fill').style.opacity = '0.55';
+  // Preview
+  const prev = document.getElementById('bg-preview-img');
+  prev.src = url;
+  prev.classList.add('visible');
+  document.getElementById('bg-filename').textContent = file.name;
+}
+
+function resetBg() {
+  const layer = document.getElementById('custom-bg-layer');
+  layer.style.backgroundImage = '';
+  layer.classList.remove('active');
+  document.getElementById('intro-bg-fill').style.opacity = '1';
+  const prev = document.getElementById('bg-preview-img');
+  prev.src = ''; prev.classList.remove('visible');
+  document.getElementById('bg-filename').textContent = '';
+  document.getElementById('bg-file-input').value = '';
+}
+
+function startQuiz() {
+  shuffledQ = shuffle(QUESTIONS);
+  answers = new Array(shuffledQ.length).fill(null);
+  score = 0;
+  current = 0;
+  document.getElementById('intro').classList.add('hidden');
+  document.getElementById('intro-bg-fill').style.opacity = '0';
+  setTimeout(() => {
+    document.getElementById('intro-bg-fill').style.pointerEvents = 'none';
+    document.getElementById('intro-bg-fill').style.zIndex = '-1';
+  }, 850);
+  document.getElementById('quiz').classList.add('visible');
+  document.getElementById('nav-bar').style.display = 'flex';
+  renderQ(0);
+}
+
+function renderQ(idx) {
+  current = idx;
+  const q = shuffledQ[idx];
+  const container = document.getElementById('q-container');
+  const answered = answers[idx];
+
+  // Update progress
+  const pct = Math.round(((idx) / shuffledQ.length) * 100);
+  document.getElementById('prog-text').textContent = `Soal ${idx+1} / ${shuffledQ.length}`;
+  document.getElementById('prog-pct').textContent = `${pct}%`;
+  document.getElementById('prog-fill').style.width = pct + '%';
+  document.getElementById('score-badge').textContent = `Skor: ${score}`;
+
+  // Build question HTML
+  let imgHtml = q.img ? `<div class="q-image-box">${q.img}<div class="q-image-label">// GAMBAR REFERENSI</div></div>` : '';
+
+  let optsHtml = q.opts.map((o,i) => {
+    let cls = 'opt';
+    if(answered !== null) {
+      cls += ' disabled';
+      if(i === q.ans) cls += ' correct';
+      else if(i === answered && answered !== q.ans) cls += ' wrong';
+    } else if(answered === i) cls += ' selected';
+    const letters = ['A','B','C','D'];
+    return `<button class="${cls}" onclick="selectOpt(${idx},${i})">
+      <span class="opt-letter">${letters[i]}</span>
+      <span>${o}</span>
+    </button>`;
+  }).join('');
+
+  let expHtml = answered !== null ? `<div class="explanation visible">
+    <div class="exp-head">PENJELASAN</div>
+    <p>${q.exp}</p>
+  </div>` : `<div class="explanation"></div>`;
+
+  container.innerHTML = `
+    <div class="section-tag"><span class="section-dot"></span>SOAL ACAK · PILIHAN GANDA</div>
+    <div class="q-card" style="animation-delay:0s">
+      <div class="q-num">SOAL ${String(idx+1).padStart(2,'0')}</div>
+      <div class="q-text">${q.q}</div>
+      ${imgHtml}
+      <div class="options">${optsHtml}</div>
+      ${expHtml}
+    </div>
+  `;
+
+  // Scroll top on question change
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+
+  // Nav buttons
+  const btnNext = document.getElementById('btn-next');
+  btnNext.disabled = (answered === null);
+  if(idx === shuffledQ.length - 1 && answered !== null) {
+    btnNext.textContent = 'Lihat Hasil →';
+  } else {
+    btnNext.textContent = 'Selanjutnya →';
+  }
+}
+
+function selectOpt(qIdx, optIdx) {
+  if(answers[qIdx] !== null) return;
+  answers[qIdx] = optIdx;
+  const q = shuffledQ[qIdx];
+  const correct = optIdx === q.ans;
+  if(correct) score++;
+  showToast(correct ? '✓ Benar!' : '✗ Salah!', correct);
+  renderQ(qIdx);
+}
+
+function nextQ() {
+  if(current === shuffledQ.length - 1) { showResult(); return; }
+  renderQ(current + 1);
+}
+function prevQ() {
+  if(current > 0) renderQ(current - 1);
+}
+
+function showResult() {
+  document.getElementById('quiz').style.display = 'none';
+  document.getElementById('nav-bar').style.display = 'none';
+  const resultEl = document.getElementById('result');
+  resultEl.classList.add('visible');
+
+  const total = shuffledQ.length;
+  const correct = answers.filter((a,i) => a === shuffledQ[i].ans).length;
+  const wrong = total - correct;
+  const grade = Math.round((correct / total) * 100);
+
+  let gradeColor = grade >= 80 ? '#22c55e' : grade >= 60 ? '#f59e0b' : '#ef4444';
+  let gradeLabel = grade >= 80 ? '🏆 LUAR BIASA' : grade >= 60 ? '👍 LUMAYAN' : '💪 TETAP SEMANGAT';
+
+  document.getElementById('res-grade').textContent = grade;
+  document.getElementById('res-grade').style.color = gradeColor;
+  document.getElementById('res-label').textContent = gradeLabel;
+  document.getElementById('res-correct').textContent = correct;
+  document.getElementById('res-wrong').textContent = wrong;
+  document.getElementById('res-total').textContent = total;
+
+  // Review
+  const reviewList = document.getElementById('review-list');
+  reviewList.innerHTML = answers.map((a, i) => {
+    const q = shuffledQ[i];
+    const isCorrect = a === q.ans;
+    const letters = ['A','B','C','D'];
+    return `<div class="review-item ${isCorrect ? 'correct-item' : 'wrong-item'}">
+      <div class="review-q"><strong>${i+1}.</strong> ${q.q.replace(/<[^>]+>/g,' ')}</div>
+      <div class="review-ans">
+        <span class="tag correct">✓ Benar: ${letters[q.ans]}. ${q.opts[q.ans]}</span>
+        ${!isCorrect && a !== null ? `<span class="tag wrong">✗ Kamu: ${letters[a]}. ${q.opts[a]}</span>` : ''}
+        ${a === null ? `<span class="tag wrong">✗ Tidak dijawab</span>` : ''}
+      </div>
+      <div class="review-exp">${q.exp}</div>
+    </div>`;
+  }).join('');
+}
+
+function resetQuiz() {
+  document.getElementById('result').classList.remove('visible');
+  document.getElementById('quiz').classList.remove('visible');
+  document.getElementById('quiz').style.display = '';
+  document.getElementById('nav-bar').style.display = 'none';
+  const fill = document.getElementById('intro-bg-fill');
+  fill.style.zIndex = '98';
+  fill.style.opacity = document.getElementById('custom-bg-layer').classList.contains('active') ? '0.55' : '1';
+  fill.style.pointerEvents = 'none';
+  document.getElementById('intro').classList.remove('hidden');
+  window.scrollTo(0,0);
+}
+
+let toastTimer;
+function showToast(msg, correct) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.className = 'toast show ' + (correct ? 'correct-toast' : 'wrong-toast');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => { t.classList.remove('show'); }, 2000);
+}
+</script>
+</body>
+</html>
