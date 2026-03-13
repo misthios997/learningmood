@@ -1,0 +1,1042 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PANCASILA & BHINNEKA TUNGGAL IKA — Quiz Interaktif</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=DM+Sans:wght@300;400;500;600&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --red: #C0392B;
+    --deep-red: #96231B;
+    --gold: #D4A017;
+    --gold-light: #F0C040;
+    --dark: #0D0D0D;
+    --dark2: #1A1A1A;
+    --dark3: #262626;
+    --cream: #F5EDD8;
+    --cream2: #EDE0C4;
+    --white: #FAFAF8;
+    --text-muted: #8A8070;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--dark);
+    color: var(--cream);
+    min-height: 100vh;
+    overflow-x: hidden;
+    position: relative;
+  }
+
+  /* Background layer */
+  #bg-layer {
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    background: radial-gradient(ellipse at 20% 20%, #2a0a0a 0%, transparent 60%),
+                radial-gradient(ellipse at 80% 80%, #1a1500 0%, transparent 60%),
+                var(--dark);
+    background-size: cover;
+    background-position: center;
+    transition: all 0.5s ease;
+  }
+  #bg-layer::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: rgba(0,0,0,0.62);
+  }
+  #bg-layer.has-image::after {
+    background: rgba(0,0,0,0.72);
+  }
+
+  /* Noise overlay */
+  body::after {
+    content: '';
+    position: fixed;
+    inset: 0;
+    z-index: 1;
+    pointer-events: none;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+    opacity: 0.35;
+  }
+
+  .app {
+    position: relative;
+    z-index: 2;
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 0 20px 60px;
+  }
+
+  /* ===== HEADER ===== */
+  header {
+    text-align: center;
+    padding: 60px 0 40px;
+    position: relative;
+  }
+  .header-eyebrow {
+    font-family: 'Space Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.3em;
+    color: var(--gold);
+    text-transform: uppercase;
+    margin-bottom: 16px;
+  }
+  header h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(2.2rem, 7vw, 4.2rem);
+    font-weight: 900;
+    line-height: 1.05;
+    letter-spacing: -0.02em;
+    color: var(--white);
+    margin-bottom: 8px;
+  }
+  header h1 span { color: var(--gold); }
+  .header-sub {
+    font-size: 14px;
+    color: var(--text-muted);
+    font-weight: 300;
+    letter-spacing: 0.05em;
+    margin-bottom: 32px;
+  }
+  .header-divider {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    justify-content: center;
+    margin-bottom: 32px;
+  }
+  .header-divider::before, .header-divider::after {
+    content: '';
+    width: 80px;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--gold));
+  }
+  .header-divider::after { background: linear-gradient(90deg, var(--gold), transparent); }
+  .header-divider-icon {
+    width: 32px;
+    height: 32px;
+    border: 1px solid var(--gold);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+  }
+
+  /* ===== BG UPLOAD ===== */
+  .bg-upload-bar {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    margin-bottom: 50px;
+  }
+  .bg-upload-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 20px;
+    background: transparent;
+    border: 1px solid rgba(212,160,23,0.4);
+    color: var(--gold);
+    font-family: 'Space Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: all 0.2s;
+    border-radius: 2px;
+  }
+  .bg-upload-btn:hover {
+    background: rgba(212,160,23,0.1);
+    border-color: var(--gold);
+  }
+  .bg-reset-btn {
+    padding: 10px 16px;
+    background: transparent;
+    border: 1px solid rgba(255,255,255,0.15);
+    color: var(--text-muted);
+    font-family: 'Space Mono', monospace;
+    font-size: 10px;
+    cursor: pointer;
+    transition: all 0.2s;
+    border-radius: 2px;
+    display: none;
+  }
+  .bg-reset-btn.visible { display: inline-flex; align-items: center; gap: 6px; }
+  .bg-reset-btn:hover { border-color: rgba(255,255,255,0.3); color: var(--cream); }
+  #bgFileInput { display: none; }
+
+  /* ===== NAV TABS ===== */
+  .nav-tabs {
+    display: flex;
+    gap: 4px;
+    margin-bottom: 40px;
+    background: rgba(255,255,255,0.04);
+    padding: 6px;
+    border-radius: 4px;
+    border: 1px solid rgba(255,255,255,0.08);
+  }
+  .nav-tab {
+    flex: 1;
+    padding: 12px 16px;
+    background: transparent;
+    border: none;
+    color: var(--text-muted);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    border-radius: 3px;
+    transition: all 0.2s;
+    letter-spacing: 0.02em;
+  }
+  .nav-tab.active {
+    background: var(--red);
+    color: var(--white);
+  }
+  .nav-tab:hover:not(.active) { color: var(--cream); background: rgba(255,255,255,0.05); }
+
+  /* ===== MATERI SECTION ===== */
+  .materi-section { display: none; }
+  .materi-section.active { display: block; }
+
+  .ppt-slide {
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 4px;
+    margin-bottom: 20px;
+    overflow: hidden;
+    transition: border-color 0.2s;
+  }
+  .ppt-slide:hover { border-color: rgba(212,160,23,0.3); }
+
+  .ppt-slide-header {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 20px 24px;
+    cursor: pointer;
+    user-select: none;
+  }
+  .ppt-slide-num {
+    font-family: 'Space Mono', monospace;
+    font-size: 10px;
+    color: var(--gold);
+    letter-spacing: 0.1em;
+    min-width: 28px;
+  }
+  .ppt-slide-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 17px;
+    font-weight: 700;
+    color: var(--cream);
+    flex: 1;
+  }
+  .ppt-slide-toggle {
+    color: var(--text-muted);
+    font-size: 18px;
+    transition: transform 0.3s;
+  }
+  .ppt-slide.open .ppt-slide-toggle { transform: rotate(180deg); }
+
+  .ppt-slide-body {
+    display: none;
+    padding: 0 24px 24px;
+    border-top: 1px solid rgba(255,255,255,0.06);
+  }
+  .ppt-slide.open .ppt-slide-body { display: block; }
+
+  .ppt-slide-body ul { list-style: none; padding: 0; }
+  .ppt-slide-body ul li {
+    padding: 10px 0;
+    font-size: 14px;
+    line-height: 1.7;
+    color: #C8BFA8;
+    border-bottom: 1px solid rgba(255,255,255,0.05);
+    padding-left: 20px;
+    position: relative;
+  }
+  .ppt-slide-body ul li:last-child { border-bottom: none; }
+  .ppt-slide-body ul li::before {
+    content: '▸';
+    color: var(--gold);
+    position: absolute;
+    left: 0;
+    font-size: 10px;
+    top: 12px;
+  }
+
+  .comparison-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin-top: 16px;
+  }
+  .comparison-card {
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 3px;
+    padding: 16px;
+  }
+  .comparison-card h4 {
+    font-family: 'Space Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 12px;
+  }
+  .comparison-card p {
+    font-size: 13px;
+    line-height: 1.6;
+    color: #B0A890;
+  }
+
+  /* ===== QUIZ SECTION ===== */
+  .quiz-section { display: none; }
+  .quiz-section.active { display: block; }
+
+  .quiz-meta {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 32px;
+    padding: 16px 20px;
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 4px;
+  }
+  .quiz-progress-text {
+    font-family: 'Space Mono', monospace;
+    font-size: 11px;
+    color: var(--text-muted);
+    letter-spacing: 0.1em;
+  }
+  .quiz-progress-text span { color: var(--gold); font-weight: 700; }
+  .quiz-score-display {
+    font-family: 'Space Mono', monospace;
+    font-size: 11px;
+    color: var(--text-muted);
+  }
+  .quiz-score-display span { color: #5CB85C; font-weight: 700; }
+
+  .progress-bar-wrap {
+    height: 3px;
+    background: rgba(255,255,255,0.08);
+    border-radius: 2px;
+    margin-bottom: 36px;
+    overflow: hidden;
+  }
+  .progress-bar-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--red), var(--gold));
+    border-radius: 2px;
+    transition: width 0.4s ease;
+  }
+
+  .question-card {
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 6px;
+    padding: 32px;
+    margin-bottom: 24px;
+    animation: slideIn 0.35s ease;
+  }
+  @keyframes slideIn {
+    from { opacity: 0; transform: translateY(16px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .question-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-family: 'Space Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: var(--gold);
+    background: rgba(212,160,23,0.1);
+    border: 1px solid rgba(212,160,23,0.25);
+    padding: 5px 10px;
+    border-radius: 2px;
+    margin-bottom: 20px;
+  }
+
+  .question-text {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(16px, 3vw, 20px);
+    font-weight: 700;
+    line-height: 1.5;
+    color: var(--white);
+    margin-bottom: 28px;
+  }
+
+  .options-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+  }
+  @media(max-width: 600px) { .options-grid { grid-template-columns: 1fr; } .comparison-grid { grid-template-columns: 1fr; } }
+
+  .option-btn {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 14px 16px;
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 4px;
+    color: var(--cream);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    text-align: left;
+    cursor: pointer;
+    transition: all 0.2s;
+    line-height: 1.5;
+  }
+  .option-btn:hover:not(:disabled) {
+    background: rgba(212,160,23,0.08);
+    border-color: rgba(212,160,23,0.4);
+    color: var(--white);
+  }
+  .option-label {
+    font-family: 'Space Mono', monospace;
+    font-size: 11px;
+    color: var(--gold);
+    min-width: 18px;
+    padding-top: 1px;
+  }
+  .option-btn.correct {
+    background: rgba(92,184,92,0.12);
+    border-color: rgba(92,184,92,0.5);
+    color: #8CE88C;
+  }
+  .option-btn.correct .option-label { color: #5CB85C; }
+  .option-btn.wrong {
+    background: rgba(192,57,43,0.12);
+    border-color: rgba(192,57,43,0.5);
+    color: #FF8070;
+  }
+  .option-btn.wrong .option-label { color: var(--red); }
+  .option-btn:disabled { cursor: default; }
+
+  .answer-feedback {
+    margin-top: 20px;
+    padding: 16px 20px;
+    border-radius: 4px;
+    font-size: 14px;
+    line-height: 1.65;
+    display: none;
+    animation: fadeIn 0.3s ease;
+  }
+  @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+  .answer-feedback.show { display: block; }
+  .answer-feedback.correct-fb {
+    background: rgba(92,184,92,0.08);
+    border: 1px solid rgba(92,184,92,0.25);
+    color: #A8E8A8;
+  }
+  .answer-feedback.wrong-fb {
+    background: rgba(192,57,43,0.08);
+    border: 1px solid rgba(192,57,43,0.25);
+    color: #FFB0A0;
+  }
+  .fb-label {
+    font-family: 'Space Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    margin-bottom: 8px;
+    display: block;
+  }
+  .correct-fb .fb-label { color: #5CB85C; }
+  .wrong-fb .fb-label { color: var(--red); }
+
+  .nav-btns {
+    display: flex;
+    gap: 12px;
+    margin-top: 24px;
+  }
+  .btn-next {
+    flex: 1;
+    padding: 16px 24px;
+    background: var(--red);
+    border: none;
+    color: var(--white);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    border-radius: 3px;
+    letter-spacing: 0.05em;
+    transition: background 0.2s;
+    display: none;
+  }
+  .btn-next:hover { background: var(--deep-red); }
+  .btn-next.show { display: block; }
+  .btn-prev {
+    padding: 16px 20px;
+    background: transparent;
+    border: 1px solid rgba(255,255,255,0.15);
+    color: var(--text-muted);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13px;
+    cursor: pointer;
+    border-radius: 3px;
+    transition: all 0.2s;
+    display: none;
+  }
+  .btn-prev:hover { border-color: rgba(255,255,255,0.3); color: var(--cream); }
+  .btn-prev.show { display: block; }
+
+  /* ===== RESULTS ===== */
+  .results-section {
+    display: none;
+    text-align: center;
+    padding: 60px 20px;
+    animation: slideIn 0.4s ease;
+  }
+  .results-section.show { display: block; }
+
+  .result-circle {
+    width: 160px;
+    height: 160px;
+    margin: 0 auto 32px;
+    position: relative;
+  }
+  .result-circle svg { transform: rotate(-90deg); }
+  .result-circle-text {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+  }
+  .result-pct {
+    font-family: 'Playfair Display', serif;
+    font-size: 40px;
+    font-weight: 900;
+    color: var(--white);
+    line-height: 1;
+  }
+  .result-pct-label {
+    font-family: 'Space Mono', monospace;
+    font-size: 9px;
+    color: var(--text-muted);
+    letter-spacing: 0.2em;
+    margin-top: 4px;
+  }
+  .result-grade {
+    font-family: 'Playfair Display', serif;
+    font-size: 48px;
+    font-weight: 900;
+    margin-bottom: 12px;
+  }
+  .result-message {
+    font-size: 16px;
+    color: var(--text-muted);
+    margin-bottom: 8px;
+  }
+  .result-stats {
+    display: flex;
+    gap: 20px;
+    justify-content: center;
+    margin: 32px 0;
+  }
+  .result-stat {
+    text-align: center;
+    padding: 20px 28px;
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 4px;
+  }
+  .result-stat-val {
+    font-family: 'Playfair Display', serif;
+    font-size: 32px;
+    font-weight: 900;
+    margin-bottom: 4px;
+  }
+  .result-stat-val.green { color: #5CB85C; }
+  .result-stat-val.red { color: var(--red); }
+  .result-stat-label {
+    font-family: 'Space Mono', monospace;
+    font-size: 9px;
+    color: var(--text-muted);
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+  }
+  .btn-restart {
+    padding: 16px 48px;
+    background: var(--gold);
+    border: none;
+    color: var(--dark);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 15px;
+    font-weight: 700;
+    cursor: pointer;
+    border-radius: 3px;
+    letter-spacing: 0.05em;
+    transition: all 0.2s;
+  }
+  .btn-restart:hover { background: var(--gold-light); }
+
+  .question-navigator {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(36px, 1fr));
+    gap: 6px;
+    margin-top: 40px;
+    padding: 20px;
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 4px;
+  }
+  .qn-bubble {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    border: 1px solid rgba(255,255,255,0.15);
+    background: transparent;
+    color: var(--text-muted);
+    font-family: 'Space Mono', monospace;
+    font-size: 10px;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .qn-bubble:hover { border-color: var(--gold); color: var(--gold); }
+  .qn-bubble.answered-correct { background: rgba(92,184,92,0.15); border-color: #5CB85C; color: #5CB85C; }
+  .qn-bubble.answered-wrong { background: rgba(192,57,43,0.15); border-color: var(--red); color: var(--red); }
+  .qn-bubble.current { border-color: var(--gold); color: var(--gold); background: rgba(212,160,23,0.1); }
+</style>
+</head>
+<body>
+<div id="bg-layer"></div>
+<input type="file" id="bgFileInput" accept="image/*">
+
+<div class="app">
+  <header>
+    <div class="header-eyebrow">Pendidikan Kewarganegaraan · PKN</div>
+    <h1>Pancasila &<br><span>Bhinneka Tunggal Ika</span></h1>
+    <p class="header-sub">Materi Lengkap + Kuis Interaktif 45 Soal</p>
+    <div class="header-divider"><div class="header-divider-icon">✦</div></div>
+
+    <div class="bg-upload-bar">
+      <button class="bg-upload-btn" onclick="document.getElementById('bgFileInput').click()">
+        ⊕ Upload Background
+      </button>
+      <button class="bg-reset-btn" id="bgResetBtn" onclick="resetBg()">✕ Reset</button>
+    </div>
+  </header>
+
+  <div class="nav-tabs">
+    <button class="nav-tab active" onclick="switchTab('materi')">📖 Materi PPT</button>
+    <button class="nav-tab" onclick="switchTab('quiz')">✏️ Kuis 45 Soal</button>
+  </div>
+
+  <!-- MATERI -->
+  <div class="materi-section active" id="tab-materi">
+
+    <div class="ppt-slide">
+      <div class="ppt-slide-header" onclick="toggleSlide(this)">
+        <span class="ppt-slide-num">01</span>
+        <span class="ppt-slide-title">Pengertian Pancasila</span>
+        <span class="ppt-slide-toggle">▾</span>
+      </div>
+      <div class="ppt-slide-body">
+        <ul>
+          <li>Pancasila adalah dasar negara dan ideologi bangsa Indonesia yang menjadi pedoman dalam kehidupan bermasyarakat, berbangsa, dan bernegara.</li>
+          <li>Secara bahasa, kata Pancasila berasal dari bahasa Sanskerta: <em>Panca</em> berarti lima, dan <em>Sila</em> berarti prinsip atau asas, sehingga Pancasila berarti <strong>lima prinsip dasar</strong>.</li>
+          <li>Pancasila secara resmi tercantum dalam Pembukaan UUD NRI Tahun 1945 alinea keempat dan dirumuskan dalam sidang BPUPKI.</li>
+          <li>Lima Sila Pancasila: (1) Ketuhanan Yang Maha Esa, (2) Kemanusiaan yang Adil dan Beradab, (3) Persatuan Indonesia, (4) Kerakyatan yang Dipimpin oleh Hikmat Kebijaksanaan dalam Permusyawaratan/Perwakilan, (5) Keadilan Sosial bagi Seluruh Rakyat Indonesia.</li>
+          <li>Pancasila berfungsi sebagai dasar negara, pandangan hidup bangsa, sumber dari segala sumber hukum, dan pedoman bersikap dan bertindak.</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="ppt-slide">
+      <div class="ppt-slide-header" onclick="toggleSlide(this)">
+        <span class="ppt-slide-num">02</span>
+        <span class="ppt-slide-title">Pengertian Bhinneka Tunggal Ika</span>
+        <span class="ppt-slide-toggle">▾</span>
+      </div>
+      <div class="ppt-slide-body">
+        <ul>
+          <li>Bhinneka Tunggal Ika adalah semboyan bangsa Indonesia yang berarti <strong>"Berbeda-beda tetapi tetap satu"</strong>.</li>
+          <li>Semboyan ini menjadi lambang persatuan bangsa Indonesia yang memiliki banyak perbedaan: suku, agama, bahasa, budaya, dan adat istiadat.</li>
+          <li>Secara resmi, Bhinneka Tunggal Ika tercantum pada lambang negara Indonesia, yaitu <strong>Garuda Pancasila</strong>.</li>
+          <li>Ungkapan Bhinneka Tunggal Ika berasal dari kitab <strong>Kakawin Sutasoma</strong> yang ditulis oleh Mpu Tantular pada masa Kerajaan Majapahit.</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="ppt-slide">
+      <div class="ppt-slide-header" onclick="toggleSlide(this)">
+        <span class="ppt-slide-num">03</span>
+        <span class="ppt-slide-title">Kesamaan Pancasila & Bhinneka Tunggal Ika</span>
+        <span class="ppt-slide-toggle">▾</span>
+      </div>
+      <div class="ppt-slide-body">
+        <ul>
+          <li>Sama-sama menjadi dasar persatuan bangsa: Pancasila adalah dasar negara, Bhinneka Tunggal Ika adalah semboyan pemersatu.</li>
+          <li>Menghargai perbedaan: keduanya menekankan hidup rukun dan saling menghormati meski berbeda suku, agama, ras, dan budaya.</li>
+          <li>Menjadi pedoman kehidupan berbangsa: Pancasila dalam hukum & pemerintahan, Bhinneka Tunggal Ika dalam kerukunan & persatuan.</li>
+          <li>Sama-sama tercantum dalam simbol negara: Pancasila di Pembukaan UUD 1945, Bhinneka Tunggal Ika di pita Garuda Pancasila.</li>
+          <li>Bertujuan menjaga keutuhan NKRI dari perpecahan.</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="ppt-slide">
+      <div class="ppt-slide-header" onclick="toggleSlide(this)">
+        <span class="ppt-slide-num">04</span>
+        <span class="ppt-slide-title">Perbedaan Pancasila & Bhinneka Tunggal Ika</span>
+        <span class="ppt-slide-toggle">▾</span>
+      </div>
+      <div class="ppt-slide-body">
+        <div class="comparison-grid">
+          <div class="comparison-card">
+            <h4>Pancasila</h4>
+            <p><strong>Pengertian:</strong> Dasar negara & ideologi bangsa.<br><strong>Fungsi:</strong> Dasar hukum, pedoman penyelenggaraan negara.<br><strong>Letak Resmi:</strong> Pembukaan UUD 1945 alinea 4.<br><strong>Peran:</strong> Mengatur seluruh aspek kehidupan berbangsa.</p>
+          </div>
+          <div class="comparison-card">
+            <h4>Bhinneka Tunggal Ika</h4>
+            <p><strong>Pengertian:</strong> Semboyan negara, "berbeda-beda tetapi tetap satu".<br><strong>Fungsi:</strong> Semboyan pemersatu dalam keberagaman.<br><strong>Letak Resmi:</strong> Pita pada lambang Garuda Pancasila.<br><strong>Peran:</strong> Menekankan persatuan dalam perbedaan.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="ppt-slide">
+      <div class="ppt-slide-header" onclick="toggleSlide(this)">
+        <span class="ppt-slide-num">05</span>
+        <span class="ppt-slide-title">Tradisi, Kearifan Lokal & 7 Unsur Budaya</span>
+        <span class="ppt-slide-toggle">▾</span>
+      </div>
+      <div class="ppt-slide-body">
+        <ul>
+          <li><strong>Tradisi</strong> adalah kebiasaan yang diwariskan secara turun-temurun dan dijadikan pedoman perilaku di masyarakat.</li>
+          <li><strong>Kearifan lokal</strong> adalah pandangan hidup dan kebiasaan masyarakat setempat yang diterapkan secara bijaksana untuk memecahkan masalah kehidupan.</li>
+          <li><strong>7 Unsur Budaya:</strong> (1) Bahasa, (2) Sistem Pengetahuan, (3) Sistem Organisasi Sosial/Kekerabatan, (4) Sistem Peralatan Hidup/Teknologi, (5) Sistem Ekonomi/Mata Pencaharian, (6) Sistem Religi/Kepercayaan, (7) Kesenian.</li>
+          <li>Pelestarian tradisi: praktik sehari-hari, diajarkan ke generasi muda, muatan lokal sekolah, festival budaya rutin.</li>
+          <li>Nilai moral kearifan lokal: menghormati leluhur, kejujuran, pelestarian lingkungan, kepedulian sosial, toleransi.</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="ppt-slide">
+      <div class="ppt-slide-header" onclick="toggleSlide(this)">
+        <span class="ppt-slide-num">06</span>
+        <span class="ppt-slide-title">Teknologi, Globalisasi & Pelestarian Budaya</span>
+        <span class="ppt-slide-toggle">▾</span>
+      </div>
+      <div class="ppt-slide-body">
+        <ul>
+          <li><strong>Pengaruh global:</strong> Dampak positif (tradisi lokal lebih dikenal dunia) + negatif (generasi muda rentan meninggalkan tradisi).</li>
+          <li><strong>Digitalisasi</strong> bertindak sebagai arsip abadi yang melindungi naskah kuno, musik, dan tarian dari kerusakan fisik.</li>
+          <li><strong>Media massa & platform sosial</strong> menjadi jembatan publikasi yang menumbuhkan rasa bangga dan minat masyarakat merawat warisan budaya.</li>
+          <li><strong>Peran pemerintah:</strong> Regulasi menyaring budaya asing, dana pembinaan seni budaya, pendidikan karakter di sekolah. Dijamin Pasal 32 UUD 1945 & UU No. 5 Tahun 2017 tentang Pemajuan Kebudayaan.</li>
+          <li><strong>Sikap selektif:</strong> Ambil hal positif dari luar, tolak hal negatif yang tidak sesuai nilai Pancasila (pergaulan bebas, konsumtif).</li>
+          <li><strong>Dampak negatif globalisasi:</strong> Lunturnya gotong royong, westernisasi berlebihan, memudarnya tata krama ketimuran.</li>
+          <li>Pasal 28I ayat (3) UUD 1945: menjamin identitas budaya dan hak masyarakat tradisional dihormati dan dilindungi.</li>
+        </ul>
+      </div>
+    </div>
+
+  </div><!-- end materi -->
+
+  <!-- QUIZ -->
+  <div class="quiz-section" id="tab-quiz">
+    <div id="quiz-container">
+      <div class="quiz-meta">
+        <span class="quiz-progress-text">Soal <span id="q-current">1</span> dari <span id="q-total">45</span></span>
+        <span class="quiz-score-display">Skor: <span id="q-score">0</span></span>
+      </div>
+      <div class="progress-bar-wrap">
+        <div class="progress-bar-fill" id="progress-fill" style="width:0%"></div>
+      </div>
+      <div id="question-area"></div>
+      <div class="nav-btns">
+        <button class="btn-prev" id="btn-prev" onclick="prevQuestion()">← Sebelumnya</button>
+        <button class="btn-next" id="btn-next" onclick="nextQuestion()">Soal Berikutnya →</button>
+      </div>
+      <div class="question-navigator" id="q-nav"></div>
+    </div>
+    <div class="results-section" id="results-section">
+      <div class="result-circle">
+        <svg width="160" height="160" viewBox="0 0 160 160">
+          <circle cx="80" cy="80" r="70" fill="none" stroke="rgba(255,255,255,0.08)" stroke-width="8"/>
+          <circle cx="80" cy="80" r="70" fill="none" stroke="url(#rg)" stroke-width="8" stroke-linecap="round"
+            stroke-dasharray="440" id="result-circle-dash" stroke-dashoffset="440"/>
+          <defs>
+            <linearGradient id="rg" x1="0%" y1="0%" x2="100%" y2="0%">
+              <stop offset="0%" stop-color="#C0392B"/>
+              <stop offset="100%" stop-color="#D4A017"/>
+            </linearGradient>
+          </defs>
+        </svg>
+        <div class="result-circle-text">
+          <span class="result-pct" id="result-pct">0%</span>
+          <span class="result-pct-label">NILAI</span>
+        </div>
+      </div>
+      <div class="result-grade" id="result-grade"></div>
+      <p class="result-message" id="result-msg"></p>
+      <div class="result-stats">
+        <div class="result-stat">
+          <div class="result-stat-val green" id="res-correct">0</div>
+          <div class="result-stat-label">Benar</div>
+        </div>
+        <div class="result-stat">
+          <div class="result-stat-val red" id="res-wrong">0</div>
+          <div class="result-stat-label">Salah</div>
+        </div>
+        <div class="result-stat">
+          <div class="result-stat-val" id="res-total" style="color:var(--gold)">45</div>
+          <div class="result-stat-label">Total Soal</div>
+        </div>
+      </div>
+      <button class="btn-restart" onclick="restartQuiz()">🔄 Ulangi Kuis</button>
+    </div>
+  </div>
+
+</div>
+
+<script>
+// ===== BACKGROUND UPLOAD =====
+document.getElementById('bgFileInput').addEventListener('change', function(e) {
+  const file = e.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = function(ev) {
+    const bgLayer = document.getElementById('bg-layer');
+    bgLayer.style.backgroundImage = `url(${ev.target.result})`;
+    bgLayer.style.backgroundSize = 'cover';
+    bgLayer.style.backgroundPosition = 'center';
+    bgLayer.classList.add('has-image');
+    document.getElementById('bgResetBtn').classList.add('visible');
+  };
+  reader.readAsDataURL(file);
+});
+
+function resetBg() {
+  const bgLayer = document.getElementById('bg-layer');
+  bgLayer.style.backgroundImage = '';
+  bgLayer.classList.remove('has-image');
+  document.getElementById('bgResetBtn').classList.remove('visible');
+  document.getElementById('bgFileInput').value = '';
+}
+
+// ===== TABS =====
+function switchTab(tab) {
+  document.querySelectorAll('.nav-tab').forEach((t,i) => t.classList.toggle('active', (i===0&&tab==='materi')||(i===1&&tab==='quiz')));
+  document.getElementById('tab-materi').classList.toggle('active', tab==='materi');
+  document.getElementById('tab-quiz').classList.toggle('active', tab==='quiz');
+}
+
+// ===== MATERI ACCORDION =====
+function toggleSlide(header) {
+  const slide = header.parentElement;
+  slide.classList.toggle('open');
+}
+
+// ===== QUIZ DATA =====
+const questions = [
+  // KELOMPOK 1: Pancasila (1-15)
+  {cat:"Pancasila", q:"Pancasila secara resmi tercantum dalam...", opts:["Batang Tubuh UUD 1945","Pembukaan UUD 1945 alinea keempat","Penjelasan UUD 1945","TAP MPR No. I/1966"], ans:1, exp:"Pancasila resmi tercantum di Pembukaan UUD NRI Tahun 1945 alinea keempat."},
+  {cat:"Pancasila", q:"Pancasila dirumuskan dalam sidang badan bernama...", opts:["PPKI","BPUPKI","DPR RI","MPR"], ans:1, exp:"Pancasila dirumuskan dalam sidang BPUPKI (Badan Penyelidik Usaha-Usaha Persiapan Kemerdekaan Indonesia)."},
+  {cat:"Pancasila", q:"Pancasila berfungsi sebagai sumber dari segala sumber hukum. Maksudnya adalah...", opts:["Semua undang-undang boleh bertentangan dengan Pancasila","Seluruh peraturan perundang-undangan harus berlandaskan nilai-nilai Pancasila","Pancasila hanya berlaku di pengadilan","Hukum adat lebih tinggi dari Pancasila"], ans:1, exp:"Sebagai sumber dari segala sumber hukum, semua peraturan perundang-undangan di Indonesia harus berlandaskan dan tidak boleh bertentangan dengan nilai Pancasila."},
+  {cat:"Pancasila", q:"Sila ke-4 Pancasila mencerminkan sistem pemerintahan Indonesia yang mengutamakan...", opts:["Keputusan satu pemimpin","Musyawarah untuk mencapai mufakat","Voting terbanyak selalu menang","Keputusan partai berkuasa"], ans:1, exp:"Sila ke-4 'Kerakyatan yang Dipimpin oleh Hikmat Kebijaksanaan dalam Permusyawaratan/Perwakilan' mencerminkan sistem musyawarah mufakat."},
+  {cat:"Pancasila", q:"Pancasila ditetapkan secara resmi sebagai dasar negara pada tanggal...", opts:["17 Agustus 1945","1 Juni 1945","18 Agustus 1945","22 Juni 1945"], ans:2, exp:"Pancasila ditetapkan secara resmi sebagai dasar negara pada 18 Agustus 1945 saat pengesahan UUD 1945 oleh PPKI."},
+  {cat:"Pancasila", q:"Pancasila sebagai pandangan hidup bangsa artinya...", opts:["Pancasila hanya berlaku untuk pemerintah","Pancasila menjadi pedoman sikap dan tingkah laku sehari-hari","Pancasila adalah aturan tertulis saja","Pancasila berlaku hanya saat pemilu"], ans:1, exp:"Sebagai pandangan hidup, Pancasila menjadi pedoman dalam bersikap dan bertindak dalam kehidupan sehari-hari."},
+  {cat:"Pancasila", q:"Sila ke-2 'Kemanusiaan yang Adil dan Beradab' mengandung makna bahwa...", opts:["Hanya warga negara kaya yang mendapat perlakuan adil","Setiap manusia memiliki harkat dan martabat yang sama dan harus diperlakukan adil","Keadilan hanya berlaku di pengadilan","Beradab berarti mengikuti budaya barat"], ans:1, exp:"Sila ke-2 mengandung nilai pengakuan harkat dan martabat manusia — setiap orang berhak mendapat perlakuan yang adil dan beradab tanpa diskriminasi."},
+  {cat:"Pancasila", q:"Manakah yang BUKAN merupakan fungsi Pancasila?", opts:["Dasar negara Indonesia","Pandangan hidup bangsa","Semboyan negara Indonesia","Sumber dari segala sumber hukum"], ans:2, exp:"Semboyan negara Indonesia adalah Bhinneka Tunggal Ika, bukan Pancasila. Fungsi Pancasila: dasar negara, pandangan hidup, sumber hukum, dan pedoman bertindak."},
+  {cat:"Pancasila", q:"Sila ke-3 'Persatuan Indonesia' menunjukkan bahwa...", opts:["Hanya ada satu suku yang diakui","Indonesia adalah negara kesatuan yang tidak terpecah meski beragam","Bahasa daerah harus dihapus","Hanya ada satu agama yang diakui"], ans:1, exp:"Sila ke-3 menegaskan bahwa meskipun Indonesia terdiri dari berbagai suku, agama, dan budaya, bangsa Indonesia tetap bersatu sebagai NKRI."},
+  {cat:"Pancasila", q:"Sila ke-5 'Keadilan Sosial bagi Seluruh Rakyat Indonesia' berarti...", opts:["Keadilan hanya untuk golongan tertentu","Pemerataan kesejahteraan dan hak bagi seluruh rakyat tanpa terkecuali","Keadilan diserahkan kepada masing-masing individu","Rakyat kaya lebih berhak mendapat keadilan"], ans:1, exp:"Sila ke-5 menuntut pemerataan kesejahteraan dan keadilan hak bagi seluruh rakyat Indonesia tanpa memandang golongan."},
+  {cat:"Pancasila", q:"Mengapa Pancasila disebut sebagai ideologi terbuka?", opts:["Karena bisa diganti sewaktu-waktu","Karena nilai-nilainya dapat berkembang sesuai zaman tanpa mengubah nilai dasarnya","Karena berasal dari luar negeri","Karena tidak memiliki aturan yang tetap"], ans:1, exp:"Pancasila disebut ideologi terbuka karena nilai-nilainya bersifat dinamis, dapat dikembangkan sesuai perkembangan zaman, namun nilai dasarnya tetap tidak berubah."},
+  {cat:"Pancasila", q:"Dalam kehidupan sehari-hari, pengamalan sila ke-1 dapat diwujudkan dengan...", opts:["Memaksakan agama kepada orang lain","Menghormati pemeluk agama lain yang sedang beribadah","Melarang pendirian rumah ibadah agama lain","Menyebarkan ujaran kebencian berbasis agama"], ans:1, exp:"Sila ke-1 (Ketuhanan YME) diamalkan dengan menghormati dan menghargai pemeluk agama lain, bukan memaksakan keyakinan."},
+  {cat:"Pancasila", q:"Peristiwa apa yang menandai Pancasila pertama kali diusulkan secara resmi?", opts:["Proklamasi 17 Agustus 1945","Pidato Soekarno 1 Juni 1945 di sidang BPUPKI","Pengesahan UUD 1945 oleh PPKI","Kongres Pemuda II 1928"], ans:1, exp:"Pancasila pertama kali diusulkan oleh Ir. Soekarno pada 1 Juni 1945 dalam sidang BPUPKI, yang kemudian diperingati sebagai Hari Lahir Pancasila."},
+  {cat:"Pancasila", q:"Jika ada peraturan daerah yang bertentangan dengan nilai Pancasila, maka...", opts:["Peraturan daerah tersebut tetap berlaku","Peraturan daerah tersebut harus dicabut atau direvisi","Nilai Pancasila yang harus menyesuaikan","Keduanya dapat berlaku bersamaan"], ans:1, exp:"Karena Pancasila adalah sumber dari segala sumber hukum, setiap peraturan yang bertentangan dengannya harus dicabut atau direvisi."},
+  {cat:"Pancasila", q:"Hubungan antara sila-sila dalam Pancasila bersifat...", opts:["Berdiri sendiri dan tidak saling berkaitan","Hierarkis kaku, sila pertama paling penting","Organis — saling berkaitan dan tidak dapat dipisahkan","Boleh dipilih sesuai kebutuhan"], ans:2, exp:"Sila-sila Pancasila bersifat organis, saling berkaitan, dan tidak dapat dipisahkan. Melaksanakan satu sila harus selaras dengan sila-sila lainnya."},
+
+  // KELOMPOK 2: Bhinneka Tunggal Ika (16-25)
+  {cat:"Bhinneka Tunggal Ika", q:"Bhinneka Tunggal Ika berasal dari kitab...", opts:["Negarakertagama","Pararaton","Kakawin Sutasoma","Babad Tanah Jawi"], ans:2, exp:"Ungkapan Bhinneka Tunggal Ika berasal dari kitab Kakawin Sutasoma karya Mpu Tantular pada masa Kerajaan Majapahit."},
+  {cat:"Bhinneka Tunggal Ika", q:"Semboyan Bhinneka Tunggal Ika pertama kali dijadikan semboyan resmi negara melalui...", opts:["Proklamasi Kemerdekaan 1945","Peraturan Pemerintah No. 66 Tahun 1951","TAP MPR No. II/1978","Keppres No. 1 Tahun 1950"], ans:1, exp:"Bhinneka Tunggal Ika secara resmi dijadikan semboyan negara melalui Peraturan Pemerintah No. 66 Tahun 1951."},
+  {cat:"Bhinneka Tunggal Ika", q:"Makna mendalam Bhinneka Tunggal Ika bagi bangsa Indonesia adalah...", opts:["Semua suku harus menggunakan bahasa yang sama","Perbedaan suku, agama, dan budaya tidak boleh ada","Perbedaan adalah kekayaan yang memperkuat persatuan bangsa","Mayoritas berhak menentukan aturan bagi minoritas"], ans:2, exp:"Bhinneka Tunggal Ika mengajarkan bahwa perbedaan suku, agama, ras, dan budaya justru merupakan kekayaan bangsa yang memperkuat persatuan."},
+  {cat:"Bhinneka Tunggal Ika", q:"Bhinneka Tunggal Ika tercantum pada lambang negara tepatnya di...", opts:["Kepala Garuda","Sayap Garuda","Perisai Garuda","Pita yang dicengkram kaki Garuda"], ans:3, exp:"Bhinneka Tunggal Ika tertulis pada pita yang dicengkram kaki Garuda Pancasila."},
+  {cat:"Bhinneka Tunggal Ika", q:"Contoh penerapan nilai Bhinneka Tunggal Ika dalam kehidupan sekolah adalah...", opts:["Berteman hanya dengan yang sesuku","Menolak mengerjakan tugas kelompok dengan teman berbeda agama","Bersedia bekerja sama dengan teman dari berbagai latar belakang","Menghindari teman yang berbeda budaya"], ans:2, exp:"Bhinneka Tunggal Ika diterapkan dengan bersedia bekerja sama dan berteman dengan siapapun tanpa memandang perbedaan suku, agama, atau budaya."},
+  {cat:"Bhinneka Tunggal Ika", q:"Apa hubungan antara Bhinneka Tunggal Ika dan Pasal 32 UUD 1945?", opts:["Tidak ada hubungannya","Pasal 32 memperkuat semangat Bhinneka dengan mewajibkan negara memajukan kebudayaan","Pasal 32 melarang keberagaman budaya","Bhinneka Tunggal Ika berasal dari Pasal 32"], ans:1, exp:"Pasal 32 UUD 1945 mewajibkan negara memajukan kebudayaan nasional, sejalan dengan semangat Bhinneka Tunggal Ika yang menghargai keberagaman budaya."},
+  {cat:"Bhinneka Tunggal Ika", q:"Ancaman terhadap semangat Bhinneka Tunggal Ika dalam kehidupan modern antara lain...", opts:["Banyaknya festival budaya daerah","Munculnya sikap intoleransi dan diskriminasi berbasis suku/agama","Penggunaan bahasa Indonesia sebagai bahasa persatuan","Meningkatnya pariwisata budaya"], ans:1, exp:"Sikap intoleransi, diskriminasi, dan fanatisme sempit berbasis SARA adalah ancaman nyata terhadap semangat Bhinneka Tunggal Ika."},
+  {cat:"Bhinneka Tunggal Ika", q:"Mpu Tantular menulis Kakawin Sutasoma pada masa kerajaan...", opts:["Sriwijaya","Singasari","Majapahit","Mataram Islam"], ans:2, exp:"Kakawin Sutasoma ditulis oleh Mpu Tantular pada masa Kerajaan Majapahit, yang saat itu memiliki masyarakat beragam agama (Hindu dan Buddha)."},
+  {cat:"Bhinneka Tunggal Ika", q:"Konteks awal penulisan Bhinneka Tunggal Ika dalam Kakawin Sutasoma berkaitan dengan...", opts:["Perang antar kerajaan","Kerukunan antara umat Hindu dan Buddha di Majapahit","Larangan menikah beda suku","Aturan perdagangan antar pulau"], ans:1, exp:"Dalam konteks aslinya, Bhinneka Tunggal Ika merujuk pada kerukunan umat Hindu dan Buddha di Kerajaan Majapahit yang berbeda namun satu tujuan."},
+  {cat:"Bhinneka Tunggal Ika", q:"Peran Bhinneka Tunggal Ika dalam konteks NKRI adalah...", opts:["Memaksa semua warga menggunakan satu adat istiadat","Menghapus identitas suku dan daerah","Menjadi perekat persatuan di tengah keberagaman suku, agama, ras, dan budaya","Membatasi kebebasan beragama"], ans:2, exp:"Bhinneka Tunggal Ika berfungsi sebagai perekat persatuan bangsa Indonesia yang sangat beragam, agar tetap bersatu dalam NKRI."},
+  {cat:"Bhinneka Tunggal Ika", q:"Nilai Bhinneka Tunggal Ika paling tepat diwujudkan melalui...", opts:["Menghilangkan semua perbedaan yang ada","Toleransi aktif — saling mengenal, menghargai, dan bekerja sama lintas perbedaan","Menyeragamkan budaya seluruh Indonesia","Hanya memperingatinya di hari nasional saja"], ans:1, exp:"Bhinneka Tunggal Ika tidak cukup diucapkan, melainkan harus diwujudkan melalui toleransi aktif: saling mengenal, menghargai, dan bekerja sama lintas perbedaan."},
+
+  // KELOMPOK 3: Perbandingan Pancasila & Bhinneka Tunggal Ika (26-32)
+  {cat:"Perbandingan", q:"Perbedaan Pancasila dan Bhinneka Tunggal Ika dari segi fungsi adalah...", opts:["Pancasila sebagai semboyan, Bhinneka sebagai dasar hukum","Pancasila sebagai dasar hukum negara, Bhinneka sebagai semboyan pemersatu","Keduanya berfungsi sama sebagai dasar negara","Keduanya hanya bersifat simbolik belaka"], ans:1, exp:"Pancasila berfungsi sebagai dasar hukum dan pedoman penyelenggaraan negara; Bhinneka Tunggal Ika sebagai semboyan pemersatu bangsa dalam keberagaman."},
+  {cat:"Perbandingan", q:"Letak resmi Pancasila dan Bhinneka Tunggal Ika yang benar adalah...", opts:["Keduanya di Garuda Pancasila","Keduanya di Pembukaan UUD 1945","Pancasila di Pembukaan UUD 1945, Bhinneka di pita lambang Garuda","Pancasila di lambang negara, Bhinneka di Pembukaan UUD 1945"], ans:2, exp:"Pancasila resmi di Pembukaan UUD 1945 alinea 4; Bhinneka Tunggal Ika tertulis di pita yang dicengkram Garuda Pancasila."},
+  {cat:"Perbandingan", q:"Manakah pernyataan yang BENAR tentang Pancasila dan Bhinneka Tunggal Ika?", opts:["Keduanya memiliki peran yang sama persis","Pancasila mengatur seluruh aspek berbangsa, Bhinneka menekankan persatuan dalam perbedaan","Bhinneka Tunggal Ika lebih tinggi kedudukannya dari Pancasila","Pancasila hanya berlaku untuk aparatur pemerintah"], ans:1, exp:"Pancasila mengatur seluruh aspek kehidupan berbangsa; Bhinneka Tunggal Ika menekankan pentingnya persatuan dalam perbedaan."},
+  {cat:"Perbandingan", q:"Kesamaan antara Pancasila dan Bhinneka Tunggal Ika yang paling tepat adalah...", opts:["Keduanya berasal dari bahasa Sanskerta","Keduanya berasal dari kitab Kakawin Sutasoma","Keduanya bertujuan memperkuat persatuan dan mencegah perpecahan NKRI","Keduanya ditetapkan pada 17 Agustus 1945"], ans:2, exp:"Keduanya sama-sama bertujuan memperkuat persatuan dan mencegah perpecahan dalam Negara Kesatuan Republik Indonesia."},
+  {cat:"Perbandingan", q:"Dari segi peran, perbedaan Pancasila dan Bhinneka Tunggal Ika adalah...", opts:["Pancasila mengatur aspek hukum saja, Bhinneka hanya untuk kebudayaan","Pancasila mengatur seluruh aspek berbangsa & bernegara, Bhinneka menekankan persatuan dalam keberagaman","Bhinneka mengatur hukum, Pancasila hanya simbol","Keduanya hanya berperan dalam pendidikan"], ans:1, exp:"Pancasila mengatur seluruh aspek kehidupan berbangsa dan bernegara. Bhinneka Tunggal Ika secara spesifik menekankan pentingnya persatuan dalam perbedaan."},
+  {cat:"Perbandingan", q:"Seorang siswa mengejek teman sekelas yang berbeda agama. Nilai manakah yang ia langgar?", opts:["Hanya Pancasila sila ke-1","Hanya Bhinneka Tunggal Ika","Baik Pancasila (sila 1 dan 2) maupun nilai Bhinneka Tunggal Ika","Tidak melanggar nilai apapun"], ans:2, exp:"Sikap mengejek berdasarkan agama melanggar sila ke-1 (Ketuhanan YME) dan sila ke-2 (Kemanusiaan), sekaligus bertentangan dengan Bhinneka Tunggal Ika yang mengajarkan toleransi."},
+  {cat:"Perbandingan", q:"Mengapa Pancasila dan Bhinneka Tunggal Ika sama-sama penting bagi Indonesia yang beragam?", opts:["Karena Indonesia negara kecil","Pancasila memberi landasan hukum, Bhinneka memberi semangat persatuan — keduanya saling melengkapi","Keduanya bisa saling menggantikan","Hanya Pancasila yang penting, Bhinneka hanya hiasan"], ans:1, exp:"Pancasila dan Bhinneka Tunggal Ika saling melengkapi: Pancasila memberi landasan hukum & ideologi, sedangkan Bhinneka Tunggal Ika memberi semangat persatuan di tengah keberagaman."},
+
+  // KELOMPOK 4: Tradisi, Kearifan Lokal, Budaya (33-45) — KISI-KISI CATATAN
+  {cat:"Budaya & Kearifan Lokal", q:"Menurut Clifford Geertz, tradisi adalah...", opts:["Peraturan tertulis yang ditetapkan pemerintah daerah","Sistem warisan yang dipelajari dan dihidupkan kembali oleh setiap generasi","Kumpulan tarian dan lagu daerah","Kebiasaan yang hanya berlaku dalam upacara formal"], ans:1, exp:"Clifford Geertz: tradisi adalah sistem warisan yang dipelajari dan dihidupkan kembali oleh setiap generasi dalam kehidupan masyarakat."},
+  {cat:"Budaya & Kearifan Lokal", q:"Menurut Fx. Rahyono, kearifan lokal adalah...", opts:["Peraturan daerah yang tertulis resmi","Kecerdasan manusia yang dimiliki etnis tertentu, diperoleh melalui pengalaman masyarakat","Tradisi yang telah punah","Budaya yang berasal dari luar negeri"], ans:1, exp:"Fx. Rahyono: kearifan lokal adalah kecerdasan manusia yang dimiliki etnis tertentu, diperoleh melalui pengalaman masyarakat — hasil dari pengalaman hidup komunitas tersebut."},
+  {cat:"Budaya & Kearifan Lokal", q:"Menurut Safarinah Sadli, kearifan lokal dipengaruhi oleh...", opts:["Kebijakan pemerintah pusat semata","Faktor sejarah, budaya, maupun agama yang khas bagi setiap komunitas atau wilayah","Teknologi modern dari luar negeri","Peraturan internasional tentang kebudayaan"], ans:1, exp:"Safarinah Sadli: kearifan lokal dipengaruhi faktor sejarah, budaya, maupun agama yang khas bagi setiap komunitas atau wilayah tertentu."},
+  {cat:"Budaya & Kearifan Lokal", q:"Pasal 1 ayat (1) UU No. 5 Tahun 2017 mendefinisikan kebudayaan sebagai...", opts:["Hasil karya seni dan sastra semata","Segala sesuatu yang berkaitan dengan cipta, rasa, karsa, dan hasil karya masyarakat","Peraturan adat yang tertulis resmi","Bahasa daerah yang digunakan sehari-hari"], ans:1, exp:"UU No. 5 Tahun 2017 Pasal 1(1): kebudayaan adalah segala sesuatu yang berkaitan dengan cipta, rasa, karsa, dan hasil karya masyarakat."},
+  {cat:"Budaya & Kearifan Lokal", q:"Pasal 2 UU No. 5 Tahun 2017 menyatakan pemajuan kebudayaan dilaksanakan berdasarkan...", opts:["Keinginan pemerintah daerah setempat","Pancasila, UUD NRI 1945, NKRI, dan Bhinneka Tunggal Ika","Peraturan UNESCO tentang kebudayaan","Keputusan sidang MPR tahunan"], ans:1, exp:"Pasal 2 UU No. 5/2017: pemajuan kebudayaan dilaksanakan berdasarkan Pancasila, UUD NRI Tahun 1945, NKRI, dan Bhinneka Tunggal Ika."},
+  {cat:"Budaya & Kearifan Lokal", q:"Manakah yang termasuk macam-macam kearifan lokal?", opts:["Teknologi industri, hukum perdata, sistem militer","Pengetahuan lokal, budaya lokal, keterampilan lokal, sumber daya lokal, proses sosial lokal","Bahasa Inggris, sistem perdagangan global, hukum internasional","Kurikulum nasional, standar industri, sistem perpajakan"], ans:1, exp:"Macam kearifan lokal: pengetahuan lokal, budaya lokal, keterampilan lokal, sumber daya lokal, dan proses sosial lokal."},
+  {cat:"Budaya & Kearifan Lokal", q:"Salah satu peran tradisi di bidang sosial adalah...", opts:["Menyebabkan kesenjangan ekonomi antar daerah","Memberikan keseimbangan dan stabilitas sosial dalam masyarakat","Mendorong dominasi satu suku tertentu","Membatasi hak individu dalam berekspresi"], ans:1, exp:"Tradisi berperan memberikan keseimbangan dan stabilitas sosial, membentuk identitas budaya, melestarikan keanekaragaman, serta mendorong pariwisata dan ekonomi kreatif."},
+  {cat:"Budaya & Kearifan Lokal", q:"Peran kearifan lokal dalam bidang ekonomi komunitas adalah...", opts:["Menghambat masuknya investasi asing","Mendukung keberlangsungan ekonomi, inovasi, dan pemberdayaan komunitas lokal","Mengganti sistem ekonomi nasional","Membatasi perdagangan antar daerah"], ans:1, exp:"Kearifan lokal berperan mendukung keberlangsungan ekonomi masyarakat, mendorong inovasi dan penyesuaian, serta pemberdayaan komunitas lokal."},
+  {cat:"Budaya & Kearifan Lokal", q:"Pasal 6 ayat (2) UU No. 39 Tahun 1999 tentang HAM menyatakan...", opts:["Semua budaya daerah harus dihapuskan","Identitas budaya masyarakat hukum adat termasuk hak atas tanah ulayat dilindungi selaras perkembangan zaman","Hak budaya hanya dimiliki warga negara tertentu","Budaya asing lebih diutamakan dari budaya lokal"], ans:1, exp:"Pasal 6(2) UU No. 39/1999: identitas budaya masyarakat hukum adat, termasuk hak atas tanah ulayat, dilindungi dan dihormati selaras dengan perkembangan zaman."},
+  {cat:"Budaya & Kearifan Lokal", q:"Koentjaraningrat berpendapat bahwa tradisi di Indonesia tidak hanya berasal dari praktik turun-temurun, tetapi juga dari...", opts:["Pengaruh budaya barat secara langsung","Kepercayaan lokal yang menyatu dengan praktik kehidupan sehari-hari","Peraturan pemerintah daerah","Standar internasional UNESCO"], ans:1, exp:"Koentjaraningrat: tradisi di Indonesia tidak hanya dari praktik turun-temurun, tetapi juga dari kepercayaan lokal yang menyatu dengan kehidupan masyarakat."},
+  {cat:"Budaya & Kearifan Lokal", q:"Pasal 28C ayat (1) UUD 1945 menjamin hak setiap orang untuk...", opts:["Memilih pemimpin negara secara bebas","Mendapat pendidikan dan memperoleh manfaat dari ilmu pengetahuan, seni, budaya demi meningkatkan kualitas hidup","Menolak semua pengaruh budaya asing","Mendirikan partai politik baru"], ans:1, exp:"Pasal 28C(1) UUD 1945: setiap orang berhak mendapat pendidikan dan memperoleh manfaat dari ilmu pengetahuan, teknologi, seni, dan budaya demi meningkatkan kualitas hidupnya."},
+  {cat:"Budaya & Kearifan Lokal", q:"Menurut Giddens, kebudayaan berkenaan dengan...", opts:["Sistem ekonomi dan keuangan suatu bangsa","Cara hidup anggota masyarakat","Peraturan hukum tertulis yang berlaku","Teknologi yang digunakan dalam industri"], ans:1, exp:"Menurut Giddens, kebudayaan berkenaan dengan cara hidup anggota masyarakat — mencakup nilai, norma, dan kebiasaan yang membentuk kehidupan sehari-hari."},
+  {cat:"Budaya & Kearifan Lokal", q:"Pasal 32 ayat (2) UUD 1945 menegaskan bahwa negara...", opts:["Melarang penggunaan bahasa daerah di lingkungan formal","Menghormati dan memelihara bahasa daerah sebagai kekayaan budaya nasional","Mewajibkan semua daerah menggunakan satu bahasa yang sama","Menghapus adat istiadat yang dianggap tidak modern"], ans:1, exp:"Pasal 32(2) UUD 1945: negara menghormati dan memelihara bahasa daerah sebagai kekayaan budaya nasional Indonesia."},
+];
+
+// ===== QUIZ STATE =====
+let currentQ = 0;
+let answers = new Array(questions.length).fill(null);
+let score = 0;
+
+function renderQuestion() {
+  const q = questions[currentQ];
+  const answered = answers[currentQ];
+  const area = document.getElementById('question-area');
+
+  area.innerHTML = `
+    <div class="question-card">
+      <div class="question-tag">${q.cat} · Soal ${currentQ+1}</div>
+      <div class="question-text">${q.q}</div>
+      <div class="options-grid">
+        ${q.opts.map((opt,i) => {
+          let cls = 'option-btn';
+          if (answered !== null) {
+            if (i === q.ans) cls += ' correct';
+            else if (i === answered && answered !== q.ans) cls += ' wrong';
+          }
+          const labels = ['A','B','C','D'];
+          return `<button class="${cls}" onclick="selectAnswer(${i})" ${answered!==null?'disabled':''}>
+            <span class="option-label">${labels[i]}</span>${opt}
+          </button>`;
+        }).join('')}
+      </div>
+      <div class="answer-feedback ${answered!==null?'show':''} ${answered!==null?(answered===q.ans?'correct-fb':'wrong-fb'):''}">
+        <span class="fb-label">${answered!==null?(answered===q.ans?'✓ Benar!':'✗ Salah'):''}
+        </span>${q.exp}
+      </div>
+    </div>
+  `;
+
+  document.getElementById('q-current').textContent = currentQ + 1;
+  document.getElementById('q-score').textContent = score;
+  document.getElementById('progress-fill').style.width = `${((currentQ+1)/questions.length)*100}%`;
+
+  const nextBtn = document.getElementById('btn-next');
+  nextBtn.classList.toggle('show', answered !== null);
+  nextBtn.textContent = currentQ < questions.length-1 ? 'Soal Berikutnya →' : 'Lihat Hasil →';
+
+  document.getElementById('btn-prev').classList.toggle('show', currentQ > 0);
+
+  renderNav();
+}
+
+function selectAnswer(idx) {
+  if (answers[currentQ] !== null) return;
+  answers[currentQ] = idx;
+  if (idx === questions[currentQ].ans) score++;
+  renderQuestion();
+}
+
+function nextQuestion() {
+  if (currentQ < questions.length - 1) {
+    currentQ++;
+    renderQuestion();
+  } else {
+    showResults();
+  }
+}
+
+function prevQuestion() {
+  if (currentQ > 0) {
+    currentQ--;
+    renderQuestion();
+  }
+}
+
+function renderNav() {
+  const nav = document.getElementById('q-nav');
+  nav.innerHTML = questions.map((q,i) => {
+    let cls = 'qn-bubble';
+    if (i === currentQ) cls += ' current';
+    else if (answers[i] !== null) cls += answers[i] === q.ans ? ' answered-correct' : ' answered-wrong';
+    return `<button class="${cls}" onclick="goToQ(${i})">${i+1}</button>`;
+  }).join('');
+}
+
+function goToQ(i) {
+  currentQ = i;
+  renderQuestion();
+}
+
+function showResults() {
+  document.getElementById('quiz-container').style.display = 'none';
+  const res = document.getElementById('results-section');
+  res.classList.add('show');
+  const pct = Math.round((score / questions.length) * 100);
+  const wrong = questions.length - score;
+
+  document.getElementById('result-pct').textContent = pct + '%';
+  document.getElementById('res-correct').textContent = score;
+  document.getElementById('res-wrong').textContent = wrong;
+  document.getElementById('res-total').textContent = questions.length;
+
+  let grade, msg, color;
+  if (pct >= 90) { grade = 'A'; msg = '🏆 Luar biasa! Kamu sangat memahami materi.'; color = '#5CB85C'; }
+  else if (pct >= 75) { grade = 'B'; msg = '👍 Bagus! Pemahaman kamu sudah baik.'; color = '#D4A017'; }
+  else if (pct >= 60) { grade = 'C'; msg = '📚 Cukup. Pelajari kembali materi yang belum dikuasai.'; color = '#F0A500'; }
+  else { grade = 'D'; msg = '💪 Semangat! Baca materi lagi dan coba ulang.'; color = var_red; }
+
+  const gradeEl = document.getElementById('result-grade');
+  gradeEl.textContent = grade;
+  gradeEl.style.color = color;
+  document.getElementById('result-msg').textContent = msg;
+
+  // Animate circle
+  const offset = 440 - (440 * pct / 100);
+  setTimeout(() => {
+    document.getElementById('result-circle-dash').style.transition = 'stroke-dashoffset 1.2s ease';
+    document.getElementById('result-circle-dash').style.strokeDashoffset = offset;
+  }, 200);
+}
+
+const var_red = '#C0392B';
+
+function restartQuiz() {
+  currentQ = 0;
+  answers = new Array(questions.length).fill(null);
+  score = 0;
+  document.getElementById('quiz-container').style.display = '';
+  document.getElementById('results-section').classList.remove('show');
+  document.getElementById('result-circle-dash').style.transition = 'none';
+  document.getElementById('result-circle-dash').style.strokeDashoffset = 440;
+  renderQuestion();
+}
+
+// Init
+renderQuestion();
+</script>
+</body>
+</html>
