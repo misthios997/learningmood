@@ -4,2446 +4,894 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>PyPath — Belajar Python</title>
-<link href="https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400&family=Outfit:wght@300;400;500;600;700;900&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Outfit:wght@300;400;500;600;700;900&display=swap" rel="stylesheet">
 <style>
-  :root {
-    --bg: #0a0e1a;
-    --surface: #111827;
-    --surface2: #1a2235;
-    --border: #1e2d47;
-    --text: #e2e8f0;
-    --muted: #64748b;
-    --accent: #38bdf8;
-    --accent2: #818cf8;
-    --green: #34d399;
-    --yellow: #fbbf24;
-    --red: #f87171;
-    --orange: #fb923c;
-
-    --tier-beginner: #34d399;
-    --tier-basic: #38bdf8;
-    --tier-normal: #818cf8;
-    --tier-pro: #f472b6;
-    --tier-master: #fb923c;
-    --tier-legend: #fbbf24;
-    --tier-mystery: #a78bfa;
-  }
-
-  * { margin: 0; padding: 0; box-sizing: border-box; }
-  
-  body {
-    background: var(--bg);
-    color: var(--text);
-    font-family: 'Outfit', sans-serif;
-    min-height: 100vh;
-    overflow-x: hidden;
-  }
-
-  /* ========== SCREEN MANAGEMENT ========== */
-  .screen { display: none; min-height: 100vh; }
-  .screen.active { display: flex; flex-direction: column; }
-
-  /* ========== HOME SCREEN ========== */
-  #home-screen {
-    align-items: center;
-    justify-content: center;
-    position: relative;
-    overflow: hidden;
-  }
-
-  .bg-grid {
-    position: absolute;
-    inset: 0;
-    background-image: 
-      linear-gradient(rgba(56,189,248,0.03) 1px, transparent 1px),
-      linear-gradient(90deg, rgba(56,189,248,0.03) 1px, transparent 1px);
-    background-size: 40px 40px;
-    animation: gridMove 20s linear infinite;
-  }
-
-  @keyframes gridMove {
-    0% { transform: translateY(0); }
-    100% { transform: translateY(40px); }
-  }
-
-  .glow-orb {
-    position: absolute;
-    border-radius: 50%;
-    filter: blur(80px);
-    opacity: 0.15;
-    animation: float 6s ease-in-out infinite;
-  }
-  .orb1 { width: 400px; height: 400px; background: var(--accent); top: -100px; left: -100px; animation-delay: 0s; }
-  .orb2 { width: 300px; height: 300px; background: var(--accent2); bottom: -50px; right: -50px; animation-delay: -3s; }
-
-  @keyframes float {
-    0%, 100% { transform: translateY(0) scale(1); }
-    50% { transform: translateY(-20px) scale(1.05); }
-  }
-
-  .home-content {
-    position: relative;
-    z-index: 10;
-    text-align: center;
-    padding: 2rem;
-    max-width: 700px;
-  }
-
-  .logo-badge {
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    background: rgba(56,189,248,0.1);
-    border: 1px solid rgba(56,189,248,0.3);
-    border-radius: 100px;
-    padding: 6px 16px;
-    font-size: 0.75rem;
-    font-weight: 600;
-    letter-spacing: 2px;
-    text-transform: uppercase;
-    color: var(--accent);
-    margin-bottom: 2rem;
-    animation: fadeUp 0.6s ease both;
-  }
-
-  .home-title {
-    font-size: clamp(3rem, 8vw, 6rem);
-    font-weight: 900;
-    line-height: 0.95;
-    letter-spacing: -3px;
-    margin-bottom: 1.5rem;
-    animation: fadeUp 0.6s ease 0.1s both;
-  }
-
-  .title-py { color: var(--accent); }
-  .title-path { color: var(--text); }
-
-  .home-subtitle {
-    font-size: 1.1rem;
-    color: var(--muted);
-    line-height: 1.7;
-    margin-bottom: 3rem;
-    font-weight: 400;
-    animation: fadeUp 0.6s ease 0.2s both;
-  }
-
-  .home-buttons {
-    display: flex;
-    gap: 1rem;
-    justify-content: center;
-    flex-wrap: wrap;
-    animation: fadeUp 0.6s ease 0.3s both;
-  }
-
-  .btn-primary {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    background: var(--accent);
-    color: #0a0e1a;
-    padding: 14px 28px;
-    border-radius: 12px;
-    font-weight: 700;
-    font-size: 1rem;
-    border: none;
-    cursor: pointer;
-    transition: all 0.2s;
-    font-family: 'Outfit', sans-serif;
-  }
-  .btn-primary:hover { background: #7dd3fc; transform: translateY(-2px); box-shadow: 0 10px 30px rgba(56,189,248,0.3); }
-
-  .btn-secondary {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    background: transparent;
-    color: var(--text);
-    padding: 14px 28px;
-    border-radius: 12px;
-    font-weight: 600;
-    font-size: 1rem;
-    border: 1px solid var(--border);
-    cursor: pointer;
-    transition: all 0.2s;
-    font-family: 'Outfit', sans-serif;
-  }
-  .btn-secondary:hover { border-color: var(--accent2); color: var(--accent2); transform: translateY(-2px); }
-
-  .tier-preview {
-    display: flex;
-    gap: 8px;
-    justify-content: center;
-    margin-top: 4rem;
-    flex-wrap: wrap;
-    animation: fadeUp 0.6s ease 0.4s both;
-  }
-
-  .tier-dot {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    font-size: 0.75rem;
-    color: var(--muted);
-    padding: 4px 12px;
-    border-radius: 100px;
-    border: 1px solid var(--border);
-    background: var(--surface);
-  }
-
-  .tier-dot-circle {
-    width: 8px; height: 8px;
-    border-radius: 50%;
-  }
-
-  @keyframes fadeUp {
-    from { opacity: 0; transform: translateY(20px); }
-    to { opacity: 1; transform: translateY(0); }
-  }
-
-  /* ========== EDITOR SCREEN ========== */
-  #editor-screen {
-    flex-direction: column;
-    height: 100vh;
-  }
-
-  .editor-header {
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-    padding: 1rem 1.5rem;
-    background: var(--surface);
-    border-bottom: 1px solid var(--border);
-    flex-shrink: 0;
-  }
-
-  .editor-title {
-    font-weight: 700;
-    font-size: 1rem;
-    color: var(--accent);
-    font-family: 'Space Mono', monospace;
-  }
-
-  .editor-back {
-    background: none;
-    border: 1px solid var(--border);
-    color: var(--muted);
-    padding: 6px 12px;
-    border-radius: 8px;
-    cursor: pointer;
-    font-size: 0.8rem;
-    font-family: 'Outfit', sans-serif;
-    transition: all 0.2s;
-  }
-  .editor-back:hover { color: var(--text); border-color: var(--text); }
-
-  .editor-main {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 0;
-    flex: 1;
-    overflow: hidden;
-  }
-
-  .editor-pane {
-    display: flex;
-    flex-direction: column;
-    border-right: 1px solid var(--border);
-    overflow: hidden;
-  }
-
-  .pane-header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 8px 16px;
-    background: var(--surface2);
-    border-bottom: 1px solid var(--border);
-    font-size: 0.75rem;
-    color: var(--muted);
-    font-family: 'Space Mono', monospace;
-    flex-shrink: 0;
-  }
-
-  .pane-header .dot {
-    width: 8px; height: 8px;
-    border-radius: 50%;
-    display: inline-block;
-    margin-right: 4px;
-  }
-
-  #code-input {
-    flex: 1;
-    background: #0d1117;
-    color: #e6edf3;
-    border: none;
-    padding: 1.5rem;
-    font-family: 'Space Mono', monospace;
-    font-size: 0.875rem;
-    line-height: 1.8;
-    resize: none;
-    outline: none;
-    tab-size: 4;
-    overflow-y: auto;
-  }
-
-  .output-pane {
-    display: flex;
-    flex-direction: column;
-    overflow: hidden;
-  }
-
-  #output-area {
-    flex: 1;
-    background: #060910;
-    color: #e6edf3;
-    padding: 1.5rem;
-    font-family: 'Space Mono', monospace;
-    font-size: 0.875rem;
-    line-height: 1.8;
-    overflow-y: auto;
-    white-space: pre-wrap;
-    word-break: break-all;
-  }
-
-  .run-btn {
-    margin: 12px 16px;
-    padding: 10px;
-    background: var(--green);
-    color: #0a0e1a;
-    border: none;
-    border-radius: 8px;
-    font-weight: 700;
-    cursor: pointer;
-    font-family: 'Outfit', sans-serif;
-    font-size: 0.9rem;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
-    transition: all 0.2s;
-    flex-shrink: 0;
-  }
-  .run-btn:hover { background: #6ee7b7; }
-  .run-btn:disabled { opacity: 0.5; cursor: not-allowed; }
-
-  .output-error { color: var(--red); }
-  .output-success { color: var(--green); }
-  .output-info { color: var(--accent); }
-
-  /* ========== LEARN SCREEN ========== */
-  #learn-screen {
-    flex-direction: row;
-    height: 100vh;
-    overflow: hidden;
-  }
-
-  /* Sidebar */
-  .sidebar {
-    width: 280px;
-    background: var(--surface);
-    border-right: 1px solid var(--border);
-    display: flex;
-    flex-direction: column;
-    flex-shrink: 0;
-    overflow: hidden;
-  }
-
-  .sidebar-header {
-    padding: 1.5rem;
-    border-bottom: 1px solid var(--border);
-    flex-shrink: 0;
-  }
-
-  .sidebar-logo {
-    font-size: 1.2rem;
-    font-weight: 900;
-    letter-spacing: -1px;
-  }
-
-  .sidebar-logo span { color: var(--accent); }
-
-  .sidebar-subtitle {
-    font-size: 0.75rem;
-    color: var(--muted);
-    margin-top: 4px;
-  }
-
-  .sidebar-back {
-    background: none;
-    border: none;
-    color: var(--muted);
-    font-size: 0.75rem;
-    cursor: pointer;
-    padding: 4px 0;
-    display: flex;
-    align-items: center;
-    gap: 4px;
-    margin-top: 8px;
-    font-family: 'Outfit', sans-serif;
-    transition: color 0.2s;
-  }
-  .sidebar-back:hover { color: var(--text); }
-
-  .sidebar-progress {
-    padding: 1rem 1.5rem;
-    border-bottom: 1px solid var(--border);
-    flex-shrink: 0;
-  }
-
-  .progress-label {
-    font-size: 0.7rem;
-    color: var(--muted);
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    margin-bottom: 6px;
-  }
-
-  .progress-bar {
-    height: 4px;
-    background: var(--border);
-    border-radius: 100px;
-    overflow: hidden;
-  }
-
-  .progress-fill {
-    height: 100%;
-    background: linear-gradient(90deg, var(--accent), var(--accent2));
-    border-radius: 100px;
-    transition: width 0.5s ease;
-  }
-
-  .progress-text {
-    font-size: 0.7rem;
-    color: var(--muted);
-    margin-top: 4px;
-  }
-
-  .tier-list {
-    flex: 1;
-    overflow-y: auto;
-    padding: 1rem 0;
-  }
-
-  .tier-item {
-    padding: 0;
-    cursor: pointer;
-  }
-
-  .tier-header {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    padding: 10px 1.5rem;
-    font-size: 0.85rem;
-    font-weight: 600;
-    transition: all 0.2s;
-    border-left: 3px solid transparent;
-  }
-
-  .tier-header:hover { background: var(--surface2); }
-  .tier-header.active { background: var(--surface2); }
-
-  .tier-icon {
-    width: 28px; height: 28px;
-    border-radius: 8px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 0.75rem;
-    flex-shrink: 0;
-  }
-
-  .tier-info { flex: 1; }
-  .tier-name { font-size: 0.85rem; }
-  .tier-count { font-size: 0.65rem; color: var(--muted); }
-
-  .tier-chevron { color: var(--muted); font-size: 0.7rem; transition: transform 0.2s; }
-  .tier-header.open .tier-chevron { transform: rotate(90deg); }
-
-  .lesson-list {
-    display: none;
-    padding: 4px 0 8px;
-  }
-  .lesson-list.open { display: block; }
-
-  .lesson-item {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    padding: 7px 1.5rem 7px 3.5rem;
-    font-size: 0.8rem;
-    color: var(--muted);
-    cursor: pointer;
-    transition: all 0.2s;
-    border-left: 3px solid transparent;
-  }
-  .lesson-item:hover { color: var(--text); background: rgba(255,255,255,0.03); }
-  .lesson-item.active { color: var(--text); background: rgba(56,189,248,0.08); border-left-color: var(--accent); }
-  .lesson-item.done { color: var(--green); }
-
-  .lesson-dot {
-    width: 6px; height: 6px;
-    border-radius: 50%;
-    background: var(--border);
-    flex-shrink: 0;
-    transition: background 0.2s;
-  }
-  .lesson-item.done .lesson-dot { background: var(--green); }
-  .lesson-item.active .lesson-dot { background: var(--accent); }
-
-  /* Main content */
-  .learn-main {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    overflow: hidden;
-  }
-
-  .lesson-content {
-    flex: 1;
-    overflow-y: auto;
-    padding: 2.5rem;
-    max-width: 800px;
-    width: 100%;
-    margin: 0 auto;
-  }
-
-  .lesson-breadcrumb {
-    font-size: 0.75rem;
-    color: var(--muted);
-    margin-bottom: 1.5rem;
-    display: flex;
-    align-items: center;
-    gap: 6px;
-  }
-
-  .lesson-breadcrumb span { color: var(--text); }
-
-  .lesson-tier-badge {
-    display: inline-block;
-    padding: 3px 10px;
-    border-radius: 100px;
-    font-size: 0.7rem;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    margin-bottom: 1rem;
-  }
-
-  .lesson-title {
-    font-size: 2rem;
-    font-weight: 800;
-    letter-spacing: -1px;
-    margin-bottom: 0.5rem;
-    line-height: 1.2;
-  }
-
-  .lesson-desc {
-    color: var(--muted);
-    font-size: 0.9rem;
-    margin-bottom: 2rem;
-    line-height: 1.7;
-  }
-
-  .content-block {
-    margin-bottom: 2rem;
-  }
-
-  .content-block h3 {
-    font-size: 1.1rem;
-    font-weight: 700;
-    margin-bottom: 0.8rem;
-    color: var(--text);
-    display: flex;
-    align-items: center;
-    gap: 8px;
-  }
-
-  .content-block h3::before {
-    content: '';
-    width: 3px;
-    height: 16px;
-    background: var(--accent);
-    border-radius: 2px;
-  }
-
-  .content-block p {
-    color: #94a3b8;
-    line-height: 1.8;
-    font-size: 0.95rem;
-  }
-
-  .content-block ul {
-    list-style: none;
-    margin-top: 0.8rem;
-  }
-
-  .content-block ul li {
-    color: #94a3b8;
-    font-size: 0.9rem;
-    line-height: 1.8;
-    padding-left: 1.2rem;
-    position: relative;
-  }
-
-  .content-block ul li::before {
-    content: '▸';
-    position: absolute;
-    left: 0;
-    color: var(--accent);
-  }
-
-  .code-example {
-    background: #0d1117;
-    border: 1px solid var(--border);
-    border-radius: 12px;
-    overflow: hidden;
-    margin: 1rem 0;
-  }
-
-  .code-example-header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 8px 16px;
-    background: var(--surface2);
-    border-bottom: 1px solid var(--border);
-    font-size: 0.75rem;
-    color: var(--muted);
-    font-family: 'Space Mono', monospace;
-  }
-
-  .code-example pre {
-    padding: 1.2rem 1.5rem;
-    font-family: 'Space Mono', monospace;
-    font-size: 0.85rem;
-    line-height: 1.8;
-    color: #e6edf3;
-    overflow-x: auto;
-    white-space: pre;
-  }
-
-  .kw { color: #ff7b72; }
-  .str { color: #a5d6ff; }
-  .num { color: #79c0ff; }
-  .fn { color: #d2a8ff; }
-  .comment { color: #6e7681; }
-  .var { color: #ffa657; }
-
-  /* Exercise */
-  .exercise-box {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 16px;
-    overflow: hidden;
-    margin-top: 2rem;
-  }
-
-  .exercise-header {
-    padding: 1rem 1.5rem;
-    background: var(--surface2);
-    border-bottom: 1px solid var(--border);
-    display: flex;
-    align-items: center;
-    gap: 10px;
-  }
-
-  .exercise-badge {
-    background: rgba(56,189,248,0.15);
-    color: var(--accent);
-    padding: 3px 10px;
-    border-radius: 6px;
-    font-size: 0.7rem;
-    font-weight: 700;
-    text-transform: uppercase;
-  }
-
-  .exercise-title {
-    font-weight: 700;
-    font-size: 0.95rem;
-  }
-
-  .exercise-body {
-    padding: 1.5rem;
-  }
-
-  .exercise-task {
-    color: #94a3b8;
-    font-size: 0.9rem;
-    line-height: 1.7;
-    margin-bottom: 1rem;
-  }
-
-  .exercise-editor {
-    background: #0d1117;
-    border: 1px solid var(--border);
-    border-radius: 8px;
-    overflow: hidden;
-  }
-
-  .exercise-editor textarea {
-    width: 100%;
-    min-height: 120px;
-    background: transparent;
-    color: #e6edf3;
-    border: none;
-    padding: 1rem;
-    font-family: 'Space Mono', monospace;
-    font-size: 0.85rem;
-    line-height: 1.8;
-    resize: vertical;
-    outline: none;
-    tab-size: 4;
-  }
-
-  .exercise-footer {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    padding: 8px 1rem;
-    background: var(--surface2);
-    border-top: 1px solid var(--border);
-  }
-
-  .btn-run-exercise {
-    background: var(--green);
-    color: #0a0e1a;
-    border: none;
-    padding: 7px 16px;
-    border-radius: 7px;
-    font-weight: 700;
-    font-size: 0.8rem;
-    cursor: pointer;
-    font-family: 'Outfit', sans-serif;
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    transition: all 0.2s;
-  }
-  .btn-run-exercise:hover { background: #6ee7b7; }
-  .btn-run-exercise:disabled { opacity: 0.5; cursor: not-allowed; }
-
-  .btn-check {
-    background: var(--accent);
-    color: #0a0e1a;
-    border: none;
-    padding: 7px 16px;
-    border-radius: 7px;
-    font-weight: 700;
-    font-size: 0.8rem;
-    cursor: pointer;
-    font-family: 'Outfit', sans-serif;
-    transition: all 0.2s;
-  }
-  .btn-check:hover { background: #7dd3fc; }
-
-  .exercise-output {
-    padding: 0.8rem 1rem;
-    font-family: 'Space Mono', monospace;
-    font-size: 0.8rem;
-    line-height: 1.6;
-    border-top: 1px solid var(--border);
-    min-height: 40px;
-    white-space: pre-wrap;
-    word-break: break-all;
-  }
-
-  .feedback-box {
-    margin-top: 1rem;
-    padding: 1rem;
-    border-radius: 8px;
-    font-size: 0.85rem;
-    line-height: 1.6;
-    display: none;
-  }
-  .feedback-box.show { display: block; }
-  .feedback-box.success { background: rgba(52,211,153,0.1); border: 1px solid rgba(52,211,153,0.3); color: var(--green); }
-  .feedback-box.error { background: rgba(248,113,113,0.1); border: 1px solid rgba(248,113,113,0.3); color: var(--red); }
-  .feedback-box.hint { background: rgba(251,191,36,0.1); border: 1px solid rgba(251,191,36,0.3); color: var(--yellow); }
-
-  /* Navigation buttons */
-  .lesson-nav {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 1.5rem 2.5rem;
-    border-top: 1px solid var(--border);
-    background: var(--surface);
-    flex-shrink: 0;
-  }
-
-  .btn-nav {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    padding: 10px 20px;
-    border-radius: 10px;
-    font-weight: 600;
-    font-size: 0.9rem;
-    cursor: pointer;
-    transition: all 0.2s;
-    font-family: 'Outfit', sans-serif;
-  }
-
-  .btn-prev {
-    background: transparent;
-    border: 1px solid var(--border);
-    color: var(--muted);
-  }
-  .btn-prev:hover { border-color: var(--text); color: var(--text); }
-
-  .btn-next {
-    background: var(--accent);
-    border: none;
-    color: #0a0e1a;
-  }
-  .btn-next:hover { background: #7dd3fc; transform: translateX(2px); }
-  .btn-next:disabled { opacity: 0.3; cursor: not-allowed; transform: none; }
-
-  .btn-complete {
-    background: var(--green);
-    border: none;
-    color: #0a0e1a;
-  }
-  .btn-complete:hover { background: #6ee7b7; }
-
-  /* Project screen */
-  .project-banner {
-    background: linear-gradient(135deg, var(--surface2), var(--bg));
-    border: 1px solid var(--border);
-    border-radius: 16px;
-    padding: 2rem;
-    margin-bottom: 2rem;
-    position: relative;
-    overflow: hidden;
-  }
-
-  .project-banner::before {
-    content: '{ }';
-    position: absolute;
-    right: 2rem;
-    top: 50%;
-    transform: translateY(-50%);
-    font-family: 'Space Mono', monospace;
-    font-size: 5rem;
-    color: rgba(56,189,248,0.05);
-    font-weight: 700;
-  }
-
-  .project-label {
-    font-size: 0.7rem;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 2px;
-    color: var(--accent);
-    margin-bottom: 0.5rem;
-  }
-
-  .project-title {
-    font-size: 1.8rem;
-    font-weight: 800;
-    letter-spacing: -1px;
-    margin-bottom: 0.5rem;
-  }
-
-  .project-desc {
-    color: var(--muted);
-    font-size: 0.9rem;
-    line-height: 1.6;
-  }
-
-  /* Toast */
-  .toast {
-    position: fixed;
-    bottom: 2rem;
-    right: 2rem;
-    background: var(--surface2);
-    border: 1px solid var(--border);
-    border-radius: 12px;
-    padding: 1rem 1.5rem;
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    font-size: 0.9rem;
-    z-index: 1000;
-    transform: translateY(100px);
-    opacity: 0;
-    transition: all 0.3s ease;
-  }
-  .toast.show { transform: translateY(0); opacity: 1; }
-  .toast.success { border-color: rgba(52,211,153,0.4); }
-  .toast.error { border-color: rgba(248,113,113,0.4); }
-
-  /* Scrollbar */
-  ::-webkit-scrollbar { width: 4px; height: 4px; }
-  ::-webkit-scrollbar-track { background: transparent; }
-  ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
-  ::-webkit-scrollbar-thumb:hover { background: var(--muted); }
-
-  /* Pyodide loading */
-  .py-loading {
-    position: fixed;
-    inset: 0;
-    background: rgba(10,14,26,0.9);
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    z-index: 999;
-    gap: 1rem;
-  }
-
-  .py-loading.hidden { display: none; }
-
-  .spinner {
-    width: 40px;
-    height: 40px;
-    border: 3px solid var(--border);
-    border-top-color: var(--accent);
-    border-radius: 50%;
-    animation: spin 0.8s linear infinite;
-  }
-
-  @keyframes spin { to { transform: rotate(360deg); } }
-
-  .py-loading p {
-    color: var(--muted);
-    font-size: 0.9rem;
-  }
-
-  /* Lock overlay */
-  .lock-overlay {
-    position: absolute;
-    inset: 0;
-    background: rgba(10,14,26,0.85);
-    backdrop-filter: blur(4px);
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    gap: 1rem;
-    border-radius: inherit;
-  }
-
-  .lock-icon { font-size: 2rem; }
-  .lock-text { color: var(--muted); font-size: 0.85rem; text-align: center; }
-
-  @media (max-width: 768px) {
-    .editor-main { grid-template-columns: 1fr; grid-template-rows: 1fr 1fr; }
-    .sidebar { width: 100%; height: 50px; }
-    #learn-screen { flex-direction: column; }
-  }
+:root{--bg:#0a0e1a;--s:#111827;--s2:#1a2235;--b:#1e2d47;--t:#e2e8f0;--m:#64748b;--ac:#38bdf8;--ac2:#818cf8;--g:#34d399;--y:#fbbf24;--r:#f87171}
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:var(--bg);color:var(--t);font-family:'Outfit',sans-serif;min-height:100vh;overflow-x:hidden}
+.screen{display:none;min-height:100vh;flex-direction:column}
+.screen.active{display:flex}
+/* HOME */
+#hs{align-items:center;justify-content:center;position:relative;overflow:hidden}
+.grid{position:absolute;inset:0;background-image:linear-gradient(rgba(56,189,248,.04) 1px,transparent 1px),linear-gradient(90deg,rgba(56,189,248,.04) 1px,transparent 1px);background-size:44px 44px;animation:gm 18s linear infinite}
+@keyframes gm{to{background-position:0 44px}}
+.orb{position:absolute;border-radius:50%;filter:blur(90px);opacity:.12;animation:fl 7s ease-in-out infinite}
+.o1{width:420px;height:420px;background:var(--ac);top:-120px;left:-120px}
+.o2{width:320px;height:320px;background:var(--ac2);bottom:-60px;right:-60px;animation-delay:-3.5s}
+@keyframes fl{0%,100%{transform:translateY(0)}50%{transform:translateY(-22px)}}
+.hc{position:relative;z-index:10;text-align:center;padding:2rem;max-width:680px}
+.badge{display:inline-flex;align-items:center;gap:8px;background:rgba(56,189,248,.1);border:1px solid rgba(56,189,248,.3);border-radius:100px;padding:6px 18px;font-size:.72rem;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--ac);margin-bottom:2rem;animation:fu .6s ease both}
+.ht{font-size:clamp(3rem,8vw,5.5rem);font-weight:900;line-height:.95;letter-spacing:-3px;margin-bottom:1.5rem;animation:fu .6s .1s ease both}
+.ht .py{color:var(--ac)}.ht .path{color:var(--t)}
+.hs2{font-size:1.05rem;color:var(--m);line-height:1.7;margin-bottom:3rem;animation:fu .6s .2s ease both}
+.hbtns{display:flex;gap:1rem;justify-content:center;flex-wrap:wrap;animation:fu .6s .3s ease both}
+.bp{display:flex;align-items:center;gap:10px;background:var(--ac);color:#0a0e1a;padding:14px 28px;border-radius:12px;font-weight:700;font-size:1rem;border:none;cursor:pointer;transition:all .2s;font-family:'Outfit',sans-serif}
+.bp:hover{background:#7dd3fc;transform:translateY(-2px);box-shadow:0 10px 30px rgba(56,189,248,.3)}
+.bs{display:flex;align-items:center;gap:10px;background:transparent;color:var(--t);padding:14px 28px;border-radius:12px;font-weight:600;font-size:1rem;border:1px solid var(--b);cursor:pointer;transition:all .2s;font-family:'Outfit',sans-serif}
+.bs:hover{border-color:var(--ac2);color:var(--ac2);transform:translateY(-2px)}
+.tdots{display:flex;gap:8px;justify-content:center;margin-top:3.5rem;flex-wrap:wrap;animation:fu .6s .4s ease both}
+.tdot{display:flex;align-items:center;gap:6px;font-size:.72rem;color:var(--m);padding:4px 12px;border-radius:100px;border:1px solid var(--b);background:var(--s)}
+.tdc{width:8px;height:8px;border-radius:50%}
+@keyframes fu{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:translateY(0)}}
+/* EDITOR */
+#es{height:100vh;overflow:hidden}
+.eh{display:flex;align-items:center;gap:1rem;padding:.9rem 1.5rem;background:var(--s);border-bottom:1px solid var(--b);flex-shrink:0}
+.etitle{font-weight:700;font-size:.95rem;color:var(--ac);font-family:'Space Mono',monospace}
+.eback{background:none;border:1px solid var(--b);color:var(--m);padding:5px 12px;border-radius:8px;cursor:pointer;font-size:.78rem;font-family:'Outfit',sans-serif;transition:all .2s}
+.eback:hover{color:var(--t);border-color:var(--t)}
+.em{display:grid;grid-template-columns:1fr 1fr;flex:1;overflow:hidden}
+.ep{display:flex;flex-direction:column;border-right:1px solid var(--b);overflow:hidden}
+.ph{display:flex;align-items:center;justify-content:space-between;padding:7px 14px;background:var(--s2);border-bottom:1px solid var(--b);font-size:.72rem;color:var(--m);font-family:'Space Mono',monospace;flex-shrink:0}
+.dot{width:8px;height:8px;border-radius:50%;display:inline-block;margin-right:3px}
+#ci{flex:1;background:#0d1117;color:#e6edf3;border:none;padding:1.2rem 1.5rem;font-family:'Space Mono',monospace;font-size:.85rem;line-height:1.8;resize:none;outline:none;tab-size:4;overflow-y:auto}
+.op{display:flex;flex-direction:column;overflow:hidden}
+#oa{flex:1;background:#060910;color:#e6edf3;padding:1.2rem 1.5rem;font-family:'Space Mono',monospace;font-size:.83rem;line-height:1.8;overflow-y:auto;white-space:pre-wrap;word-break:break-all}
+.rbtn{margin:10px 14px;padding:10px;background:var(--g);color:#0a0e1a;border:none;border-radius:8px;font-weight:700;cursor:pointer;font-family:'Outfit',sans-serif;font-size:.88rem;display:flex;align-items:center;justify-content:center;gap:8px;transition:all .2s;flex-shrink:0}
+.rbtn:hover{background:#6ee7b7}.rbtn:disabled{opacity:.5;cursor:not-allowed}
+.oe{color:var(--r)}.os{color:var(--g)}.oi{color:var(--ac)}
+/* LEARN */
+#ls{flex-direction:row;height:100vh;overflow:hidden}
+.sb{width:270px;background:var(--s);border-right:1px solid var(--b);display:flex;flex-direction:column;flex-shrink:0;overflow:hidden}
+.sbh{padding:1.3rem;border-bottom:1px solid var(--b);flex-shrink:0}
+.sblogo{font-size:1.1rem;font-weight:900;letter-spacing:-1px}.sblogo span{color:var(--ac)}
+.sbsub{font-size:.72rem;color:var(--m);margin-top:3px}
+.sbbk{background:none;border:none;color:var(--m);font-size:.72rem;cursor:pointer;padding:4px 0;display:flex;align-items:center;gap:4px;margin-top:7px;font-family:'Outfit',sans-serif;transition:color .2s}
+.sbbk:hover{color:var(--t)}
+.sbprog{padding:.9rem 1.3rem;border-bottom:1px solid var(--b);flex-shrink:0}
+.prlbl{font-size:.68rem;color:var(--m);text-transform:uppercase;letter-spacing:1px;margin-bottom:5px}
+.prbar{height:3px;background:var(--b);border-radius:100px;overflow:hidden}
+.prfill{height:100%;background:linear-gradient(90deg,var(--ac),var(--ac2));border-radius:100px;transition:width .5s ease}
+.prtxt{font-size:.68rem;color:var(--m);margin-top:4px}
+.tl{flex:1;overflow-y:auto;padding:.7rem 0}
+.ti{padding:0;cursor:pointer}
+.tih{display:flex;align-items:center;gap:9px;padding:9px 1.3rem;font-size:.82rem;font-weight:600;transition:all .2s;border-left:3px solid transparent}
+.tih:hover,.tih.active{background:var(--s2)}
+.tico{width:26px;height:26px;border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:.72rem;flex-shrink:0}
+.tinf{flex:1}.tin{font-size:.82rem}.tic{font-size:.63rem;color:var(--m)}
+.tichev{color:var(--m);font-size:.68rem;transition:transform .2s}
+.tih.open .tichev{transform:rotate(90deg)}
+.ll{display:none;padding:3px 0 6px}
+.ll.open{display:block}
+.li{display:flex;align-items:center;gap:7px;padding:6px 1.3rem 6px 3.2rem;font-size:.78rem;color:var(--m);cursor:pointer;transition:all .2s;border-left:3px solid transparent}
+.li:hover{color:var(--t);background:rgba(255,255,255,.03)}
+.li.active{color:var(--t);background:rgba(56,189,248,.08);border-left-color:var(--ac)}
+.li.done{color:var(--g)}
+.ldot{width:5px;height:5px;border-radius:50%;background:var(--b);flex-shrink:0;transition:background .2s}
+.li.done .ldot{background:var(--g)}.li.active .ldot{background:var(--ac)}
+.lm{flex:1;display:flex;flex-direction:column;overflow:hidden}
+.lc{flex:1;overflow-y:auto;padding:2rem 2.5rem;max-width:780px;width:100%;margin:0 auto}
+.lbc{font-size:.72rem;color:var(--m);margin-bottom:1.3rem;display:flex;align-items:center;gap:6px}
+.lbc span{color:var(--t)}
+.ltbadge{display:inline-block;padding:3px 10px;border-radius:100px;font-size:.68rem;font-weight:700;text-transform:uppercase;letter-spacing:1px;margin-bottom:.9rem}
+.ltitle{font-size:1.8rem;font-weight:800;letter-spacing:-1px;margin-bottom:.4rem;line-height:1.2}
+.ldesc{color:var(--m);font-size:.88rem;margin-bottom:1.8rem;line-height:1.7}
+.cb{margin-bottom:1.8rem}
+.cb h3{font-size:1.05rem;font-weight:700;margin-bottom:.7rem;color:var(--t);display:flex;align-items:center;gap:8px}
+.cb h3::before{content:'';width:3px;height:15px;background:var(--ac);border-radius:2px;flex-shrink:0}
+.cb p{color:#94a3b8;line-height:1.8;font-size:.92rem}
+.cb ul{list-style:none;margin-top:.7rem}
+.cb ul li{color:#94a3b8;font-size:.88rem;line-height:1.8;padding-left:1.1rem;position:relative}
+.cb ul li::before{content:'▸';position:absolute;left:0;color:var(--ac)}
+.ce{background:#0d1117;border:1px solid var(--b);border-radius:11px;overflow:hidden;margin:.9rem 0}
+.ceh{display:flex;align-items:center;justify-content:space-between;padding:7px 14px;background:var(--s2);border-bottom:1px solid var(--b);font-size:.7rem;color:var(--m);font-family:'Space Mono',monospace}
+.ce pre{padding:1.1rem 1.4rem;font-family:'Space Mono',monospace;font-size:.82rem;line-height:1.8;color:#e6edf3;overflow-x:auto;white-space:pre}
+.kw{color:#ff7b72}.str{color:#a5d6ff}.num{color:#79c0ff}.fn{color:#d2a8ff}.cm{color:#6e7681}.vr{color:#ffa657}
+.exbox{background:var(--s);border:1px solid var(--b);border-radius:14px;overflow:hidden;margin-top:1.8rem}
+.exh{padding:.9rem 1.3rem;background:var(--s2);border-bottom:1px solid var(--b);display:flex;align-items:center;gap:9px}
+.exbadge{background:rgba(56,189,248,.15);color:var(--ac);padding:3px 9px;border-radius:6px;font-size:.68rem;font-weight:700;text-transform:uppercase}
+.extitle{font-weight:700;font-size:.9rem}
+.exbody{padding:1.3rem}
+.extask{color:#94a3b8;font-size:.88rem;line-height:1.7;margin-bottom:1rem}
+.exeditor{background:#0d1117;border:1px solid var(--b);border-radius:8px;overflow:hidden}
+.exeditor textarea{width:100%;min-height:120px;background:transparent;color:#e6edf3;border:none;padding:.9rem;font-family:'Space Mono',monospace;font-size:.82rem;line-height:1.8;resize:vertical;outline:none;tab-size:4}
+.exfoot{display:flex;align-items:center;gap:8px;padding:7px .9rem;background:var(--s2);border-top:1px solid var(--b)}
+.brun{background:var(--g);color:#0a0e1a;border:none;padding:6px 14px;border-radius:7px;font-weight:700;font-size:.78rem;cursor:pointer;font-family:'Outfit',sans-serif;display:flex;align-items:center;gap:5px;transition:all .2s}
+.brun:hover{background:#6ee7b7}.brun:disabled{opacity:.5;cursor:not-allowed}
+.bcheck{background:var(--ac);color:#0a0e1a;border:none;padding:6px 14px;border-radius:7px;font-weight:700;font-size:.78rem;cursor:pointer;font-family:'Outfit',sans-serif;transition:all .2s}
+.bcheck:hover{background:#7dd3fc}.bcheck:disabled{opacity:.5;cursor:not-allowed}
+.exout{padding:.7rem .9rem;font-family:'Space Mono',monospace;font-size:.78rem;line-height:1.6;border-top:1px solid var(--b);min-height:38px;white-space:pre-wrap;word-break:break-all}
+.fb{margin-top:.9rem;padding:.9rem;border-radius:8px;font-size:.83rem;line-height:1.6;display:none}
+.fb.show{display:block}
+.fb.ok{background:rgba(52,211,153,.1);border:1px solid rgba(52,211,153,.3);color:var(--g)}
+.fb.err{background:rgba(248,113,113,.1);border:1px solid rgba(248,113,113,.3);color:var(--r)}
+.pbn{background:linear-gradient(135deg,var(--s2),var(--bg));border:1px solid var(--b);border-radius:14px;padding:1.8rem;margin-bottom:1.8rem;position:relative;overflow:hidden}
+.pbn::before{content:'{}';position:absolute;right:1.8rem;top:50%;transform:translateY(-50%);font-family:'Space Mono',monospace;font-size:4.5rem;color:rgba(56,189,248,.04);font-weight:700}
+.pbl{font-size:.68rem;font-weight:700;text-transform:uppercase;letter-spacing:2px;color:var(--ac);margin-bottom:.4rem}
+.pbt{font-size:1.6rem;font-weight:800;letter-spacing:-1px;margin-bottom:.4rem}
+.pbd{color:var(--m);font-size:.87rem;line-height:1.6}
+.ln{display:flex;align-items:center;justify-content:space-between;padding:1.2rem 2.5rem;border-top:1px solid var(--b);background:var(--s);flex-shrink:0}
+.bnav{display:flex;align-items:center;gap:8px;padding:9px 18px;border-radius:9px;font-weight:600;font-size:.88rem;cursor:pointer;transition:all .2s;font-family:'Outfit',sans-serif}
+.bprev{background:transparent;border:1px solid var(--b);color:var(--m)}.bprev:hover{border-color:var(--t);color:var(--t)}
+.bnext{background:var(--ac);border:none;color:#0a0e1a}.bnext:hover{background:#7dd3fc}
+.bnext:disabled{opacity:.3;cursor:not-allowed}
+.spin{width:14px;height:14px;border:2px solid rgba(0,0,0,.3);border-top-color:#0a0e1a;border-radius:50%;animation:sp .7s linear infinite;display:inline-block}
+@keyframes sp{to{transform:rotate(360deg)}}
+.toast{position:fixed;bottom:1.8rem;right:1.8rem;background:var(--s2);border:1px solid var(--b);border-radius:11px;padding:.9rem 1.4rem;display:flex;align-items:center;gap:9px;font-size:.88rem;z-index:1000;transform:translateY(100px);opacity:0;transition:all .3s ease}
+.toast.show{transform:translateY(0);opacity:1}
+.toast.ok{border-color:rgba(52,211,153,.4)}
+::-webkit-scrollbar{width:3px;height:3px}::-webkit-scrollbar-track{background:transparent}::-webkit-scrollbar-thumb{background:var(--b);border-radius:3px}
+code{color:var(--ac);font-family:'Space Mono',monospace;font-size:.85em}
 </style>
 </head>
 <body>
 
-<!-- Pyodide Loading -->
-<div class="py-loading hidden" id="py-loading">
-  <div class="spinner"></div>
-  <p>Loading Python runtime...</p>
-</div>
+<div class="toast" id="toast"><span id="ti"></span><span id="tt"></span></div>
 
-<!-- Toast -->
-<div class="toast" id="toast">
-  <span id="toast-icon">✓</span>
-  <span id="toast-text"></span>
-</div>
-
-<!-- ============ HOME SCREEN ============ -->
-<div class="screen active" id="home-screen">
-  <div class="bg-grid"></div>
-  <div class="glow-orb orb1"></div>
-  <div class="glow-orb orb2"></div>
-  
-  <div class="home-content">
-    <div class="logo-badge">
-      <span>🐍</span>
-      Interactive Python Learning
+<!-- HOME -->
+<div class="screen active" id="hs">
+  <div class="grid"></div>
+  <div class="orb o1"></div>
+  <div class="orb o2"></div>
+  <div class="hc">
+    <div class="badge">🐍 Interactive Python Learning</div>
+    <h1 class="ht"><span class="py">Py</span><span class="path">Path</span></h1>
+    <p class="hs2">Belajar Python dari nol sampai jago.<br>Materi interaktif, coding langsung di browser, progress tersimpan otomatis.</p>
+    <div class="hbtns">
+      <button class="bp" id="btnLearn">🚀 Start Learn</button>
+      <button class="bs" id="btnEditor">⚡ Test Python Script</button>
     </div>
-    
-    <h1 class="home-title">
-      <span class="title-py">Py</span><span class="title-path">Path</span>
-    </h1>
-    
-    <p class="home-subtitle">
-      Belajar Python dari nol sampai jago.<br>
-      Materi interaktif, coding langsung di browser, progress tersimpan otomatis.
-    </p>
-    
-    <div class="home-buttons">
-      <button class="btn-primary" onclick="goToLearn()">
-        <span>🚀</span> Start Learn
-      </button>
-      <button class="btn-secondary" onclick="goToEditor()">
-        <span>⚡</span> Test Python Script
-      </button>
-    </div>
-
-    <div class="tier-preview" id="tier-preview-dots"></div>
+    <div class="tdots" id="tdots"></div>
   </div>
 </div>
 
-<!-- ============ EDITOR SCREEN ============ -->
-<div class="screen" id="editor-screen">
-  <div class="editor-header">
-    <button class="editor-back" onclick="goToHome()">← Back</button>
-    <div class="editor-title">PyPath // Script Editor</div>
-    <div style="font-size:0.75rem;color:var(--muted);margin-left:auto">Python 3.11 (Pyodide)</div>
+<!-- EDITOR -->
+<div class="screen" id="es">
+  <div class="eh">
+    <button class="eback" id="edBack">← Back</button>
+    <div class="etitle">PyPath // Script Editor</div>
+    <div style="font-size:.72rem;color:var(--m);margin-left:auto">Python 3 via AI Runtime</div>
   </div>
-  
-  <div class="editor-main">
-    <div class="editor-pane">
-      <div class="pane-header">
+  <div class="em" style="flex:1;overflow:hidden">
+    <div class="ep">
+      <div class="ph">
         <span><span class="dot" style="background:#ff5f57"></span><span class="dot" style="background:#ffbd2e"></span><span class="dot" style="background:#28c840"></span> script.py</span>
         <span>Python</span>
       </div>
-      <textarea id="code-input" spellcheck="false" placeholder="# Tulis kode Python kamu di sini...
-# Contoh:
-print('Hello, World!')
-name = input('Nama kamu: ')
-print(f'Halo, {name}!')
-"># Selamat datang di PyPath Script Editor!
-# Kamu bisa test kode Python apapun di sini.
+      <textarea id="ci" spellcheck="false"># Selamat datang di PyPath Editor!
+# Ctrl+Enter untuk Run
 
-# Contoh dasar:
 print("Hello, World!")
 
-# Operasi matematika
-a = 10
-b = 3
+# Operasi dasar
+a, b = 10, 3
 print(f"{a} + {b} = {a + b}")
 print(f"{a} * {b} = {a * b}")
 print(f"{a} / {b} = {a / b:.2f}")
+print(f"{a} ** {b} = {a ** b}")
 
 # List
-fruits = ["apel", "mangga", "durian"]
-for fruit in fruits:
-    print(f"🍎 {fruit}")</textarea>
+buah = ["apel", "mangga", "durian", "jeruk"]
+for i, x in enumerate(buah, 1):
+    print(f"  {i}. {x}")</textarea>
     </div>
-    
-    <div class="output-pane">
-      <div class="pane-header">
+    <div class="op">
+      <div class="ph">
         <span><span class="dot" style="background:#34d399"></span> output</span>
-        <button onclick="clearOutput()" style="background:none;border:none;color:var(--muted);cursor:pointer;font-size:0.7rem;font-family:Space Mono,monospace">clear</button>
+        <button id="clearBtn" style="background:none;border:none;color:var(--m);cursor:pointer;font-size:.68rem;font-family:Space Mono,monospace">clear</button>
       </div>
-      <div id="output-area"><span class="output-info">// Output akan muncul di sini setelah kamu klik Run</span></div>
-      <button class="run-btn" id="run-btn" onclick="runEditorCode()">
-        <span>▶</span> Run Code
-      </button>
+      <div id="oa"><span class="oi">// Klik Run atau Ctrl+Enter</span></div>
+      <button class="rbtn" id="runBtn">▶ Run Code</button>
     </div>
   </div>
 </div>
 
-<!-- ============ LEARN SCREEN ============ -->
-<div class="screen" id="learn-screen">
-  <!-- Sidebar -->
-  <div class="sidebar">
-    <div class="sidebar-header">
-      <div class="sidebar-logo"><span>Py</span>Path</div>
-      <div class="sidebar-subtitle">Python Learning Path</div>
-      <button class="sidebar-back" onclick="goToHome()">← Kembali ke Home</button>
+<!-- LEARN -->
+<div class="screen" id="ls">
+  <div class="sb">
+    <div class="sbh">
+      <div class="sblogo"><span>Py</span>Path</div>
+      <div class="sbsub">Python Learning Path</div>
+      <button class="sbbk" id="learnBack">← Kembali ke Home</button>
     </div>
-    <div class="sidebar-progress">
-      <div class="progress-label">Overall Progress</div>
-      <div class="progress-bar"><div class="progress-fill" id="overall-progress" style="width:0%"></div></div>
-      <div class="progress-text" id="progress-text">0 / 0 lessons</div>
+    <div class="sbprog">
+      <div class="prlbl">Overall Progress</div>
+      <div class="prbar"><div class="prfill" id="prfill" style="width:0%"></div></div>
+      <div class="prtxt" id="prtxt">0 / 0 lessons</div>
     </div>
-    <div class="tier-list" id="tier-list"></div>
+    <div class="tl" id="tl"></div>
   </div>
-
-  <!-- Main content -->
-  <div class="learn-main">
-    <div class="lesson-content" id="lesson-content">
-      <!-- Lesson rendered here -->
-    </div>
-    <div class="lesson-nav" id="lesson-nav">
-      <button class="btn-nav btn-prev" id="btn-prev" onclick="prevLesson()">← Sebelumnya</button>
-      <div id="lesson-indicator" style="font-size:0.8rem;color:var(--muted)"></div>
-      <button class="btn-nav btn-next" id="btn-next" onclick="nextLesson()">Selanjutnya →</button>
+  <div class="lm">
+    <div class="lc" id="lc"></div>
+    <div class="ln">
+      <button class="bnav bprev" id="bprev">← Sebelumnya</button>
+      <span id="lind" style="font-size:.78rem;color:var(--m)"></span>
+      <button class="bnav bnext" id="bnext">Selanjutnya →</button>
     </div>
   </div>
 </div>
 
-<!-- Pyodide -->
-<script src="https://cdn.jsdelivr.net/pyodide/v0.25.0/full/pyodide.js"></script>
 <script>
-// ==================== DATA ====================
-const TIERS = [
-  {
-    id: 'beginner',
-    name: 'Beginner',
-    icon: '🌱',
-    color: '#34d399',
-    desc: 'Dasar-dasar Python',
-    lessons: [
-      {
-        id: 'intro',
-        title: 'Apa itu Python?',
-        desc: 'Kenalan sama Python, bahasa pemrograman yang powerful tapi mudah dipelajari.',
-        type: 'lesson',
-        content: `
-          <div class="content-block">
-            <h3>Apa itu Python?</h3>
-            <p>Python adalah bahasa pemrograman <strong style="color:var(--accent)">tingkat tinggi</strong> yang diciptakan oleh Guido van Rossum pada tahun 1991. Python dirancang agar mudah dibaca dan ditulis — hampir seperti bahasa Inggris biasa!</p>
-          </div>
-          <div class="content-block">
-            <h3>Kenapa Belajar Python?</h3>
-            <ul>
-              <li>Sintaks yang bersih dan mudah dipahami</li>
-              <li>Dipakai di Web Development, AI, Data Science, Automation</li>
-              <li>Komunitas besar dan banyak library gratis</li>
-              <li>Salah satu bahasa yang paling dicari di dunia kerja</li>
-            </ul>
-          </div>
-          <div class="content-block">
-            <h3>Program Pertama</h3>
-            <p>Tradisi dalam pemrograman adalah membuat program "Hello, World!" sebagai langkah pertama. Ini cara lakukannya di Python:</p>
-            <div class="code-example">
-              <div class="code-example-header">python</div>
-              <pre><span class="fn">print</span>(<span class="str">"Hello, World!"</span>)</pre>
-            </div>
-            <p>Hanya satu baris! Fungsi <code style="color:var(--accent);font-family:Space Mono,monospace">print()</code> digunakan untuk menampilkan output ke layar.</p>
-          </div>
-        `,
-        exercise: {
-          task: 'Buat program yang menampilkan nama kamu! Gunakan fungsi print() dengan nama kamu di dalamnya.',
-          starter: '# Ketik kode kamu di sini\nprint("Nama kamu")',
-          hint: 'Ganti "Nama kamu" dengan nama kamu yang sebenarnya, contoh: print("Budi")',
-          check: (code, output) => output.trim().length > 0 && code.includes('print')
-        }
-      },
-      {
-        id: 'variabel',
-        title: 'Variabel & Tipe Data',
-        desc: 'Cara menyimpan data di Python.',
-        type: 'lesson',
-        content: `
-          <div class="content-block">
-            <h3>Apa itu Variabel?</h3>
-            <p>Variabel adalah <strong style="color:var(--accent)">wadah untuk menyimpan data</strong>. Bayangkan seperti kotak yang diberi label — kamu bisa taruh barang di dalamnya dan ambil kapanpun kamu mau.</p>
-            <div class="code-example">
-              <div class="code-example-header">python — membuat variabel</div>
-              <pre><span class="var">nama</span> = <span class="str">"Budi"</span>        <span class="comment"># String (teks)</span>
-<span class="var">umur</span> = <span class="num">17</span>           <span class="comment"># Integer (bilangan bulat)</span>
-<span class="var">tinggi</span> = <span class="num">170.5</span>      <span class="comment"># Float (bilangan desimal)</span>
-<span class="var">lulus</span> = <span class="kw">True</span>        <span class="comment"># Boolean (benar/salah)</span>
+// ===== LESSONS DATA =====
+const T = [
+  { id:'beginner', name:'Beginner', icon:'🌱', color:'#34d399', lessons:[
+    { id:'intro', title:'Apa itu Python?', desc:'Kenalan sama Python, bahasa paling populer di dunia.', type:'lesson',
+      content:`<div class="cb"><h3>Apa itu Python?</h3><p>Python adalah bahasa pemrograman <strong style="color:var(--ac)">tingkat tinggi</strong> yang dibuat Guido van Rossum tahun 1991. Dirancang agar mudah dibaca — hampir seperti bahasa Inggris biasa!</p></div>
+      <div class="cb"><h3>Kenapa Belajar Python?</h3><ul><li>Sintaks bersih dan mudah dipahami</li><li>Dipakai di Web Dev, AI, Data Science, Automation</li><li>Komunitas besar dan banyak library gratis</li><li>Salah satu bahasa paling dicari di industri</li></ul></div>
+      <div class="cb"><h3>Program Pertama: Hello World</h3><p>Tradisi dalam programming adalah program "Hello, World!" sebagai langkah pertama. Di Python sangat simpel:</p>
+      <div class="ce"><div class="ceh">python</div><pre><span class="fn">print</span>(<span class="str">"Hello, World!"</span>)
+<span class="cm"># Output: Hello, World!</span>
 
-<span class="fn">print</span>(<span class="var">nama</span>)
-<span class="fn">print</span>(<span class="var">umur</span>)
-<span class="fn">print</span>(<span class="var">tinggi</span>)
-<span class="fn">print</span>(<span class="var">lulus</span>)</pre>
-            </div>
-          </div>
-          <div class="content-block">
-            <h3>4 Tipe Data Dasar</h3>
-            <ul>
-              <li><code style="color:var(--accent);font-family:Space Mono,monospace">str</code> — String, untuk teks. Ditulis dalam tanda kutip: "hello" atau 'hello'</li>
-              <li><code style="color:var(--accent);font-family:Space Mono,monospace">int</code> — Integer, bilangan bulat: 1, 42, -7, 1000</li>
-              <li><code style="color:var(--accent);font-family:Space Mono,monospace">float</code> — Float, bilangan desimal: 3.14, 1.5, -0.5</li>
-              <li><code style="color:var(--accent);font-family:Space Mono,monospace">bool</code> — Boolean, hanya True atau False</li>
-            </ul>
-          </div>
-          <div class="content-block">
-            <h3>Cek Tipe Data</h3>
-            <div class="code-example">
-              <div class="code-example-header">python</div>
-              <pre><span class="var">x</span> = <span class="num">42</span>
-<span class="fn">print</span>(<span class="fn">type</span>(<span class="var">x</span>))   <span class="comment"># Output: &lt;class 'int'&gt;</span>
+<span class="cm"># Bisa juga multi baris:</span>
+<span class="fn">print</span>(<span class="str">"Nama saya Python"</span>)
+<span class="fn">print</span>(<span class="str">"Umur saya 30+ tahun"</span>)
+<span class="fn">print</span>(<span class="str">"Saya bahasa pemrograman 🐍"</span>)</pre></div>
+      <p>Fungsi <code>print()</code> menampilkan output ke layar. Tanda kutip bisa pakai <code>"..."</code> atau <code>'...'</code>.</p></div>`,
+      ex:{ task:'Buat program yang menampilkan nama kamu, umur kamu, dan kota kamu — masing-masing di baris berbeda!',
+        start:'# Ketik kode kamu di sini\n# Gunakan print() 3 kali\n\nprint("...")\nprint("...")\nprint("...")',
+        hint:'Contoh: print("Budi") — ganti dengan info kamu yang asli',
+        check:(c,o)=>{ const ls=o.trim().split('\n'); return ls.length>=3 && c.includes('print') } } },
 
-<span class="var">y</span> = <span class="str">"hello"</span>
-<span class="fn">print</span>(<span class="fn">type</span>(<span class="var">y</span>))   <span class="comment"># Output: &lt;class 'str'&gt;</span></pre>
-            </div>
-          </div>
-        `,
-        exercise: {
-          task: 'Buat 3 variabel: nama (string dengan nama kamu), umur (integer dengan umur kamu), dan favorit (string dengan hal favorit kamu). Kemudian print ketiganya!',
-          starter: '# Buat variabel di sini\nnama = \numur = \nfavorit = \n\n# Print variabel-variabel di atas\n',
-          hint: 'Contoh: nama = "Andi" — ingat string harus pakai tanda kutip!',
-          check: (code, output) => {
-            const lines = output.trim().split('\n');
-            return lines.length >= 3 && code.includes('=');
-          }
-        }
-      },
-      {
-        id: 'operasi',
-        title: 'Operasi Aritmatika',
-        desc: 'Python bisa jadi kalkulator canggih.',
-        type: 'lesson',
-        content: `
-          <div class="content-block">
-            <h3>Operator Matematika</h3>
-            <div class="code-example">
-              <div class="code-example-header">python — semua operator</div>
-              <pre><span class="var">a</span> = <span class="num">10</span>
-<span class="var">b</span> = <span class="num">3</span>
+    { id:'var', title:'Variabel & Tipe Data', desc:'Cara menyimpan dan mengelola data di Python.', type:'lesson',
+      content:`<div class="cb"><h3>Variabel = Wadah Data</h3><p>Variabel adalah <strong style="color:var(--ac)">wadah untuk menyimpan data</strong>. Bayangkan seperti kotak berlabel — kamu taruh barang di dalamnya dan ambil kapanpun.</p>
+      <div class="ce"><div class="ceh">python — 4 tipe data dasar</div><pre><span class="vr">nama</span>   = <span class="str">"Budi"</span>      <span class="cm"># str   — teks</span>
+<span class="vr">umur</span>   = <span class="num">17</span>          <span class="cm"># int   — bilangan bulat</span>
+<span class="vr">tinggi</span> = <span class="num">170.5</span>       <span class="cm"># float — bilangan desimal</span>
+<span class="vr">lulus</span>  = <span class="kw">True</span>        <span class="cm"># bool  — True atau False</span>
 
-<span class="fn">print</span>(<span class="var">a</span> + <span class="var">b</span>)   <span class="comment"># 13  (penjumlahan)</span>
-<span class="fn">print</span>(<span class="var">a</span> - <span class="var">b</span>)   <span class="comment"># 7   (pengurangan)</span>
-<span class="fn">print</span>(<span class="var">a</span> * <span class="var">b</span>)   <span class="comment"># 30  (perkalian)</span>
-<span class="fn">print</span>(<span class="var">a</span> / <span class="var">b</span>)   <span class="comment"># 3.33 (pembagian)</span>
-<span class="fn">print</span>(<span class="var">a</span> // <span class="var">b</span>)  <span class="comment"># 3   (pembagian bulat)</span>
-<span class="fn">print</span>(<span class="var">a</span> % <span class="var">b</span>)   <span class="comment"># 1   (sisa bagi/modulo)</span>
-<span class="fn">print</span>(<span class="var">a</span> ** <span class="var">b</span>)  <span class="comment"># 1000 (pangkat)</span></pre>
-            </div>
-          </div>
-          <div class="content-block">
-            <h3>f-string: Cara Keren Menampilkan Output</h3>
-            <p>Dengan f-string, kamu bisa embed variabel langsung di dalam teks:</p>
-            <div class="code-example">
-              <div class="code-example-header">python</div>
-              <pre><span class="var">nama</span> = <span class="str">"Budi"</span>
-<span class="var">nilai</span> = <span class="num">95</span>
-<span class="fn">print</span>(<span class="str">f"Hai </span><span class="var">{nama}</span><span class="str">, nilai kamu adalah </span><span class="var">{nilai}</span><span class="str">!"</span>)
-<span class="comment"># Output: Hai Budi, nilai kamu adalah 95!</span>
+<span class="fn">print</span>(<span class="vr">nama</span>, <span class="vr">umur</span>, <span class="vr">tinggi</span>, <span class="vr">lulus</span>)
+<span class="fn">print</span>(<span class="fn">type</span>(<span class="vr">nama</span>))   <span class="cm"># &lt;class 'str'&gt;</span>
+<span class="fn">print</span>(<span class="fn">type</span>(<span class="vr">umur</span>))   <span class="cm"># &lt;class 'int'&gt;</span></pre></div></div>
+      <div class="cb"><h3>f-String: Cara Keren Print Variabel</h3>
+      <div class="ce"><div class="ceh">python</div><pre><span class="vr">nama</span>  = <span class="str">"Andi"</span>
+<span class="vr">nilai</span> = <span class="num">92</span>
+<span class="fn">print</span>(<span class="str">f"Halo </span><span class="vr">{nama}</span><span class="str">, nilaimu </span><span class="vr">{nilai}</span><span class="str">!"</span>)
+<span class="cm"># Output: Halo Andi, nilaimu 92!</span>
 
-<span class="comment"># Bisa langsung kalkulasi juga:</span>
-<span class="fn">print</span>(<span class="str">f"Setengah nilai: </span><span class="var">{nilai/2}</span><span class="str">"</span>)</pre>
-            </div>
-          </div>
-        `,
-        exercise: {
-          task: 'Buat kalkulator sederhana! Simpan 2 angka dalam variabel a dan b, lalu tampilkan hasil penjumlahan, pengurangan, perkalian, dan pembagiannya menggunakan f-string.',
-          starter: 'a = 20\nb = 4\n\n# Tampilkan semua operasi\nprint(f"Penjumlahan: ?")\nprint(f"Pengurangan: ?")\nprint(f"Perkalian: ?")\nprint(f"Pembagian: ?")',
-          hint: 'Ganti ? dengan operasi yang tepat, contoh: print(f"Penjumlahan: {a + b}")',
-          check: (code, output) => {
-            const lines = output.trim().split('\n');
-            return lines.length >= 4;
-          }
-        }
-      },
-      {
-        id: 'project-beginner',
-        title: '🎯 Project: Kartu Identitas',
-        desc: 'Project pertama kamu! Buat program kartu identitas digital.',
-        type: 'project',
-        content: `
-          <div class="project-banner">
-            <div class="project-label">🎯 Tier Project — Beginner</div>
-            <div class="project-title">Kartu Identitas Digital</div>
-            <div class="project-desc">Gabungkan semua yang sudah kamu pelajari: variabel, tipe data, dan print untuk membuat kartu identitas digital kamu sendiri.</div>
-          </div>
-          <div class="content-block">
-            <h3>Tujuan Project</h3>
-            <p>Buat program yang menampilkan kartu identitas dengan format yang rapi. Program harus menampilkan setidaknya: nama, umur, kota, hobi, dan fakta menarik tentang diri kamu.</p>
-          </div>
-          <div class="content-block">
-            <h3>Contoh Output yang Diharapkan</h3>
-            <div class="code-example">
-              <div class="code-example-header">output</div>
-              <pre>============================
-     KARTU IDENTITAS DIGITAL
-============================
-Nama   : Budi Santoso
-Umur   : 17 tahun
-Kota   : Jakarta
-Hobi   : Gaming, Coding
-Fakta  : Saya bisa makan 5 piring nasi!
-============================</pre>
-            </div>
-          </div>
-          <div class="content-block">
-            <h3>Hint</h3>
-            <ul>
-              <li>Gunakan variabel untuk setiap info</li>
-              <li>Gunakan print() banyak kali untuk format yang rapi</li>
-              <li>Pakai f-string untuk embed variabel ke dalam teks</li>
-              <li>Gunakan "=" * 30 untuk membuat garis pemisah</li>
-            </ul>
-          </div>
-        `,
-        exercise: {
-          task: 'Buat program kartu identitas digital kamu! Minimal 5 info diri, dengan format yang rapi.',
-          starter: '# === PROJECT: Kartu Identitas Digital ===\n# Isi variabel dengan info kamu\n\nnama = ""\numur = 0\nkota = ""\nhobi = ""\nfakta = ""\n\n# Tampilkan kartu identitas\nprint("=" * 30)\nprint("  KARTU IDENTITAS DIGITAL")\nprint("=" * 30)\n# Tambahkan print untuk setiap info...\n',
-          hint: 'Gunakan f"Nama : {nama}" untuk setiap baris informasi!',
-          check: (code, output) => {
-            const lines = output.trim().split('\n');
-            return lines.length >= 7 && output.includes('=');
-          }
-        }
-      }
-    ]
-  },
-  {
-    id: 'basic',
-    name: 'Basic',
-    icon: '⚡',
-    color: '#38bdf8',
-    desc: 'Input, kondisi, loop',
-    lessons: [
-      {
-        id: 'input',
-        title: 'Input dari User',
-        desc: 'Cara membuat program interaktif dengan input().',
-        type: 'lesson',
-        content: `
-          <div class="content-block">
-            <h3>Fungsi input()</h3>
-            <p>Fungsi <code style="color:var(--accent);font-family:Space Mono,monospace">input()</code> memungkinkan user mengetik sesuatu dan program menyimpannya sebagai variabel. Ini cara membuat program yang interaktif!</p>
-            <div class="code-example">
-              <div class="code-example-header">python</div>
-              <pre><span class="var">nama</span> = <span class="fn">input</span>(<span class="str">"Siapa nama kamu? "</span>)
-<span class="fn">print</span>(<span class="str">f"Halo, </span><span class="var">{nama}</span><span class="str">! 👋"</span>)</pre>
-            </div>
-          </div>
-          <div class="content-block">
-            <h3>Konversi Tipe Data Input</h3>
-            <p>Semua input dari user awalnya adalah <strong style="color:var(--yellow)">string</strong>. Kalau kamu butuh angka, harus dikonversi dulu:</p>
-            <div class="code-example">
-              <div class="code-example-header">python</div>
-              <pre><span class="var">umur_str</span> = <span class="fn">input</span>(<span class="str">"Umur kamu: "</span>)  <span class="comment"># Ini string!</span>
-<span class="var">umur</span> = <span class="fn">int</span>(<span class="var">umur_str</span>)             <span class="comment"># Konversi ke integer</span>
-<span class="fn">print</span>(<span class="str">f"Tahun depan kamu umur </span><span class="var">{umur + 1}</span><span class="str"> tahun"</span>)
+<span class="cm"># Bisa langsung kalkulasi dalam f-string:</span>
+<span class="fn">print</span>(<span class="str">f"Setengah nilai: </span><span class="vr">{nilai/2}</span><span class="str">"</span>)
+<span class="fn">print</span>(<span class="str">f"Nilai desimal 2: </span><span class="vr">{nilai:.2f}</span><span class="str">"</span>)</pre></div></div>`,
+      ex:{ task:'Buat 4 variabel: nama (str), umur (int), tinggi (float), dan suka_gaming (bool). Kemudian print semua dalam 1 kalimat menggunakan f-string!',
+        start:'nama = ""\numur = 0\ntinggi = 0.0\nsuka_gaming = True\n\n# Print menggunakan f-string\nprint(f"...")',
+        hint:'Contoh f-string: print(f"Nama: {nama}, Umur: {umur} tahun")',
+        check:(c,o)=>{ return o.trim().length>0 && c.includes('=') && (c.includes('f"') || c.includes("f'")) } } },
 
-<span class="comment"># Atau langsung:</span>
-<span class="var">tinggi</span> = <span class="fn">float</span>(<span class="fn">input</span>(<span class="str">"Tinggi badan (cm): "</span>))</pre>
-            </div>
-          </div>
-        `,
-        exercise: {
-          task: 'Buat program yang meminta nama dan tahun lahir user, lalu hitung umur mereka (anggap sekarang tahun 2025) dan tampilkan pesan personal.',
-          starter: '# Program Hitung Umur\nnama = input("Nama kamu: ")\ntahun_lahir = int(input("Tahun lahir: "))\n\n# Hitung umur\numur = 2025 - tahun_lahir\n\n# Tampilkan hasil\n',
-          hint: 'Gunakan f-string: print(f"Halo {nama}! Kamu berumur {umur} tahun.")',
-          check: (code, output) => output.trim().length > 0 && code.includes('input')
-        }
-      },
-      {
-        id: 'kondisi',
-        title: 'If, Elif, Else',
-        desc: 'Buat program yang bisa membuat keputusan.',
-        type: 'lesson',
-        content: `
-          <div class="content-block">
-            <h3>Pernyataan Kondisi</h3>
-            <p>Kondisi memungkinkan program mengambil jalur berbeda berdasarkan situasi yang ada. Seperti percabangan di jalan!</p>
-            <div class="code-example">
-              <div class="code-example-header">python — if/elif/else</div>
-              <pre><span class="var">nilai</span> = <span class="num">85</span>
+    { id:'ops', title:'Operasi & Kalkulasi', desc:'Python bisa jadi kalkulator super canggih.', type:'lesson',
+      content:`<div class="cb"><h3>Operator Matematika</h3>
+      <div class="ce"><div class="ceh">python</div><pre><span class="vr">a</span>, <span class="vr">b</span> = <span class="num">10</span>, <span class="num">3</span>
+<span class="fn">print</span>(<span class="vr">a</span> + <span class="vr">b</span>)   <span class="cm"># 13  penjumlahan</span>
+<span class="fn">print</span>(<span class="vr">a</span> - <span class="vr">b</span>)   <span class="cm"># 7   pengurangan</span>
+<span class="fn">print</span>(<span class="vr">a</span> * <span class="vr">b</span>)   <span class="cm"># 30  perkalian</span>
+<span class="fn">print</span>(<span class="vr">a</span> / <span class="vr">b</span>)   <span class="cm"># 3.33 pembagian</span>
+<span class="fn">print</span>(<span class="vr">a</span> // <span class="vr">b</span>)  <span class="cm"># 3   bagi bulat</span>
+<span class="fn">print</span>(<span class="vr">a</span> % <span class="vr">b</span>)   <span class="cm"># 1   sisa bagi</span>
+<span class="fn">print</span>(<span class="vr">a</span> ** <span class="vr">b</span>)  <span class="cm"># 1000 pangkat</span></pre></div></div>
+      <div class="cb"><h3>Operasi String</h3>
+      <div class="ce"><div class="ceh">python</div><pre><span class="vr">s1</span> = <span class="str">"Hello"</span>
+<span class="vr">s2</span> = <span class="str">"World"</span>
+<span class="fn">print</span>(<span class="vr">s1</span> + <span class="str">" "</span> + <span class="vr">s2</span>)  <span class="cm"># Hello World (gabung)</span>
+<span class="fn">print</span>(<span class="vr">s1</span> * <span class="num">3</span>)            <span class="cm"># HelloHelloHello (ulang)</span>
+<span class="fn">print</span>(<span class="fn">len</span>(<span class="vr">s1</span>))           <span class="cm"># 5 (panjang)</span>
+<span class="fn">print</span>(<span class="vr">s1</span>.upper())        <span class="cm"># HELLO</span>
+<span class="fn">print</span>(<span class="vr">s1</span>.lower())        <span class="cm"># hello</span></pre></div></div>`,
+      ex:{ task:'Buat kalkulator BMI! Berat = 60 kg, Tinggi = 1.65 m. Rumus: BMI = berat / (tinggi ** 2). Print hasilnya dengan 2 angka desimal dan label yang jelas.',
+        start:'berat = 60\ntinggi = 1.65\n\n# Hitung BMI\nbmi = berat / (tinggi ** 2)\n\n# Print hasil\nprint(f"Berat : {berat} kg")\nprint(f"Tinggi: {tinggi} m")\nprint(f"BMI   : ...")',
+        hint:'Gunakan :.2f untuk 2 desimal: print(f"BMI: {bmi:.2f}")',
+        check:(c,o)=>o.includes('BMI') || o.includes('bmi') || o.includes('22') } },
 
-<span class="kw">if</span> <span class="var">nilai</span> >= <span class="num">90</span>:
-    <span class="fn">print</span>(<span class="str">"🏆 Sangat Bagus!"</span>)
-<span class="kw">elif</span> <span class="var">nilai</span> >= <span class="num">75</span>:
-    <span class="fn">print</span>(<span class="str">"✅ Bagus!"</span>)
-<span class="kw">elif</span> <span class="var">nilai</span> >= <span class="num">60</span>:
-    <span class="fn">print</span>(<span class="str">"⚠️ Cukup"</span>)
+    { id:'proj-beg', title:'🎯 Project: Kartu Identitas', desc:'Project pertama kamu menggunakan semua yang sudah dipelajari!', type:'project',
+      content:`<div class="pbn"><div class="pbl">🎯 Tier Project — Beginner</div><div class="pbt">Kartu Identitas Digital</div><div class="pbd">Gabungkan variabel, tipe data, dan print untuk membuat kartu identitas digital kamu yang keren.</div></div>
+      <div class="cb"><h3>Target Output</h3><div class="ce"><div class="ceh">output yang diinginkan</div><pre>==============================
+    KARTU IDENTITAS DIGITAL
+==============================
+Nama    : Budi Santoso
+Umur    : 17 tahun
+Kota    : Jakarta
+Hobi    : Gaming, Coding
+Fakta   : Bisa makan 5 piring nasi!
+==============================
+Dibuat dengan Python 🐍</pre></div></div>
+      <div class="cb"><h3>Tips</h3><ul><li>Pakai variabel untuk setiap info</li><li>Gunakan <code>"=" * 30</code> untuk garis pemisah</li><li>f-string untuk embed variabel ke teks</li><li>Minimal 5 info diri</li></ul></div>`,
+      ex:{ task:'Buat program kartu identitas digital kamu sendiri! Minimal 5 info, format rapi dengan garis pemisah.',
+        start:'# === PROJECT: Kartu Identitas Digital ===\nnama    = "Nama Kamu"\numur    = 0\nkota    = "Kota Kamu"\nhobi    = "Hobi Kamu"\nfakta   = "Fakta unik tentang kamu"\n\ngaris = "=" * 30\nprint(garis)\nprint("  KARTU IDENTITAS DIGITAL")\nprint(garis)\nprint(f"Nama  : {nama}")\n# Tambahkan baris lainnya...\nprint(garis)',
+        hint:'Tambahkan print(f"Umur  : {umur} tahun") dan seterusnya untuk tiap info',
+        check:(c,o)=>{ const ls=o.trim().split('\n'); return ls.length>=7 && o.includes('=') } } }
+  ]},
+
+  { id:'basic', name:'Basic', icon:'⚡', color:'#38bdf8', lessons:[
+    { id:'input', title:'Input dari User', desc:'Buat program yang bisa interaksi dengan user.', type:'lesson',
+      content:`<div class="cb"><h3>Fungsi input()</h3><p>Fungsi <code>input()</code> membuat program berhenti dan menunggu user mengetik sesuatu. Hasilnya selalu berupa <strong style="color:var(--y)">string</strong>!</p>
+      <div class="ce"><div class="ceh">python</div><pre><span class="vr">nama</span> = <span class="fn">input</span>(<span class="str">"Siapa namamu? "</span>)
+<span class="fn">print</span>(<span class="str">f"Halo, </span><span class="vr">{nama}</span><span class="str">! 👋"</span>)
+
+<span class="cm"># Konversi ke angka:</span>
+<span class="vr">umur</span> = <span class="fn">int</span>(<span class="fn">input</span>(<span class="str">"Umurmu: "</span>))
+<span class="vr">tinggi</span> = <span class="fn">float</span>(<span class="fn">input</span>(<span class="str">"Tinggi (cm): "</span>))
+<span class="fn">print</span>(<span class="str">f"Umur: </span><span class="vr">{umur}</span><span class="str">, Tinggi: </span><span class="vr">{tinggi}</span><span class="str">cm"</span>)</pre></div></div>
+      <div class="cb"><h3>Catatan Penting</h3><ul><li><code>input()</code> selalu return string</li><li>Gunakan <code>int(input(...))</code> untuk angka bulat</li><li>Gunakan <code>float(input(...))</code> untuk angka desimal</li><li>Teks dalam <code>input("...")</code> adalah prompt yang ditampilkan ke user</li></ul></div>`,
+      ex:{ task:'Buat program yang minta input nama dan tahun lahir, lalu hitung umur (2025 - tahun_lahir) dan tampilkan pesan personal.',
+        start:'nama = input("Nama kamu: ")\ntahun_lahir = int(input("Tahun lahir: "))\n\numur = 2025 - tahun_lahir\nprint(f"Halo {nama}! Kamu berumur {umur} tahun.")',
+        hint:'Kode sudah hampir benar! Pastikan pesan outputnya menyebut nama dan umur.',
+        check:(c,o)=>o.trim().length>10 && c.includes('input') } },
+
+    { id:'cond', title:'If, Elif, Else', desc:'Buat program yang bisa mengambil keputusan.', type:'lesson',
+      content:`<div class="cb"><h3>Percabangan Kondisi</h3><p>Kondisi memungkinkan program mengambil jalur berbeda berdasarkan situasi — seperti percabangan di jalan!</p>
+      <div class="ce"><div class="ceh">python</div><pre><span class="vr">nilai</span> = <span class="num">85</span>
+
+<span class="kw">if</span> <span class="vr">nilai</span> >= <span class="num">90</span>:
+    <span class="fn">print</span>(<span class="str">"🏆 Grade A - Sempurna!"</span>)
+<span class="kw">elif</span> <span class="vr">nilai</span> >= <span class="num">80</span>:
+    <span class="fn">print</span>(<span class="str">"✅ Grade B - Bagus!"</span>)
+<span class="kw">elif</span> <span class="vr">nilai</span> >= <span class="num">70</span>:
+    <span class="fn">print</span>(<span class="str">"⚠️ Grade C - Cukup"</span>)
 <span class="kw">else</span>:
-    <span class="fn">print</span>(<span class="str">"❌ Perlu belajar lebih"</span>)</pre>
-            </div>
-          </div>
-          <div class="content-block">
-            <h3>Operator Perbandingan</h3>
-            <ul>
-              <li><code style="color:var(--accent);font-family:Space Mono,monospace">==</code> — Sama dengan</li>
-              <li><code style="color:var(--accent);font-family:Space Mono,monospace">!=</code> — Tidak sama dengan</li>
-              <li><code style="color:var(--accent);font-family:Space Mono,monospace">></code> — Lebih besar dari</li>
-              <li><code style="color:var(--accent);font-family:Space Mono,monospace"><</code> — Lebih kecil dari</li>
-              <li><code style="color:var(--accent);font-family:Space Mono,monospace">>=</code> — Lebih besar atau sama</li>
-              <li><code style="color:var(--accent);font-family:Space Mono,monospace"><=</code> — Lebih kecil atau sama</li>
-            </ul>
-          </div>
-          <div class="content-block">
-            <h3>Operator Logika</h3>
-            <div class="code-example">
-              <div class="code-example-header">python</div>
-              <pre><span class="var">umur</span> = <span class="num">17</span>
-<span class="var">punya_ktp</span> = <span class="kw">False</span>
+    <span class="fn">print</span>(<span class="str">"❌ Grade D - Perlu belajar"</span>)</pre></div></div>
+      <div class="cb"><h3>Operator Perbandingan & Logika</h3><ul><li><code>==</code> sama dengan, <code>!=</code> tidak sama</li><li><code>&gt;</code> <code>&lt;</code> <code>&gt;=</code> <code>&lt;=</code> perbandingan angka</li><li><code>and</code> — kedua kondisi harus True</li><li><code>or</code> — salah satu kondisi True</li><li><code>not</code> — balik kondisi</li></ul></div>`,
+      ex:{ task:'Buat program klasifikasi BMI. Input berat (kg) dan tinggi (m), hitung BMI = berat/(tinggi²), tampilkan kategori: Kurus (<18.5), Normal (18.5-25), Overweight (25-30), Obesitas (≥30).',
+        start:'berat = float(input("Berat (kg): "))\ntinggi = float(input("Tinggi (m): "))\n\nbmi = berat / (tinggi ** 2)\nprint(f"BMI kamu: {bmi:.1f}")\n\nif bmi < 18.5:\n    print("Kategori: Kurus")\nelif bmi < 25:\n    print("Kategori: Normal ✅")\nelif bmi < 30:\n    print("Kategori: Overweight")\nelse:\n    print("Kategori: Obesitas")',
+        hint:'Kode sudah lengkap! Coba jalankan dan masukkan contoh angka.',
+        check:(c,o)=>o.includes('BMI') && (o.includes('Kurus')||o.includes('Normal')||o.includes('Overweight')||o.includes('Obesitas')) } },
 
-<span class="kw">if</span> <span class="var">umur</span> >= <span class="num">17</span> <span class="kw">and</span> <span class="var">punya_ktp</span>:
-    <span class="fn">print</span>(<span class="str">"Bisa masuk!"</span>)
-<span class="kw">elif</span> <span class="var">umur</span> >= <span class="num">17</span> <span class="kw">or</span> <span class="var">punya_ktp</span>:
-    <span class="fn">print</span>(<span class="str">"Butuh verifikasi"</span>)
+    { id:'loop', title:'For & While Loop', desc:'Ulangi perintah tanpa nulis berkali-kali.', type:'lesson',
+      content:`<div class="cb"><h3>For Loop</h3>
+      <div class="ce"><div class="ceh">python</div><pre><span class="cm"># Loop angka 0-4</span>
+<span class="kw">for</span> <span class="vr">i</span> <span class="kw">in</span> <span class="fn">range</span>(<span class="num">5</span>):
+    <span class="fn">print</span>(<span class="str">f"Ke-</span><span class="vr">{i}</span><span class="str">"</span>)
+
+<span class="cm"># Loop list</span>
+<span class="vr">buah</span> = [<span class="str">"apel"</span>, <span class="str">"mangga"</span>, <span class="str">"jeruk"</span>]
+<span class="kw">for</span> <span class="vr">b</span> <span class="kw">in</span> <span class="vr">buah</span>:
+    <span class="fn">print</span>(<span class="str">f"Buah: </span><span class="vr">{b}</span><span class="str">"</span>)
+
+<span class="cm"># Loop dengan index</span>
+<span class="kw">for</span> <span class="vr">i</span>, <span class="vr">b</span> <span class="kw">in</span> <span class="fn">enumerate</span>(<span class="vr">buah</span>, <span class="num">1</span>):
+    <span class="fn">print</span>(<span class="str">f"</span><span class="vr">{i}</span><span class="str">. </span><span class="vr">{b}</span><span class="str">"</span>)</pre></div></div>
+      <div class="cb"><h3>While Loop</h3>
+      <div class="ce"><div class="ceh">python</div><pre><span class="vr">n</span> = <span class="num">1</span>
+<span class="kw">while</span> <span class="vr">n</span> <= <span class="num">5</span>:
+    <span class="fn">print</span>(<span class="str">f"Hitungan: </span><span class="vr">{n}</span><span class="str">"</span>)
+    <span class="vr">n</span> += <span class="num">1</span>  <span class="cm"># PENTING: jangan lupa!</span>
+<span class="fn">print</span>(<span class="str">"Selesai!"</span>)</pre></div></div>`,
+      ex:{ task:'Buat tabel perkalian! Minta input angka dari user, tampilkan tabel perkalian 1 sampai 10 untuk angka tersebut.',
+        start:'angka = int(input("Angka: "))\nprint(f"=== Tabel Perkalian {angka} ===")\nfor i in range(1, 11):\n    print(f"{angka} x {i:2} = {angka * i}")',
+        hint:'Kode sudah benar! Coba jalankan dan masukkan angka berapa saja.',
+        check:(c,o)=>{ const ls=o.trim().split('\n'); return ls.length>=10 && c.includes('for') } } },
+
+    { id:'proj-bas', title:'🎯 Project: Game Kuis', desc:'Buat game kuis interaktif dengan sistem skor!', type:'project',
+      content:`<div class="pbn"><div class="pbl">🎯 Tier Project — Basic</div><div class="pbt">Game Kuis Interaktif</div><div class="pbd">Buat game kuis dengan minimal 5 pertanyaan, skor, dan predikat akhir berdasarkan performa.</div></div>
+      <div class="cb"><h3>Template Dasar</h3><div class="ce"><div class="ceh">python</div><pre><span class="vr">skor</span> = <span class="num">0</span>
+<span class="fn">print</span>(<span class="str">"=== GAME KUIS ==="</span>)
+<span class="vr">j1</span> = <span class="fn">input</span>(<span class="str">"1. Ibu kota Indonesia? "</span>)
+<span class="kw">if</span> <span class="vr">j1</span>.lower() == <span class="str">"jakarta"</span>:
+    <span class="fn">print</span>(<span class="str">"Benar! +20"</span>); <span class="vr">skor</span> += <span class="num">20</span>
 <span class="kw">else</span>:
-    <span class="fn">print</span>(<span class="str">"Tidak bisa masuk"</span>)</pre>
-            </div>
-          </div>
-        `,
-        exercise: {
-          task: 'Buat program klasifikasi BMI. Minta user input berat (kg) dan tinggi (m), hitung BMI = berat/(tinggi²), lalu tampilkan kategori: Kurus (<18.5), Normal (18.5-24.9), Gemuk (25-29.9), Obesitas (≥30).',
-          starter: 'berat = float(input("Berat badan (kg): "))\ntinggi = float(input("Tinggi badan (m): "))\n\n# Hitung BMI\nbmi = berat / (tinggi ** 2)\nprint(f"BMI kamu: {bmi:.1f}")\n\n# Klasifikasi\n',
-          hint: 'Gunakan if bmi < 18.5: print("Kurus") elif bmi < 25: ...',
-          check: (code, output) => output.includes('BMI') && (output.includes('Kurus') || output.includes('Normal') || output.includes('Gemuk') || output.includes('Obesitas'))
-        }
-      },
-      {
-        id: 'loop',
-        title: 'For & While Loop',
-        desc: 'Ulangi perintah tanpa nulis ulang berkali-kali.',
-        type: 'lesson',
-        content: `
-          <div class="content-block">
-            <h3>For Loop</h3>
-            <p>For loop digunakan untuk mengiterasi (mengulang) sesuatu sejumlah tertentu atau melalui sebuah koleksi data.</p>
-            <div class="code-example">
-              <div class="code-example-header">python — for loop</div>
-              <pre><span class="comment"># Loop angka dengan range()</span>
-<span class="kw">for</span> <span class="var">i</span> <span class="kw">in</span> <span class="fn">range</span>(<span class="num">5</span>):
-    <span class="fn">print</span>(<span class="str">f"Iterasi ke-</span><span class="var">{i}</span><span class="str">"</span>)
+    <span class="fn">print</span>(<span class="str">"Salah! Jawabannya: Jakarta"</span>)</pre></div></div>`,
+      ex:{ task:'Buat game kuis 5 pertanyaan (boleh tentang apapun), sistem skor, dan predikat akhir (Sempurna/Bagus/Cukup/Kurang).',
+        start:'skor = 0\n\nprint("=" * 35)\nprint("      GAME KUIS PYTHON")\nprint("=" * 35)\n\n# Pertanyaan 1\nj1 = input("1. Berapa 7 x 8? ")\nif j1 == "56":\n    print("Benar! +20"); skor += 20\nelse:\n    print("Salah! Jawabannya: 56")\n\n# Pertanyaan 2\nj2 = input("2. Ibu kota Jepang? ")\nif j2.lower() == "tokyo":\n    print("Benar! +20"); skor += 20\nelse:\n    print("Salah! Jawabannya: Tokyo")\n\n# Tambahkan 3 pertanyaan lagi...\n# j3, j4, j5\n\n# Hasil akhir\nprint(f"\\n=== SKOR AKHIR: {skor}/100 ===")\nif skor >= 80:\n    print("Predikat: Sempurna! 🏆")\nelif skor >= 60:\n    print("Predikat: Bagus! ✅")\nelse:\n    print("Predikat: Perlu latihan 📚")',
+        hint:'Tambahkan j3, j4, j5 dengan pola yang sama lalu sesuaikan skor maksimal.',
+        check:(c,o)=>o.includes('SKOR')||o.includes('Predikat') } }
+  ]},
 
-<span class="comment"># Loop list</span>
-<span class="var">buah</span> = [<span class="str">"apel"</span>, <span class="str">"mangga"</span>, <span class="str">"jeruk"</span>]
-<span class="kw">for</span> <span class="var">item</span> <span class="kw">in</span> <span class="var">buah</span>:
-    <span class="fn">print</span>(<span class="str">f"Buah: </span><span class="var">{item}</span><span class="str">"</span>)</pre>
-            </div>
-          </div>
-          <div class="content-block">
-            <h3>While Loop</h3>
-            <p>While loop terus berjalan selama kondisi masih <code style="color:var(--accent);font-family:Space Mono,monospace">True</code>.</p>
-            <div class="code-example">
-              <div class="code-example-header">python — while loop</div>
-              <pre><span class="var">hitung</span> = <span class="num">1</span>
-<span class="kw">while</span> <span class="var">hitung</span> <= <span class="num">5</span>:
-    <span class="fn">print</span>(<span class="str">f"Hitungan: </span><span class="var">{hitung}</span><span class="str">"</span>)
-    <span class="var">hitung</span> += <span class="num">1</span>  <span class="comment"># PENTING: jangan lupa increment!</span>
-    
-<span class="fn">print</span>(<span class="str">"Selesai!"</span>)</pre>
-            </div>
-          </div>
-          <div class="content-block">
-            <h3>Break & Continue</h3>
-            <div class="code-example">
-              <div class="code-example-header">python</div>
-              <pre><span class="kw">for</span> <span class="var">i</span> <span class="kw">in</span> <span class="fn">range</span>(<span class="num">10</span>):
-    <span class="kw">if</span> <span class="var">i</span> == <span class="num">3</span>:
-        <span class="kw">continue</span>  <span class="comment"># Skip i=3, lanjut ke berikutnya</span>
-    <span class="kw">if</span> <span class="var">i</span> == <span class="num">7</span>:
-        <span class="kw">break</span>     <span class="comment"># Stop loop di i=7</span>
-    <span class="fn">print</span>(<span class="var">i</span>)</pre>
-            </div>
-          </div>
-        `,
-        exercise: {
-          task: 'Buat program tabel perkalian! Minta user input sebuah angka, lalu tampilkan tabel perkalian dari 1 sampai 10 untuk angka tersebut.',
-          starter: 'angka = int(input("Angka: "))\n\nprint(f"=== Tabel Perkalian {angka} ===")\n# Gunakan for loop untuk i dari 1 sampai 10\n',
-          hint: 'Gunakan for i in range(1, 11): kemudian print(f"{angka} x {i} = {angka * i}")',
-          check: (code, output) => {
-            const lines = output.trim().split('\n');
-            return lines.length >= 10 && code.includes('for');
-          }
-        }
-      },
-      {
-        id: 'project-basic',
-        title: '🎯 Project: Kuis Interaktif',
-        desc: 'Buat game kuis sederhana dengan skor!',
-        type: 'project',
-        content: `
-          <div class="project-banner">
-            <div class="project-label">🎯 Tier Project — Basic</div>
-            <div class="project-title">Game Kuis Interaktif</div>
-            <div class="project-desc">Buat game kuis dengan minimal 5 pertanyaan, sistem poin, dan feedback untuk setiap jawaban.</div>
-          </div>
-          <div class="content-block">
-            <h3>Yang Harus Ada</h3>
-            <ul>
-              <li>Minimal 5 pertanyaan berbeda</li>
-              <li>User menjawab dengan input()</li>
-              <li>Tampilkan "Benar!" atau "Salah!" setiap pertanyaan</li>
-              <li>Hitung total skor di akhir</li>
-              <li>Beri predikat berdasarkan skor (Sempurna, Bagus, Cukup, dll)</li>
-            </ul>
-          </div>
-          <div class="content-block">
-            <h3>Struktur Dasar</h3>
-            <div class="code-example">
-              <div class="code-example-header">python — template</div>
-              <pre><span class="var">skor</span> = <span class="num">0</span>
+  { id:'normal', name:'Normal', icon:'🔥', color:'#818cf8', lessons:[
+    { id:'func', title:'Fungsi (Function)', desc:'Kode yang bisa dipanggil berulang kali.', type:'lesson',
+      content:`<div class="cb"><h3>Membuat dan Memanggil Fungsi</h3>
+      <div class="ce"><div class="ceh">python</div><pre><span class="cm"># Definisi fungsi</span>
+<span class="kw">def</span> <span class="fn">sapa</span>(<span class="vr">nama</span>):
+    <span class="fn">print</span>(<span class="str">f"Halo, </span><span class="vr">{nama}</span><span class="str">! 👋"</span>)
 
-<span class="fn">print</span>(<span class="str">"=== GAME KUIS PYTHON ==="</span>)
+<span class="cm"># Panggil berkali-kali</span>
+<span class="fn">sapa</span>(<span class="str">"Budi"</span>)
+<span class="fn">sapa</span>(<span class="str">"Ani"</span>)
 
-<span class="comment"># Pertanyaan 1</span>
-<span class="var">jawab1</span> = <span class="fn">input</span>(<span class="str">"1. Apa ibu kota Indonesia? "</span>)
-<span class="kw">if</span> <span class="var">jawab1</span>.lower() == <span class="str">"jakarta"</span>:
-    <span class="fn">print</span>(<span class="str">"✅ Benar!"</span>)
-    <span class="var">skor</span> += <span class="num">20</span>
-<span class="kw">else</span>:
-    <span class="fn">print</span>(<span class="str">"❌ Salah! Jawabannya: Jakarta"</span>)</pre>
-            </div>
-          </div>
-        `,
-        exercise: {
-          task: 'Buat game kuis dengan minimal 5 pertanyaan seputar pengetahuan umum atau Python! Hitung skor total di akhir dan beri predikat.',
-          starter: 'skor = 0\ntotal = 5\n\nprint("=" * 35)\nprint("     🎮 GAME KUIS INTERAKTIF")\nprint("=" * 35)\n\n# Pertanyaan 1\njawab1 = input("1. Berapa hasil 5 + 3? ")\nif jawab1 == "8":\n    print("✅ Benar! +20 poin")\n    skor += 20\nelse:\n    print("❌ Salah! Jawabannya: 8")\n\n# Tambahkan 4 pertanyaan lagi...\n\n# Hasil akhir\nprint(f"\\n=== HASIL ===")\nprint(f"Skor: {skor}/100")\n',
-          hint: 'Tambahkan pertanyaan 2-5 dengan pola yang sama, lalu di bagian hasil tambahkan if skor >= 80: print("Sempurna!")',
-          check: (code, output) => {
-            return output.includes('Skor') || output.includes('skor') || output.includes('HASIL');
-          }
-        }
-      }
-    ]
-  },
-  {
-    id: 'normal',
-    name: 'Normal',
-    icon: '🔥',
-    color: '#818cf8',
-    desc: 'Fungsi, list, dictionary',
-    lessons: [
-      {
-        id: 'fungsi',
-        title: 'Fungsi (Function)',
-        desc: 'Buat kode yang bisa dipakai ulang.',
-        type: 'lesson',
-        content: `
-          <div class="content-block">
-            <h3>Apa itu Fungsi?</h3>
-            <p>Fungsi adalah blok kode yang bisa dipanggil berkali-kali. Bayangkan seperti mesin — kamu kasih input, mesin proses, lalu keluarkan output.</p>
-            <div class="code-example">
-              <div class="code-example-header">python — membuat fungsi</div>
-              <pre><span class="comment"># Definisi fungsi</span>
-<span class="kw">def</span> <span class="fn">sapa</span>(<span class="var">nama</span>):
-    <span class="fn">print</span>(<span class="str">f"Halo, </span><span class="var">{nama}</span><span class="str">! 👋"</span>)
+<span class="cm"># Fungsi dengan return value</span>
+<span class="kw">def</span> <span class="fn">luas_persegi</span>(<span class="vr">s</span>):
+    <span class="kw">return</span> <span class="vr">s</span> * <span class="vr">s</span>
 
-<span class="comment"># Memanggil fungsi</span>
-<span class="fn">sapa</span>(<span class="str">"Budi"</span>)   <span class="comment"># Output: Halo, Budi! 👋</span>
-<span class="fn">sapa</span>(<span class="str">"Ani"</span>)    <span class="comment"># Output: Halo, Ani! 👋</span>
-<span class="fn">sapa</span>(<span class="str">"Caca"</span>)   <span class="comment"># Output: Halo, Caca! 👋</span></pre>
-            </div>
-          </div>
-          <div class="content-block">
-            <h3>Return Value</h3>
-            <p>Fungsi bisa mengembalikan nilai dengan keyword <code style="color:var(--accent);font-family:Space Mono,monospace">return</code>:</p>
-            <div class="code-example">
-              <div class="code-example-header">python</div>
-              <pre><span class="kw">def</span> <span class="fn">luas_persegi</span>(<span class="var">sisi</span>):
-    <span class="kw">return</span> <span class="var">sisi</span> * <span class="var">sisi</span>
+<span class="vr">L</span> = <span class="fn">luas_persegi</span>(<span class="num">5</span>)
+<span class="fn">print</span>(<span class="str">f"Luas: </span><span class="vr">{L}</span><span class="str">"</span>)  <span class="cm"># Luas: 25</span></pre></div></div>
+      <div class="cb"><h3>Default Parameter & Multiple Return</h3>
+      <div class="ce"><div class="ceh">python</div><pre><span class="kw">def</span> <span class="fn">perkenalan</span>(<span class="vr">nama</span>, <span class="vr">umur</span>=<span class="num">17</span>, <span class="vr">kota</span>=<span class="str">"Jakarta"</span>):
+    <span class="kw">return</span> <span class="str">f"</span><span class="vr">{nama}</span><span class="str">, </span><span class="vr">{umur}</span><span class="str"> th, </span><span class="vr">{kota}</span><span class="str">"</span>
 
-<span class="kw">def</span> <span class="fn">luas_lingkaran</span>(<span class="var">r</span>):
-    <span class="kw">return</span> <span class="num">3.14</span> * <span class="var">r</span> ** <span class="num">2</span>
+<span class="fn">print</span>(<span class="fn">perkenalan</span>(<span class="str">"Budi"</span>))
+<span class="fn">print</span>(<span class="fn">perkenalan</span>(<span class="str">"Ani"</span>, <span class="num">20</span>, <span class="str">"Bandung"</span>))</pre></div></div>`,
+      ex:{ task:'Buat 3 fungsi: (1) celsius_to_f(c) konversi suhu rumus (c*9/5)+32, (2) f_to_celsius(f) rumus (f-32)*5/9, (3) suhu_info(c) yang return deskripsi (Beku/Dingin/Nyaman/Panas). Test semua!',
+        start:'def celsius_to_f(c):\n    return (c * 9/5) + 32\n\ndef f_to_celsius(f):\n    return (f - 32) * 5/9\n\ndef suhu_info(c):\n    if c <= 0:\n        return "Beku 🥶"\n    elif c <= 15:\n        return "Dingin 🧥"\n    elif c <= 28:\n        return "Nyaman 😊"\n    else:\n        return "Panas 🔥"\n\nprint(f"100°C = {celsius_to_f(100):.1f}°F")\nprint(f"32°F  = {f_to_celsius(32):.1f}°C")\nprint(f"37°C  = {suhu_info(37)}")\nprint(f"0°C   = {suhu_info(0)}")',
+        hint:'Kode sudah lengkap! Jalankan dan lihat hasilnya.',
+        check:(c,o)=>o.includes('°F') && o.includes('°C') } },
 
-<span class="var">l1</span> = <span class="fn">luas_persegi</span>(<span class="num">5</span>)
-<span class="fn">print</span>(<span class="str">f"Luas persegi sisi 5: </span><span class="var">{l1}</span><span class="str">"</span>)
+    { id:'list', title:'List & Operasinya', desc:'Simpan banyak data dalam satu variabel.', type:'lesson',
+      content:`<div class="cb"><h3>List di Python</h3>
+      <div class="ce"><div class="ceh">python</div><pre><span class="vr">nilai</span> = [<span class="num">85</span>, <span class="num">92</span>, <span class="num">78</span>, <span class="num">95</span>, <span class="num">88</span>]
 
-<span class="var">l2</span> = <span class="fn">luas_lingkaran</span>(<span class="num">7</span>)
-<span class="fn">print</span>(<span class="str">f"Luas lingkaran r=7: </span><span class="var">{l2:.2f}</span><span class="str">"</span>)</pre>
-            </div>
-          </div>
-        `,
-        exercise: {
-          task: 'Buat 3 fungsi: (1) celsius_ke_fahrenheit(c) yang mengkonversi suhu, (2) fahrenheit_ke_celsius(f) sebaliknya, (3) cek_suhu(c) yang memberikan deskripsi suhu (Beku/Dingin/Normal/Panas). Test ketiga fungsi tersebut!',
-          starter: '# Fungsi konversi suhu\ndef celsius_ke_fahrenheit(c):\n    return # rumus: (c * 9/5) + 32\n\ndef fahrenheit_ke_celsius(f):\n    return # rumus: (f - 32) * 5/9\n\ndef cek_suhu(c):\n    if c <= 0:\n        return "Beku! 🥶"\n    # tambahkan kondisi lain...\n\n# Test fungsi\nprint(celsius_ke_fahrenheit(100))\nprint(fahrenheit_ke_celsius(32))\nprint(cek_suhu(37))',
-          hint: 'celsius_ke_fahrenheit(c) return (c * 9/5) + 32',
-          check: (code, output) => code.includes('def') && output.trim().split('\n').length >= 3
-        }
-      },
-      {
-        id: 'list',
-        title: 'List & Operasinya',
-        desc: 'Simpan banyak data dalam satu variabel.',
-        type: 'lesson',
-        content: `
-          <div class="content-block">
-            <h3>List di Python</h3>
-            <p>List adalah koleksi data yang bisa diubah-ubah. Data di dalam list diakses dengan <strong style="color:var(--accent)">index</strong> mulai dari 0.</p>
-            <div class="code-example">
-              <div class="code-example-header">python — operasi list</div>
-              <pre><span class="var">nilai</span> = [<span class="num">85</span>, <span class="num">92</span>, <span class="num">78</span>, <span class="num">95</span>, <span class="num">88</span>]
+<span class="fn">print</span>(<span class="vr">nilai</span>[<span class="num">0</span>])    <span class="cm"># 85  (index pertama)</span>
+<span class="fn">print</span>(<span class="vr">nilai</span>[-<span class="num">1</span>])   <span class="cm"># 88  (index terakhir)</span>
+<span class="fn">print</span>(<span class="fn">len</span>(<span class="vr">nilai</span>))  <span class="cm"># 5   (jumlah elemen)</span>
 
-<span class="comment"># Akses elemen</span>
-<span class="fn">print</span>(<span class="var">nilai</span>[<span class="num">0</span>])    <span class="comment"># 85 (index pertama)</span>
-<span class="fn">print</span>(<span class="var">nilai</span>[-<span class="num">1</span>])   <span class="comment"># 88 (index terakhir)</span>
+<span class="vr">nilai</span>.append(<span class="num">90</span>)   <span class="cm"># tambah di akhir</span>
+<span class="vr">nilai</span>.remove(<span class="num">78</span>)   <span class="cm"># hapus nilai 78</span>
+<span class="vr">nilai</span>.sort()        <span class="cm"># urutkan ascending</span>
 
-<span class="comment"># Metode list</span>
-<span class="var">nilai</span>.append(<span class="num">90</span>)  <span class="comment"># Tambah elemen</span>
-<span class="var">nilai</span>.remove(<span class="num">78</span>)  <span class="comment"># Hapus elemen</span>
-<span class="var">nilai</span>.sort()       <span class="comment"># Urutkan</span>
+<span class="fn">print</span>(<span class="fn">max</span>(<span class="vr">nilai</span>))  <span class="cm"># nilai terbesar</span>
+<span class="fn">print</span>(<span class="fn">min</span>(<span class="vr">nilai</span>))  <span class="cm"># nilai terkecil</span>
+<span class="fn">print</span>(<span class="fn">sum</span>(<span class="vr">nilai</span>))  <span class="cm"># jumlah semua</span></pre></div></div>
+      <div class="cb"><h3>List Comprehension</h3>
+      <div class="ce"><div class="ceh">python — cara singkat bikin list</div><pre><span class="vr">angka</span> = [<span class="num">1</span>,<span class="num">2</span>,<span class="num">3</span>,<span class="num">4</span>,<span class="num">5</span>]
+<span class="vr">kuadrat</span> = [<span class="vr">x</span>**<span class="num">2</span> <span class="kw">for</span> <span class="vr">x</span> <span class="kw">in</span> <span class="vr">angka</span>]
+<span class="fn">print</span>(<span class="vr">kuadrat</span>)  <span class="cm"># [1, 4, 9, 16, 25]</span>
 
-<span class="fn">print</span>(<span class="str">f"Nilai terbesar: </span><span class="var">{max(nilai)}</span><span class="str">"</span>)
-<span class="fn">print</span>(<span class="str">f"Nilai terkecil: </span><span class="var">{min(nilai)}</span><span class="str">"</span>)
-<span class="fn">print</span>(<span class="str">f"Rata-rata: </span><span class="var">{sum(nilai)/len(nilai):.1f}</span><span class="str">"</span>)</pre>
-            </div>
-          </div>
-          <div class="content-block">
-            <h3>List Comprehension</h3>
-            <p>Cara singkat membuat list baru dari list yang ada:</p>
-            <div class="code-example">
-              <div class="code-example-header">python</div>
-              <pre><span class="var">angka</span> = [<span class="num">1</span>, <span class="num">2</span>, <span class="num">3</span>, <span class="num">4</span>, <span class="num">5</span>]
+<span class="vr">genap</span> = [<span class="vr">x</span> <span class="kw">for</span> <span class="vr">x</span> <span class="kw">in</span> <span class="vr">angka</span> <span class="kw">if</span> <span class="vr">x</span> % <span class="num">2</span> == <span class="num">0</span>]
+<span class="fn">print</span>(<span class="vr">genap</span>)   <span class="cm"># [2, 4]</span></pre></div></div>`,
+      ex:{ task:'List nilai: [75, 62, 88, 95, 70, 83, 91, 55, 78, 84]. Tampilkan: max, min, rata-rata, jumlah lulus (>=75), dan buat list grade huruf (A>=90, B>=80, C>=70, D<70).',
+        start:'nilai = [75, 62, 88, 95, 70, 83, 91, 55, 78, 84]\n\nprint(f"Max    : {max(nilai)}")\nprint(f"Min    : {min(nilai)}")\nprint(f"Rata   : {sum(nilai)/len(nilai):.1f}")\n\nlulus = len([n for n in nilai if n >= 75])\nprint(f"Lulus  : {lulus}/{len(nilai)}")\n\ndef ke_grade(n):\n    if n >= 90: return "A"\n    elif n >= 80: return "B"\n    elif n >= 70: return "C"\n    else: return "D"\n\ngrades = [ke_grade(n) for n in nilai]\nprint(f"Grades : {grades}")',
+        hint:'Kode sudah lengkap! Jalankan dan lihat hasilnya.',
+        check:(c,o)=>o.includes('Max') && o.includes('Grades') } },
 
-<span class="comment"># Kuadratkan semua angka</span>
-<span class="var">kuadrat</span> = [<span class="var">x</span>**<span class="num">2</span> <span class="kw">for</span> <span class="var">x</span> <span class="kw">in</span> <span class="var">angka</span>]
-<span class="fn">print</span>(<span class="var">kuadrat</span>)  <span class="comment"># [1, 4, 9, 16, 25]</span>
-
-<span class="comment"># Filter angka genap saja</span>
-<span class="var">genap</span> = [<span class="var">x</span> <span class="kw">for</span> <span class="var">x</span> <span class="kw">in</span> <span class="var">angka</span> <span class="kw">if</span> <span class="var">x</span> % <span class="num">2</span> == <span class="num">0</span>]
-<span class="fn">print</span>(<span class="var">genap</span>)   <span class="comment"># [2, 4]</span></pre>
-            </div>
-          </div>
-        `,
-        exercise: {
-          task: 'Kamu punya list nilai ujian: [75, 62, 88, 95, 70, 83, 91, 55, 78, 84]. Buat program yang menampilkan: nilai tertinggi, terendah, rata-rata, jumlah yang lulus (≥75), dan list nilai yang sudah dikonversi ke huruf (A≥90, B≥80, C≥70, D≥60, E<60).',
-          starter: 'nilai = [75, 62, 88, 95, 70, 83, 91, 55, 78, 84]\n\nprint(f"Nilai tertinggi: {max(nilai)}")\nprint(f"Nilai terendah: {min(nilai)}")\nprint(f"Rata-rata: {sum(nilai)/len(nilai):.1f}")\n\n# Hitung yang lulus\nlulus = len([n for n in nilai if n >= 75])\nprint(f"Yang lulus: {lulus}/{len(nilai)}")\n\n# Konversi ke huruf\ndef ke_huruf(n):\n    # Tambahkan kondisi di sini\n    pass\n\nhuruf = [ke_huruf(n) for n in nilai]\nprint(f"Grade: {huruf}")',
-          hint: 'Di fungsi ke_huruf, gunakan if n >= 90: return "A" elif n >= 80: return "B" dll.',
-          check: (code, output) => output.includes('tertinggi') || output.includes('Rata') || output.includes('Grade')
-        }
-      },
-      {
-        id: 'dictionary',
-        title: 'Dictionary',
-        desc: 'Simpan data dengan pasangan key-value.',
-        type: 'lesson',
-        content: `
-          <div class="content-block">
-            <h3>Apa itu Dictionary?</h3>
-            <p>Dictionary menyimpan data dalam pasangan <strong style="color:var(--accent)">key: value</strong>. Seperti kamus sungguhan — kamu cari kata (key) dan dapat definisinya (value).</p>
-            <div class="code-example">
-              <div class="code-example-header">python — dictionary</div>
-              <pre><span class="var">siswa</span> = {
-    <span class="str">"nama"</span>: <span class="str">"Budi"</span>,
-    <span class="str">"umur"</span>: <span class="num">17</span>,
-    <span class="str">"kelas"</span>: <span class="str">"XII IPA"</span>,
-    <span class="str">"nilai"</span>: [<span class="num">90</span>, <span class="num">85</span>, <span class="num">92</span>]
+    { id:'dict', title:'Dictionary', desc:'Simpan data dengan pasangan key-value.', type:'lesson',
+      content:`<div class="cb"><h3>Dictionary di Python</h3>
+      <div class="ce"><div class="ceh">python</div><pre><span class="vr">siswa</span> = {
+    <span class="str">"nama"</span>  : <span class="str">"Budi"</span>,
+    <span class="str">"umur"</span>  : <span class="num">17</span>,
+    <span class="str">"nilai"</span> : [<span class="num">90</span>, <span class="num">85</span>, <span class="num">92</span>]
 }
 
-<span class="comment"># Akses nilai</span>
-<span class="fn">print</span>(<span class="var">siswa</span>[<span class="str">"nama"</span>])   <span class="comment"># Budi</span>
-<span class="fn">print</span>(<span class="var">siswa</span>[<span class="str">"umur"</span>])   <span class="comment"># 17</span>
+<span class="fn">print</span>(<span class="vr">siswa</span>[<span class="str">"nama"</span>])        <span class="cm"># Budi</span>
+<span class="fn">print</span>(<span class="vr">siswa</span>.get(<span class="str">"kelas"</span>, <span class="str">"N/A"</span>))  <span class="cm"># N/A (safe)</span>
 
-<span class="comment"># Tambah/ubah key</span>
-<span class="var">siswa</span>[<span class="str">"sekolah"</span>] = <span class="str">"SMA Negeri 1"</span>
+<span class="vr">siswa</span>[<span class="str">"kelas"</span>] = <span class="str">"XII"</span>  <span class="cm"># tambah key baru</span>
 
-<span class="comment"># Loop dictionary</span>
-<span class="kw">for</span> <span class="var">key</span>, <span class="var">value</span> <span class="kw">in</span> <span class="var">siswa</span>.items():
-    <span class="fn">print</span>(<span class="str">f"</span><span class="var">{key}</span><span class="str">: </span><span class="var">{value}</span><span class="str">"</span>)</pre>
-            </div>
-          </div>
-        `,
-        exercise: {
-          task: 'Buat program buku kontak sederhana! Buat dictionary dengan minimal 3 kontak (nama sebagai key, nomor HP sebagai value). Buat fungsi cari_kontak(nama) yang menampilkan nomor HP atau "Kontak tidak ditemukan" jika tidak ada.',
-          starter: 'kontak = {\n    "Budi": "081234567890",\n    "Ani": "089876543210",\n    "Caca": "082111222333"\n}\n\ndef cari_kontak(nama):\n    if nama in kontak:\n        print(f"📞 {nama}: {kontak[nama]}")\n    else:\n        print(f"❌ Kontak \'{nama}\' tidak ditemukan")\n\n# Test\ncari_kontak("Budi")\ncari_kontak("Dodi")\n\n# Tampilkan semua kontak\nprint("\\n=== SEMUA KONTAK ===")\nfor nama, nomor in kontak.items():\n    print(f"  {nama}: {nomor}")',
-          hint: 'Kode ini hampir sudah lengkap! Coba jalankan, lalu tambah beberapa kontak baru.',
-          check: (code, output) => output.includes('Budi') && output.includes('tidak ditemukan')
-        }
-      },
-      {
-        id: 'project-normal',
-        title: '🎯 Project: Sistem Nilai Siswa',
-        desc: 'Bangun sistem manajemen nilai sekolah.',
-        type: 'project',
-        content: `
-          <div class="project-banner">
-            <div class="project-label">🎯 Tier Project — Normal</div>
-            <div class="project-title">Sistem Manajemen Nilai</div>
-            <div class="project-desc">Buat sistem untuk menyimpan, mengelola, dan menganalisis nilai siswa menggunakan list dan dictionary.</div>
-          </div>
-          <div class="content-block">
-            <h3>Fitur yang Harus Ada</h3>
-            <ul>
-              <li>Data minimal 5 siswa dalam dictionary</li>
-              <li>Tiap siswa punya nama dan list nilai (minimal 3 mata pelajaran)</li>
-              <li>Fungsi hitung_rata_rata(siswa)</li>
-              <li>Fungsi cetak_rapor(siswa) yang menampilkan info lengkap</li>
-              <li>Tampilkan ranking siswa berdasarkan rata-rata</li>
-            </ul>
-          </div>
-        `,
-        exercise: {
-          task: 'Buat sistem manajemen nilai dengan fitur lengkap di atas! Data siswa harus berupa dictionary dengan nama sebagai key.',
-          starter: '# === SISTEM MANAJEMEN NILAI ===\n\nsiswa_db = {\n    "Andi": {"nilai": [85, 90, 78, 92], "kelas": "X-A"},\n    "Budi": {"nilai": [75, 82, 88, 79], "kelas": "X-A"},\n    "Caca": {"nilai": [92, 95, 89, 97], "kelas": "X-B"},\n    "Dina": {"nilai": [65, 70, 73, 68], "kelas": "X-B"},\n    "Eko":  {"nilai": [88, 85, 91, 83], "kelas": "X-A"},\n}\n\ndef hitung_rata(data_siswa):\n    return sum(data_siswa["nilai"]) / len(data_siswa["nilai"])\n\ndef grade(rata):\n    if rata >= 90: return "A"\n    elif rata >= 80: return "B"\n    elif rata >= 70: return "C"\n    else: return "D"\n\ndef cetak_rapor(nama, data):\n    rata = hitung_rata(data)\n    print(f"\\n{'='*30}")\n    print(f"  Nama  : {nama}")\n    print(f"  Kelas : {data[\'kelas\']}")\n    print(f"  Nilai : {data[\'nilai\']}")\n    print(f"  Rata  : {rata:.1f} ({grade(rata)})")\n    print(f"{'='*30}")\n\n# Cetak semua rapor\nfor nama, data in siswa_db.items():\n    cetak_rapor(nama, data)\n\n# Ranking\nprint("\\n=== RANKING KELAS ===")\nranking = sorted(siswa_db.items(), key=lambda x: hitung_rata(x[1]), reverse=True)\nfor i, (nama, data) in enumerate(ranking, 1):\n    print(f"  {i}. {nama}: {hitung_rata(data):.1f}")',
-          hint: 'Kode ini sudah hampir lengkap! Coba jalankan dan lihat outputnya. Kamu bisa tambahkan fitur lain.',
-          check: (code, output) => output.includes('Ranking') || output.includes('ranking') || output.includes('Rata')
-        }
-      }
-    ]
-  },
-  {
-    id: 'profesional',
-    name: 'Profesional',
-    icon: '💎',
-    color: '#f472b6',
-    desc: 'OOP, error handling, file',
-    lessons: [
-      {
-        id: 'oop',
-        title: 'OOP - Class & Object',
-        desc: 'Pemrograman berorientasi objek.',
-        type: 'lesson',
-        content: `
-          <div class="content-block">
-            <h3>Object-Oriented Programming</h3>
-            <p>OOP adalah paradigma pemrograman dimana program diorganisasikan sebagai kumpulan <strong style="color:var(--accent)">objek</strong> yang saling berinteraksi. Bayangkan class seperti cetak biru bangunan — dari satu blueprint kamu bisa buat banyak bangunan (objek).</p>
-            <div class="code-example">
-              <div class="code-example-header">python — class dasar</div>
-              <pre><span class="kw">class</span> <span class="fn">Kucing</span>:
-    <span class="comment"># Constructor: dipanggil saat objek dibuat</span>
-    <span class="kw">def</span> <span class="fn">__init__</span>(<span class="kw">self</span>, <span class="var">nama</span>, <span class="var">umur</span>):
-        <span class="kw">self</span>.<span class="var">nama</span> = <span class="var">nama</span>
-        <span class="kw">self</span>.<span class="var">umur</span> = <span class="var">umur</span>
+<span class="kw">for</span> <span class="vr">k</span>, <span class="vr">v</span> <span class="kw">in</span> <span class="vr">siswa</span>.items():
+    <span class="fn">print</span>(<span class="str">f"</span><span class="vr">{k}</span><span class="str">: </span><span class="vr">{v}</span><span class="str">"</span>)</pre></div></div>`,
+      ex:{ task:'Buat buku kontak (dict) dengan 3+ kontak. Buat fungsi cari(nama) yang print nomor HP atau "Tidak ditemukan". Tampilkan juga semua kontak.',
+        start:'kontak = {\n    "Budi" : "081234567890",\n    "Ani"  : "089876543210",\n    "Caca" : "082111222333"\n}\n\ndef cari(nama):\n    if nama in kontak:\n        print(f"Ketemu! {nama}: {kontak[nama]}")\n    else:\n        print(f"Kontak \'{nama}\' tidak ditemukan")\n\ncari("Budi")\ncari("Dodi")\n\nprint("\\n=== SEMUA KONTAK ===")\nfor n, hp in kontak.items():\n    print(f"  {n}: {hp}")',
+        hint:'Kode sudah lengkap! Jalankan untuk melihat hasilnya.',
+        check:(c,o)=>o.includes('Ketemu') && o.includes('tidak ditemukan') } },
+
+    { id:'proj-nor', title:'🎯 Project: Sistem Nilai', desc:'Sistem manajemen nilai siswa lengkap.', type:'project',
+      content:`<div class="pbn"><div class="pbl">🎯 Tier Project — Normal</div><div class="pbt">Sistem Manajemen Nilai Siswa</div><div class="pbd">Buat sistem lengkap dengan dict, fungsi, dan list untuk mengelola data nilai siswa + ranking.</div></div>`,
+      ex:{ task:'Buat sistem nilai dengan 5+ siswa, hitung rata-rata, grade, dan tampilkan ranking kelas.',
+        start:'siswa_db = {\n    "Andi" : [85, 90, 78, 92],\n    "Budi" : [75, 82, 88, 79],\n    "Caca" : [92, 95, 89, 97],\n    "Dina" : [65, 70, 73, 68],\n    "Eko"  : [88, 85, 91, 83],\n}\n\ndef rata(nilai): return sum(nilai)/len(nilai)\n\ndef grade(r):\n    if r >= 90: return "A"\n    elif r >= 80: return "B"\n    elif r >= 70: return "C"\n    else: return "D"\n\nprint("=" * 40)\nprint("       LAPORAN NILAI KELAS")\nprint("=" * 40)\nfor nama, nilai in siswa_db.items():\n    r = rata(nilai)\n    print(f"{nama:6} | Nilai: {nilai} | Rata: {r:.1f} | Grade: {grade(r)}")\n\nprint("\\n=== RANKING ===")\nranking = sorted(siswa_db.items(), key=lambda x: rata(x[1]), reverse=True)\nfor i, (n, v) in enumerate(ranking, 1):\n    print(f"  {i}. {n}: {rata(v):.1f}")',
+        hint:'Kode sudah lengkap! Jalankan untuk melihat sistem nilai bekerja.',
+        check:(c,o)=>o.includes('RANKING')||o.includes('Ranking') } }
+  ]},
+
+  { id:'profesional', name:'Profesional', icon:'💎', color:'#f472b6', lessons:[
+    { id:'oop', title:'OOP - Class & Object', desc:'Pemrograman berorientasi objek di Python.', type:'lesson',
+      content:`<div class="cb"><h3>Class dan Object</h3><p>OOP mengorganisasikan program sebagai kumpulan <strong style="color:var(--ac)">objek</strong>. Class adalah blueprint/cetak biru — dari satu class bisa dibuat banyak object.</p>
+      <div class="ce"><div class="ceh">python — class dasar</div><pre><span class="kw">class</span> <span class="fn">Kucing</span>:
+    <span class="kw">def</span> <span class="fn">__init__</span>(<span class="kw">self</span>, <span class="vr">nama</span>, <span class="vr">umur</span>):
+        <span class="kw">self</span>.<span class="vr">nama</span> = <span class="vr">nama</span>
+        <span class="kw">self</span>.<span class="vr">umur</span> = <span class="vr">umur</span>
     
-    <span class="comment"># Method (fungsi dalam class)</span>
     <span class="kw">def</span> <span class="fn">suara</span>(<span class="kw">self</span>):
-        <span class="fn">print</span>(<span class="str">f"</span><span class="var">{self.nama}</span><span class="str"> berkata: Meow! 🐱"</span>)
+        <span class="fn">print</span>(<span class="str">f"</span><span class="vr">{self.nama}</span><span class="str">: Meow! 🐱"</span>)
     
-    <span class="kw">def</span> <span class="fn">info</span>(<span class="kw">self</span>):
-        <span class="fn">print</span>(<span class="str">f"Kucing: </span><span class="var">{self.nama}</span><span class="str">, umur </span><span class="var">{self.umur}</span><span class="str"> tahun"</span>)
+    <span class="kw">def</span> <span class="fn">ulang_tahun</span>(<span class="kw">self</span>):
+        <span class="kw">self</span>.<span class="vr">umur</span> += <span class="num">1</span>
+        <span class="fn">print</span>(<span class="str">f"Selamat ulang tahun </span><span class="vr">{self.nama}</span><span class="str">! Umur: </span><span class="vr">{self.umur}</span><span class="str">"</span>)
 
-<span class="comment"># Membuat objek</span>
-<span class="var">kucingku</span> = <span class="fn">Kucing</span>(<span class="str">"Mimi"</span>, <span class="num">3</span>)
-<span class="var">kucingku</span>.<span class="fn">suara</span>()
-<span class="var">kucingku</span>.<span class="fn">info</span>()</pre>
-            </div>
-          </div>
-          <div class="content-block">
-            <h3>Inheritance (Pewarisan)</h3>
-            <div class="code-example">
-              <div class="code-example-header">python — inheritance</div>
-              <pre><span class="kw">class</span> <span class="fn">Hewan</span>:
-    <span class="kw">def</span> <span class="fn">__init__</span>(<span class="kw">self</span>, <span class="var">nama</span>):
-        <span class="kw">self</span>.<span class="var">nama</span> = <span class="var">nama</span>
-    
-    <span class="kw">def</span> <span class="fn">makan</span>(<span class="kw">self</span>):
-        <span class="fn">print</span>(<span class="str">f"</span><span class="var">{self.nama}</span><span class="str"> sedang makan"</span>)
+<span class="vr">mimi</span> = <span class="fn">Kucing</span>(<span class="str">"Mimi"</span>, <span class="num">3</span>)
+<span class="vr">mimi</span>.<span class="fn">suara</span>()
+<span class="vr">mimi</span>.<span class="fn">ulang_tahun</span>()</pre></div></div>`,
+      ex:{ task:'Buat class BankAccount: atribut pemilik + saldo. Method: deposit(jml), withdraw(jml) — tidak boleh melebihi saldo, cek_saldo(). Buat 2 akun dan test semua method.',
+        start:'class BankAccount:\n    def __init__(self, pemilik, saldo=0):\n        self.pemilik = pemilik\n        self.saldo = saldo\n    \n    def deposit(self, jml):\n        self.saldo += jml\n        print(f"Deposit Rp{jml:,} | Saldo: Rp{self.saldo:,}")\n    \n    def withdraw(self, jml):\n        if jml > self.saldo:\n            print(f"Gagal! Saldo tidak cukup (Rp{self.saldo:,})")\n        else:\n            self.saldo -= jml\n            print(f"Tarik Rp{jml:,} | Saldo: Rp{self.saldo:,}")\n    \n    def cek_saldo(self):\n        print(f"Saldo {self.pemilik}: Rp{self.saldo:,}")\n\na1 = BankAccount("Budi", 1000000)\na1.deposit(500000)\na1.withdraw(200000)\na1.withdraw(2000000)\na1.cek_saldo()',
+        hint:'Kode sudah lengkap! Jalankan dan lihat hasilnya.',
+        check:(c,o)=>o.includes('Saldo') && o.includes('tidak cukup') } },
 
-<span class="kw">class</span> <span class="fn">Anjing</span>(<span class="fn">Hewan</span>):  <span class="comment"># Inherit dari Hewan</span>
-    <span class="kw">def</span> <span class="fn">gonggong</span>(<span class="kw">self</span>):
-        <span class="fn">print</span>(<span class="str">f"</span><span class="var">{self.nama}</span><span class="str">: Woof! 🐕"</span>)
-
-<span class="var">dog</span> = <span class="fn">Anjing</span>(<span class="str">"Rex"</span>)
-<span class="var">dog</span>.<span class="fn">makan</span>()      <span class="comment"># Inherited method</span>
-<span class="var">dog</span>.<span class="fn">gonggong</span>()   <span class="comment"># Own method</span></pre>
-            </div>
-          </div>
-        `,
-        exercise: {
-          task: 'Buat class BankAccount dengan atribut pemilik dan saldo. Buat method: deposit(jumlah), withdraw(jumlah), dan cek_saldo(). Withdraw tidak boleh melebihi saldo! Buat 2 akun berbeda dan test semua method.',
-          starter: 'class BankAccount:\n    def __init__(self, pemilik, saldo_awal=0):\n        self.pemilik = pemilik\n        self.saldo = saldo_awal\n    \n    def deposit(self, jumlah):\n        self.saldo += jumlah\n        print(f"✅ Deposit Rp{jumlah:,} - Saldo: Rp{self.saldo:,}")\n    \n    def withdraw(self, jumlah):\n        if jumlah > self.saldo:\n            print(f"❌ Saldo tidak cukup! Saldo kamu: Rp{self.saldo:,}")\n        else:\n            self.saldo -= jumlah\n            print(f"💸 Tarik Rp{jumlah:,} - Saldo: Rp{self.saldo:,}")\n    \n    def cek_saldo(self):\n        print(f"💰 Saldo {self.pemilik}: Rp{self.saldo:,}")\n\n# Test\nakun1 = BankAccount("Budi", 1000000)\nakun1.deposit(500000)\nakun1.withdraw(200000)\nakun1.withdraw(2000000)  # Seharusnya gagal\nakun1.cek_saldo()',
-          hint: 'Kode sudah hampir lengkap! Jalankan dan lihat hasilnya.',
-          check: (code, output) => output.includes('Saldo') && output.includes('tidak cukup')
-        }
-      },
-      {
-        id: 'error-handling',
-        title: 'Error Handling',
-        desc: 'Tangani error dengan elegan.',
-        type: 'lesson',
-        content: `
-          <div class="content-block">
-            <h3>Try-Except</h3>
-            <p>Error handling memungkinkan program tetap berjalan meski terjadi error. Gunakan <code style="color:var(--accent);font-family:Space Mono,monospace">try-except</code> untuk "menangkap" error:</p>
-            <div class="code-example">
-              <div class="code-example-header">python — try except</div>
-              <pre><span class="kw">try</span>:
-    <span class="var">angka</span> = <span class="fn">int</span>(<span class="fn">input</span>(<span class="str">"Masukkan angka: "</span>))
-    <span class="var">hasil</span> = <span class="num">100</span> / <span class="var">angka</span>
-    <span class="fn">print</span>(<span class="str">f"100 / {angka} = {hasil}"</span>)
+    { id:'err', title:'Error Handling', desc:'Tangani error agar program tidak crash.', type:'lesson',
+      content:`<div class="cb"><h3>Try - Except</h3>
+      <div class="ce"><div class="ceh">python</div><pre><span class="kw">try</span>:
+    <span class="vr">x</span> = <span class="fn">int</span>(<span class="fn">input</span>(<span class="str">"Angka: "</span>))
+    <span class="fn">print</span>(<span class="num">100</span> / <span class="vr">x</span>)
 
 <span class="kw">except</span> <span class="fn">ValueError</span>:
-    <span class="fn">print</span>(<span class="str">"❌ Input harus berupa angka!"</span>)
+    <span class="fn">print</span>(<span class="str">"Input harus angka!"</span>)
 
 <span class="kw">except</span> <span class="fn">ZeroDivisionError</span>:
-    <span class="fn">print</span>(<span class="str">"❌ Tidak bisa dibagi nol!"</span>)
+    <span class="fn">print</span>(<span class="str">"Tidak bisa dibagi nol!"</span>)
 
-<span class="kw">except</span> <span class="fn">Exception</span> <span class="kw">as</span> <span class="var">e</span>:
-    <span class="fn">print</span>(<span class="str">f"❌ Error tak terduga: </span><span class="var">{e}</span><span class="str">"</span>)
+<span class="kw">except</span> <span class="fn">Exception</span> <span class="kw">as</span> <span class="vr">e</span>:
+    <span class="fn">print</span>(<span class="str">f"Error: </span><span class="vr">{e}</span><span class="str">"</span>)
 
 <span class="kw">finally</span>:
-    <span class="fn">print</span>(<span class="str">"Program selesai."</span>)  <span class="comment"># Selalu dijalankan</span></pre>
-            </div>
-          </div>
-          <div class="content-block">
-            <h3>Custom Exception</h3>
-            <div class="code-example">
-              <div class="code-example-header">python</div>
-              <pre><span class="kw">class</span> <span class="fn">SaldoKurang</span>(<span class="fn">Exception</span>):
-    <span class="kw">pass</span>
+    <span class="fn">print</span>(<span class="str">"Selesai."</span>)  <span class="cm"># Selalu dieksekusi</span></pre></div></div>`,
+      ex:{ task:'Buat kalkulator aman yang bisa menangani: input bukan angka (ValueError), bagi nol (ZeroDivisionError), dan operasi tidak dikenal. Gunakan try-except.',
+        start:'def kalkulator():\n    try:\n        a = float(input("Angka 1: "))\n        op = input("Operasi (+,-,*,/): ")\n        b = float(input("Angka 2: "))\n        \n        if op == "+": hasil = a + b\n        elif op == "-": hasil = a - b\n        elif op == "*": hasil = a * b\n        elif op == "/":\n            if b == 0: raise ZeroDivisionError("Tidak bisa bagi nol!")\n            hasil = a / b\n        else:\n            raise ValueError(f"Operasi tidak dikenal: {op}")\n        \n        print(f"Hasil: {a} {op} {b} = {hasil}")\n    \n    except ValueError as e:\n        print(f"ValueError: {e}")\n    except ZeroDivisionError as e:\n        print(f"ZeroDivisionError: {e}")\n    finally:\n        print("Kalkulator selesai.")\n\nkalkulator()',
+        hint:'Kode sudah lengkap! Jalankan dan coba berbagai input.',
+        check:(c,o)=>o.includes('Hasil')||o.includes('Error')||o.includes('selesai') } },
 
-<span class="kw">def</span> <span class="fn">tarik_tunai</span>(<span class="var">saldo</span>, <span class="var">jumlah</span>):
-    <span class="kw">if</span> <span class="var">jumlah</span> > <span class="var">saldo</span>:
-        <span class="kw">raise</span> <span class="fn">SaldoKurang</span>(<span class="str">"Saldo tidak mencukupi!"</span>)
-    <span class="kw">return</span> <span class="var">saldo</span> - <span class="var">jumlah</span>
+    { id:'proj-pro', title:'🎯 Project: Sistem Perpustakaan', desc:'Sistem perpustakaan digital menggunakan OOP.', type:'project',
+      content:`<div class="pbn"><div class="pbl">🎯 Tier Project — Profesional</div><div class="pbt">Perpustakaan Digital</div><div class="pbd">Buat sistem perpustakaan dengan class Buku, Anggota, dan Perpustakaan. Fitur: pinjam, kembalikan, cari buku.</div></div>`,
+      ex:{ task:'Implementasikan sistem perpustakaan dengan 3 class dan semua method pinjam/kembalikan.',
+        start:'class Buku:\n    def __init__(self, id, judul, penulis):\n        self.id = id; self.judul = judul\n        self.penulis = penulis; self.tersedia = True\n    def info(self):\n        st = "Tersedia" if self.tersedia else "Dipinjam"\n        print(f"[{self.id}] {self.judul} - {self.penulis} | {st}")\n\nclass Perpustakaan:\n    def __init__(self):\n        self.koleksi = {}; self.peminjam = {}\n    def tambah(self, buku):\n        self.koleksi[buku.id] = buku\n        print(f"+ Buku ditambahkan: {buku.judul}")\n    def pinjam(self, nama, id_buku):\n        if id_buku not in self.koleksi:\n            print("Buku tidak ada"); return\n        b = self.koleksi[id_buku]\n        if not b.tersedia:\n            print(f"Buku sedang dipinjam orang lain"); return\n        b.tersedia = False\n        self.peminjam[nama] = id_buku\n        print(f"{nama} meminjam: {b.judul}")\n    def kembalikan(self, nama):\n        if nama not in self.peminjam:\n            print(f"{nama} tidak ada pinjaman"); return\n        id_b = self.peminjam.pop(nama)\n        self.koleksi[id_b].tersedia = True\n        print(f"{nama} mengembalikan: {self.koleksi[id_b].judul}")\n    def lihat_semua(self):\n        print("\\n=== KOLEKSI PERPUSTAKAAN ===")\n        for b in self.koleksi.values(): b.info()\n\nlib = Perpustakaan()\nlib.tambah(Buku("B1","Python Dasar","Guido"))\nlib.tambah(Buku("B2","Clean Code","Martin"))\nlib.tambah(Buku("B3","The Pragmatic Programmer","Hunt"))\nlib.pinjam("Budi","B1")\nlib.pinjam("Ani","B1")\nlib.kembalikan("Budi")\nlib.pinjam("Ani","B1")\nlib.lihat_semua()',
+        hint:'Kode sudah lengkap! Jalankan untuk melihat sistem perpustakaan bekerja.',
+        check:(c,o)=>o.includes('meminjam')||o.includes('KOLEKSI') } }
+  ]},
 
-<span class="kw">try</span>:
-    <span class="var">saldo_baru</span> = <span class="fn">tarik_tunai</span>(<span class="num">100000</span>, <span class="num">200000</span>)
-<span class="kw">except</span> <span class="fn">SaldoKurang</span> <span class="kw">as</span> <span class="var">e</span>:
-    <span class="fn">print</span>(<span class="str">f"Error: </span><span class="var">{e}</span><span class="str">"</span>)</pre>
-            </div>
-          </div>
-        `,
-        exercise: {
-          task: 'Buat kalkulator yang aman dari error! Program harus bisa menangani: input bukan angka, pembagian dengan nol, dan operasi yang tidak dikenal. Gunakan try-except.',
-          starter: 'def kalkulator_aman():\n    print("=== Kalkulator Aman ===")\n    \n    try:\n        a = float(input("Angka pertama: "))\n        op = input("Operasi (+, -, *, /): ")\n        b = float(input("Angka kedua: "))\n        \n        if op == "+":\n            hasil = a + b\n        elif op == "-":\n            hasil = a - b\n        elif op == "*":\n            hasil = a * b\n        elif op == "/":\n            if b == 0:\n                raise ZeroDivisionError("Tidak bisa dibagi nol!")\n            hasil = a / b\n        else:\n            raise ValueError(f"Operasi \'{op}\' tidak dikenal!")\n        \n        print(f"✅ Hasil: {a} {op} {b} = {hasil}")\n    \n    except ValueError as e:\n        print(f"❌ ValueError: {e}")\n    except ZeroDivisionError as e:\n        print(f"❌ ZeroDivisionError: {e}")\n\nkalkulator_aman()',
-          hint: 'Kode sudah lengkap! Jalankan dan coba masukkan input yang berbeda-beda.',
-          check: (code, output) => output.includes('Hasil') || output.includes('Error') || output.includes('Kalkulator')
-        }
-      },
-      {
-        id: 'project-pro',
-        title: '🎯 Project: Sistem Perpustakaan',
-        desc: 'Bangun sistem manajemen perpustakaan dengan OOP.',
-        type: 'project',
-        content: `
-          <div class="project-banner">
-            <div class="project-label">🎯 Tier Project — Profesional</div>
-            <div class="project-title">Sistem Perpustakaan Digital</div>
-            <div class="project-desc">Buat sistem perpustakaan lengkap menggunakan OOP, dengan class Buku, Anggota, dan Perpustakaan.</div>
-          </div>
-          <div class="content-block">
-            <h3>Desain Class</h3>
-            <ul>
-              <li><strong style="color:var(--accent)">class Buku</strong>: judul, penulis, tahun, tersedia</li>
-              <li><strong style="color:var(--accent)">class Anggota</strong>: nama, id, list buku dipinjam</li>
-              <li><strong style="color:var(--accent)">class Perpustakaan</strong>: tambah_buku(), pinjam_buku(), kembalikan_buku(), cari_buku(), lihat_semua()</li>
-            </ul>
-          </div>
-        `,
-        exercise: {
-          task: 'Buat sistem perpustakaan digital lengkap dengan 3 class dan semua method di atas!',
-          starter: 'class Buku:\n    def __init__(self, id, judul, penulis, tahun):\n        self.id = id\n        self.judul = judul\n        self.penulis = penulis\n        self.tahun = tahun\n        self.tersedia = True\n    \n    def info(self):\n        status = "✅ Tersedia" if self.tersedia else "❌ Dipinjam"\n        print(f"[{self.id}] {self.judul} - {self.penulis} ({self.tahun}) | {status}")\n\nclass Anggota:\n    def __init__(self, id, nama):\n        self.id = id\n        self.nama = nama\n        self.pinjaman = []\n\nclass Perpustakaan:\n    def __init__(self):\n        self.buku = {}\n        self.anggota = {}\n    \n    def tambah_buku(self, buku):\n        self.buku[buku.id] = buku\n        print(f"📚 Buku \'{buku.judul}\' ditambahkan")\n    \n    def daftar_anggota(self, anggota):\n        self.anggota[anggota.id] = anggota\n        print(f"👤 Anggota \'{anggota.nama}\' didaftarkan")\n    \n    def pinjam_buku(self, id_anggota, id_buku):\n        if id_buku not in self.buku:\n            print("❌ Buku tidak ditemukan")\n            return\n        buku = self.buku[id_buku]\n        if not buku.tersedia:\n            print(f"❌ Buku \'{buku.judul}\' sedang dipinjam")\n            return\n        anggota = self.anggota[id_anggota]\n        buku.tersedia = False\n        anggota.pinjaman.append(id_buku)\n        print(f"✅ {anggota.nama} meminjam \'{buku.judul}\'")\n    \n    def kembalikan_buku(self, id_anggota, id_buku):\n        buku = self.buku[id_buku]\n        anggota = self.anggota[id_anggota]\n        buku.tersedia = True\n        anggota.pinjaman.remove(id_buku)\n        print(f"✅ \'{buku.judul}\' dikembalikan oleh {anggota.nama}")\n    \n    def lihat_semua(self):\n        print("\\n=== KOLEKSI PERPUSTAKAAN ===")\n        for buku in self.buku.values():\n            buku.info()\n\n# Test sistem\nlib = Perpustakaan()\n\n# Tambah buku\nlib.tambah_buku(Buku("B001", "Python Dasar", "Guido van Rossum", 2020))\nlib.tambah_buku(Buku("B002", "Clean Code", "Robert Martin", 2008))\nlib.tambah_buku(Buku("B003", "The Pragmatic Programmer", "Hunt & Thomas", 1999))\n\n# Daftarkan anggota\nlib.daftar_anggota(Anggota("A001", "Budi"))\nlib.daftar_anggota(Anggota("A002", "Ani"))\n\n# Operasi\nlib.pinjam_buku("A001", "B001")\nlib.pinjam_buku("A002", "B001")  # Sudah dipinjam\nlib.kembalikan_buku("A001", "B001")\nlib.pinjam_buku("A002", "B001")  # Sekarang bisa\n\nlib.lihat_semua()',
-          hint: 'Kode sudah lengkap! Jalankan untuk melihat sistem perpustakaan bekerja.',
-          check: (code, output) => output.includes('Perpustakaan') || output.includes('meminjam') || output.includes('Tersedia')
-        }
-      }
-    ]
-  },
-  {
-    id: 'master',
-    name: 'Master',
-    icon: '🌟',
-    color: '#fb923c',
-    desc: 'Algoritma, kompleksitas, advanced',
-    lessons: [
-      {
-        id: 'recursion',
-        title: 'Rekursi',
-        desc: 'Fungsi yang memanggil dirinya sendiri.',
-        type: 'lesson',
-        content: `
-          <div class="content-block">
-            <h3>Apa itu Rekursi?</h3>
-            <p>Rekursi adalah teknik di mana sebuah fungsi <strong style="color:var(--accent)">memanggil dirinya sendiri</strong> untuk memecahkan masalah yang lebih kecil. Setiap fungsi rekursif harus punya <strong style="color:var(--yellow)">base case</strong> (kondisi berhenti).</p>
-            <div class="code-example">
-              <div class="code-example-header">python — factorial rekursif</div>
-              <pre><span class="kw">def</span> <span class="fn">faktorial</span>(<span class="var">n</span>):
-    <span class="comment"># Base case: stop rekursi</span>
-    <span class="kw">if</span> <span class="var">n</span> <= <span class="num">1</span>:
-        <span class="kw">return</span> <span class="num">1</span>
-    <span class="comment"># Recursive case</span>
-    <span class="kw">return</span> <span class="var">n</span> * <span class="fn">faktorial</span>(<span class="var">n</span> - <span class="num">1</span>)
+  { id:'master', name:'Master', icon:'🌟', color:'#fb923c', lessons:[
+    { id:'recursion', title:'Rekursi', desc:'Fungsi yang memanggil dirinya sendiri.', type:'lesson',
+      content:`<div class="cb"><h3>Apa itu Rekursi?</h3><p>Rekursi adalah fungsi yang <strong style="color:var(--ac)">memanggil dirinya sendiri</strong>. Harus punya <strong style="color:var(--y)">base case</strong> agar tidak infinite loop.</p>
+      <div class="ce"><div class="ceh">python</div><pre><span class="kw">def</span> <span class="fn">faktorial</span>(<span class="vr">n</span>):
+    <span class="kw">if</span> <span class="vr">n</span> <= <span class="num">1</span>: <span class="kw">return</span> <span class="num">1</span>  <span class="cm"># base case</span>
+    <span class="kw">return</span> <span class="vr">n</span> * <span class="fn">faktorial</span>(<span class="vr">n</span> - <span class="num">1</span>)
 
-<span class="fn">print</span>(<span class="fn">faktorial</span>(<span class="num">5</span>))   <span class="comment"># 120</span>
-<span class="fn">print</span>(<span class="fn">faktorial</span>(<span class="num">10</span>))  <span class="comment"># 3628800</span>
+<span class="fn">print</span>(<span class="fn">faktorial</span>(<span class="num">5</span>))   <span class="cm"># 120</span>
+<span class="fn">print</span>(<span class="fn">faktorial</span>(<span class="num">10</span>))  <span class="cm"># 3628800</span>
 
-<span class="comment"># Fibonacci</span>
-<span class="kw">def</span> <span class="fn">fib</span>(<span class="var">n</span>):
-    <span class="kw">if</span> <span class="var">n</span> <= <span class="num">1</span>: <span class="kw">return</span> <span class="var">n</span>
-    <span class="kw">return</span> <span class="fn">fib</span>(<span class="var">n</span>-<span class="num">1</span>) + <span class="fn">fib</span>(<span class="var">n</span>-<span class="num">2</span>)
+<span class="kw">def</span> <span class="fn">fib</span>(<span class="vr">n</span>):
+    <span class="kw">if</span> <span class="vr">n</span> <= <span class="num">1</span>: <span class="kw">return</span> <span class="vr">n</span>
+    <span class="kw">return</span> <span class="fn">fib</span>(<span class="vr">n</span>-<span class="num">1</span>) + <span class="fn">fib</span>(<span class="vr">n</span>-<span class="num">2</span>)
 
-<span class="fn">print</span>([<span class="fn">fib</span>(<span class="var">i</span>) <span class="kw">for</span> <span class="var">i</span> <span class="kw">in</span> <span class="fn">range</span>(<span class="num">10</span>)])</pre>
-            </div>
-          </div>
-        `,
-        exercise: {
-          task: 'Implementasikan 3 fungsi rekursif: (1) pangkat(base, exp) - menghitung base^exp, (2) jumlah_digit(n) - menghitung jumlah semua digit sebuah angka, (3) balik_string(s) - membalik string. Test semua fungsi!',
-          starter: 'def pangkat(base, exp):\n    if exp == 0:\n        return 1\n    return base * pangkat(base, exp - 1)\n\ndef jumlah_digit(n):\n    if n < 10:\n        return n\n    return (n % 10) + jumlah_digit(n // 10)\n\ndef balik_string(s):\n    if len(s) <= 1:\n        return s\n    return balik_string(s[1:]) + s[0]\n\n# Test\nprint(f"2^10 = {pangkat(2, 10)}")\nprint(f"Jumlah digit 12345 = {jumlah_digit(12345)}")\nprint(f"Balik \'python\' = {balik_string(\'python\')}")',
-          hint: 'Kode sudah lengkap! Jalankan dan lihat hasilnya.',
-          check: (code, output) => output.includes('1024') || output.includes('python')
-        }
-      },
-      {
-        id: 'project-master',
-        title: '🎯 Project: Sorting Visualizer',
-        desc: 'Implementasikan berbagai algoritma sorting.',
-        type: 'project',
-        content: `
-          <div class="project-banner">
-            <div class="project-label">🎯 Tier Project — Master</div>
-            <div class="project-title">Algoritma Sorting</div>
-            <div class="project-desc">Implementasikan dan bandingkan 3 algoritma sorting berbeda: Bubble Sort, Selection Sort, dan Merge Sort.</div>
-          </div>
-          <div class="content-block">
-            <h3>Yang Harus Diimplementasikan</h3>
-            <ul>
-              <li>bubble_sort(arr) — O(n²)</li>
-              <li>selection_sort(arr) — O(n²)</li>
-              <li>merge_sort(arr) — O(n log n)</li>
-              <li>Bandingkan kecepatan ketiganya dengan data besar</li>
-            </ul>
-          </div>
-        `,
-        exercise: {
-          task: 'Implementasikan ketiga algoritma sorting dan bandingkan performanya!',
-          starter: 'import time\nimport random\n\ndef bubble_sort(arr):\n    arr = arr.copy()\n    n = len(arr)\n    for i in range(n):\n        for j in range(0, n-i-1):\n            if arr[j] > arr[j+1]:\n                arr[j], arr[j+1] = arr[j+1], arr[j]\n    return arr\n\ndef selection_sort(arr):\n    arr = arr.copy()\n    n = len(arr)\n    for i in range(n):\n        min_idx = i\n        for j in range(i+1, n):\n            if arr[j] < arr[min_idx]:\n                min_idx = j\n        arr[i], arr[min_idx] = arr[min_idx], arr[i]\n    return arr\n\ndef merge_sort(arr):\n    if len(arr) <= 1:\n        return arr\n    mid = len(arr) // 2\n    left = merge_sort(arr[:mid])\n    right = merge_sort(arr[mid:])\n    return merge(left, right)\n\ndef merge(left, right):\n    result = []\n    i = j = 0\n    while i < len(left) and j < len(right):\n        if left[i] <= right[j]:\n            result.append(left[i]); i += 1\n        else:\n            result.append(right[j]); j += 1\n    result.extend(left[i:])\n    result.extend(right[j:])\n    return result\n\n# Test dengan data kecil\ndata = [64, 34, 25, 12, 22, 11, 90]\nprint(f"Original  : {data}")\nprint(f"Bubble    : {bubble_sort(data)}")\nprint(f"Selection : {selection_sort(data)}")\nprint(f"Merge     : {merge_sort(data)}")\n\n# Benchmark\nn = 1000\nbig_data = [random.randint(1, 10000) for _ in range(n)]\nalgorithms = [("Bubble Sort", bubble_sort), ("Selection Sort", selection_sort), ("Merge Sort", merge_sort)]\n\nprint(f"\\n=== Benchmark ({n} data) ===")\nfor name, func in algorithms:\n    start = time.time()\n    func(big_data)\n    elapsed = (time.time() - start) * 1000\n    print(f"{name:15}: {elapsed:.2f}ms")',
-          hint: 'Kode sudah lengkap! Jalankan dan lihat perbandingan kecepatan antar algoritma.',
-          check: (code, output) => output.includes('Bubble') && output.includes('Merge') && output.includes('Benchmark')
-        }
-      }
-    ]
-  },
-  {
-    id: 'legend',
-    name: 'Legend',
-    icon: '👑',
-    color: '#fbbf24',
-    desc: 'Decorators, generators, metaclass',
-    lessons: [
-      {
-        id: 'decorators',
-        title: 'Decorators & Generators',
-        desc: 'Fitur Python yang powerful dan elegan.',
-        type: 'lesson',
-        content: `
-          <div class="content-block">
-            <h3>Decorators</h3>
-            <p>Decorator adalah fungsi yang <strong style="color:var(--accent)">membungkus fungsi lain</strong> untuk menambahkan fungsionalitas tanpa mengubah kode aslinya.</p>
-            <div class="code-example">
-              <div class="code-example-header">python — decorator</div>
-              <pre><span class="kw">import</span> time
+<span class="fn">print</span>([<span class="fn">fib</span>(<span class="vr">i</span>) <span class="kw">for</span> <span class="vr">i</span> <span class="kw">in</span> <span class="fn">range</span>(<span class="num">10</span>)])</pre></div></div>`,
+      ex:{ task:'Buat 3 fungsi rekursif: pangkat(base,exp), jumlah_digit(n) — jumlahkan semua digit (misal 123→6), balik_str(s) — balik string. Test semua!',
+        start:'def pangkat(base, exp):\n    if exp == 0: return 1\n    return base * pangkat(base, exp-1)\n\ndef jumlah_digit(n):\n    if n < 10: return n\n    return (n % 10) + jumlah_digit(n // 10)\n\ndef balik_str(s):\n    if len(s) <= 1: return s\n    return balik_str(s[1:]) + s[0]\n\nprint(f"2^10 = {pangkat(2,10)}")\nprint(f"sum_digit(12345) = {jumlah_digit(12345)}")\nprint(f"balik(\'python\') = {balik_str(\'python\')}")',
+        hint:'Kode sudah lengkap! Jalankan.',
+        check:(c,o)=>o.includes('1024') && o.includes('nohtyp') } },
 
-<span class="kw">def</span> <span class="fn">timer</span>(<span class="var">func</span>):
-    <span class="kw">def</span> <span class="fn">wrapper</span>(*<span class="var">args</span>, **<span class="var">kwargs</span>):
-        <span class="var">start</span> = <span class="var">time</span>.<span class="fn">time</span>()
-        <span class="var">result</span> = <span class="fn">func</span>(*<span class="var">args</span>, **<span class="var">kwargs</span>)
-        <span class="var">end</span> = <span class="var">time</span>.<span class="fn">time</span>()
-        <span class="fn">print</span>(<span class="str">f"{func.__name__} took {end-start:.4f}s"</span>)
-        <span class="kw">return</span> <span class="var">result</span>
-    <span class="kw">return</span> <span class="var">wrapper</span>
+    { id:'proj-mas', title:'🎯 Project: Algoritma Sorting', desc:'Implementasikan dan bandingkan algoritma sorting.', type:'project',
+      content:`<div class="pbn"><div class="pbl">🎯 Tier Project — Master</div><div class="pbt">Algoritma Sorting</div><div class="pbd">Implementasikan Bubble Sort, Selection Sort, dan Merge Sort. Bandingkan kecepatan mereka!</div></div>`,
+      ex:{ task:'Implementasikan 3 algoritma sorting dan benchmark performanya.',
+        start:'import time, random\n\ndef bubble_sort(arr):\n    a = arr[:]; n = len(a)\n    for i in range(n):\n        for j in range(n-i-1):\n            if a[j] > a[j+1]: a[j],a[j+1] = a[j+1],a[j]\n    return a\n\ndef selection_sort(arr):\n    a = arr[:]; n = len(a)\n    for i in range(n):\n        m = i\n        for j in range(i+1,n):\n            if a[j] < a[m]: m = j\n        a[i],a[m] = a[m],a[i]\n    return a\n\ndef merge_sort(arr):\n    if len(arr) <= 1: return arr\n    mid = len(arr)//2\n    L = merge_sort(arr[:mid])\n    R = merge_sort(arr[mid:])\n    res=[]; i=j=0\n    while i<len(L) and j<len(R):\n        if L[i]<=R[j]: res.append(L[i]); i+=1\n        else: res.append(R[j]); j+=1\n    return res+L[i:]+R[j:]\n\ndata = [64,34,25,12,22,11,90]\nprint(f"Original  : {data}")\nprint(f"Bubble    : {bubble_sort(data)}")\nprint(f"Selection : {selection_sort(data)}")\nprint(f"Merge     : {merge_sort(data)}")\n\nN=800; big=[random.randint(1,9999) for _ in range(N)]\nprint(f"\\n=== Benchmark {N} data ===")\nfor name,fn in [("Bubble",bubble_sort),("Selection",selection_sort),("Merge",merge_sort)]:\n    t=time.time(); fn(big)\n    print(f"{name:10}: {(time.time()-t)*1000:.1f}ms")',
+        hint:'Kode sudah lengkap! Lihat perbedaan kecepatan Merge Sort vs Bubble Sort.',
+        check:(c,o)=>o.includes('Benchmark') && o.includes('Merge') } }
+  ]},
 
-<span class="comment">@timer  # Gunakan decorator</span>
-<span class="kw">def</span> <span class="fn">hitung_lambat</span>():
-    <span class="var">total</span> = <span class="fn">sum</span>(<span class="fn">range</span>(<span class="num">1000000</span>))
-    <span class="kw">return</span> <span class="var">total</span>
+  { id:'legend', name:'Legend', icon:'👑', color:'#fbbf24', lessons:[
+    { id:'deco', title:'Decorators & Generators', desc:'Fitur Python yang powerful dan elegan.', type:'lesson',
+      content:`<div class="cb"><h3>Decorator</h3><p>Decorator <strong style="color:var(--ac)">membungkus fungsi lain</strong> untuk menambah fungsionalitas tanpa ubah kode asli. Ditulis dengan <code>@nama_decorator</code>.</p>
+      <div class="ce"><div class="ceh">python — decorator timer</div><pre><span class="kw">import</span> time
 
-<span class="fn">hitung_lambat</span>()</pre>
-            </div>
-          </div>
-          <div class="content-block">
-            <h3>Generators</h3>
-            <p>Generator menghasilkan nilai <strong style="color:var(--accent)">satu per satu</strong> menggunakan <code style="color:var(--yellow);font-family:Space Mono,monospace">yield</code>, sangat efisien untuk data besar:</p>
-            <div class="code-example">
-              <div class="code-example-header">python — generator</div>
-              <pre><span class="kw">def</span> <span class="fn">fibonacci_gen</span>(<span class="var">n</span>):
-    <span class="var">a</span>, <span class="var">b</span> = <span class="num">0</span>, <span class="num">1</span>
-    <span class="kw">for</span> _ <span class="kw">in</span> <span class="fn">range</span>(<span class="var">n</span>):
-        <span class="kw">yield</span> <span class="var">a</span>
-        <span class="var">a</span>, <span class="var">b</span> = <span class="var">b</span>, <span class="var">a</span> + <span class="var">b</span>
+<span class="kw">def</span> <span class="fn">timer</span>(<span class="vr">func</span>):
+    <span class="kw">def</span> <span class="fn">wrapper</span>(*<span class="vr">args</span>, **<span class="vr">kw</span>):
+        <span class="vr">s</span> = <span class="vr">time</span>.<span class="fn">time</span>()
+        <span class="vr">r</span> = <span class="fn">func</span>(*<span class="vr">args</span>, **<span class="vr">kw</span>)
+        <span class="fn">print</span>(<span class="str">f"{func.__name__}: {time.time()-s:.4f}s"</span>)
+        <span class="kw">return</span> <span class="vr">r</span>
+    <span class="kw">return</span> <span class="vr">wrapper</span>
 
-<span class="comment"># Hanya menghasilkan saat diperlukan</span>
-<span class="kw">for</span> <span class="var">num</span> <span class="kw">in</span> <span class="fn">fibonacci_gen</span>(<span class="num">10</span>):
-    <span class="fn">print</span>(<span class="var">num</span>, end=<span class="str">" "</span>)</pre>
-            </div>
-          </div>
-        `,
-        exercise: {
-          task: 'Buat decorator @validate_input yang memvalidasi bahwa semua argumen sebuah fungsi adalah bilangan positif. Jika ada yang negatif atau nol, raise ValueError. Test dengan fungsi hitung_volume(p, l, t).',
-          starter: 'def validate_positive(func):\n    def wrapper(*args, **kwargs):\n        for i, arg in enumerate(args):\n            if isinstance(arg, (int, float)) and arg <= 0:\n                raise ValueError(f"Argumen {i+1} harus bilangan positif! Dapat: {arg}")\n        return func(*args, **kwargs)\n    return wrapper\n\n@validate_positive\ndef hitung_volume(p, l, t):\n    return p * l * t\n\n@validate_positive\ndef hitung_luas(a, b):\n    return a * b\n\n# Test valid\nprint(f"Volume: {hitung_volume(5, 3, 2)}")\nprint(f"Luas: {hitung_luas(4, 6)}")\n\n# Test invalid\ntry:\n    hitung_volume(5, -3, 2)\nexcept ValueError as e:\n    print(f"Error: {e}")\n\n# Generator bonus\ndef pangkat_dua_gen(n):\n    for i in range(1, n+1):\n        yield i ** 2\n\nprint(list(pangkat_dua_gen(8)))',
-          hint: 'Kode sudah lengkap! Jalankan dan lihat decorator bekerja.',
-          check: (code, output) => output.includes('Volume') && output.includes('Error')
-        }
-      },
-      {
-        id: 'project-legend',
-        title: '🎯 Project: Mini Framework',
-        desc: 'Buat mini web framework menggunakan decorator.',
-        type: 'project',
-        content: `
-          <div class="project-banner">
-            <div class="project-label">🎯 Tier Project — Legend</div>
-            <div class="project-title">Mini Web Framework</div>
-            <div class="project-desc">Buat mini framework mirip Flask menggunakan decorator untuk mendaftarkan route handler!</div>
-          </div>
-        `,
-        exercise: {
-          task: 'Buat class App dengan decorator @app.route(path) yang mendaftarkan fungsi handler untuk path tertentu. Implementasikan method run(path) yang menjalankan handler yang sesuai.',
-          starter: 'class App:\n    def __init__(self):\n        self.routes = {}\n    \n    def route(self, path):\n        """Decorator untuk mendaftarkan route"""\n        def decorator(func):\n            self.routes[path] = func\n            return func\n        return decorator\n    \n    def run(self, path, **kwargs):\n        if path in self.routes:\n            print(f"\\n[GET] {path}")\n            print("-" * 30)\n            result = self.routes[path](**kwargs)\n            return result\n        else:\n            print(f"\\n[404] {path} - Not Found")\n\n# Buat instance app\napp = App()\n\n@app.route("/")\ndef home():\n    return "Selamat datang di HomePage! 🏠"\n\n@app.route("/about")\ndef about():\n    return "Ini halaman About. Framework dibuat dengan Python murni! 🐍"\n\n@app.route("/user")\ndef user(nama="Guest"):\n    return f"Halo, {nama}! Selamat datang. 👤"\n\n@app.route("/hitung")\ndef hitung(a=0, b=0):\n    return f"{a} + {b} = {a + b}"\n\n# Simulasi request\nprint(app.run("/"))\nprint(app.run("/about"))\nprint(app.run("/user", nama="Budi"))\nprint(app.run("/hitung", a=10, b=25))\nprint(app.run("/kontak"))  # 404\n\nprint(f"\\n=== Registered Routes ===")\nfor route in app.routes:\n    print(f"  GET {route}")',
-          hint: 'Kode sudah lengkap! Jalankan untuk melihat mini framework bekerja.',
-          check: (code, output) => output.includes('HomePage') && output.includes('404')
-        }
-      }
-    ]
-  },
-  {
-    id: 'mystery',
-    name: 'Mystery',
-    icon: '🔮',
-    color: '#a78bfa',
-    desc: '???',
-    locked: true,
-    lessons: [
-      {
-        id: 'mystery-1',
-        title: '🔮 Rahasia Tersembunyi',
-        desc: 'Selesaikan semua tier untuk membuka ini.',
-        type: 'lesson',
-        content: `
-          <div class="content-block">
-            <h3>🔮 Tier Mystery</h3>
-            <p>Kamu berhasil membuka tier paling tersembunyi! Di sini kamu akan belajar hal-hal yang jarang diketahui developer Python biasa:</p>
-            <ul>
-              <li>Python Internals — bagaimana CPython bekerja</li>
-              <li>Metaclass — class yang membuat class</li>
-              <li>Context Manager — protokol with statement</li>
-              <li>Async/Await — concurrent programming</li>
-              <li>C Extensions — tulis module Python dalam C</li>
-            </ul>
-          </div>
-          <div class="content-block">
-            <h3>Metaclass — Class yang Membuat Class</h3>
-            <div class="code-example">
-              <div class="code-example-header">python — metaclass</div>
-              <pre><span class="kw">class</span> <span class="fn">SingletonMeta</span>(<span class="fn">type</span>):
-    <span class="var">_instances</span> = {}
+<span class="vr">@timer</span>
+<span class="kw">def</span> <span class="fn">hitung</span>():
+    <span class="kw">return</span> <span class="fn">sum</span>(<span class="fn">range</span>(<span class="num">1000000</span>))
+
+<span class="fn">hitung</span>()</pre></div></div>
+      <div class="cb"><h3>Generator dengan yield</h3>
+      <div class="ce"><div class="ceh">python</div><pre><span class="kw">def</span> <span class="fn">fib_gen</span>(<span class="vr">n</span>):
+    <span class="vr">a</span>, <span class="vr">b</span> = <span class="num">0</span>, <span class="num">1</span>
+    <span class="kw">for</span> _ <span class="kw">in</span> <span class="fn">range</span>(<span class="vr">n</span>):
+        <span class="kw">yield</span> <span class="vr">a</span>
+        <span class="vr">a</span>, <span class="vr">b</span> = <span class="vr">b</span>, <span class="vr">a</span>+<span class="vr">b</span>
+
+<span class="kw">for</span> <span class="vr">n</span> <span class="kw">in</span> <span class="fn">fib_gen</span>(<span class="num">10</span>):
+    <span class="fn">print</span>(<span class="vr">n</span>, end=<span class="str">" "</span>)</pre></div></div>`,
+      ex:{ task:'Buat decorator @log yang print nama fungsi + argumennya setiap dipanggil. Buat juga generator bilangan prima tak terbatas. Test keduanya.',
+        start:'def log(func):\n    def wrapper(*args, **kw):\n        print(f"Memanggil {func.__name__}({args})")\n        result = func(*args, **kw)\n        print(f"Hasil: {result}")\n        return result\n    return wrapper\n\n@log\ndef tambah(a, b):\n    return a + b\n\n@log\ndef kuadrat(x):\n    return x ** 2\n\ntambah(3, 4)\nkuadrat(5)\ntambah(10, 20)\n\n# Generator bilangan prima\ndef prima_gen():\n    def cek_prima(n):\n        if n < 2: return False\n        for i in range(2, int(n**0.5)+1):\n            if n % i == 0: return False\n        return True\n    n = 2\n    while True:\n        if cek_prima(n): yield n\n        n += 1\n\ngen = prima_gen()\nprima_10 = [next(gen) for _ in range(10)]\nprint(f"10 prima pertama: {prima_10}")',
+        hint:'Kode sudah lengkap! Jalankan dan lihat decorator + generator bekerja.',
+        check:(c,o)=>o.includes('Memanggil') && o.includes('prima') } },
+
+    { id:'proj-leg', title:'🎯 Project: Mini Framework', desc:'Buat mini web framework pakai decorator.', type:'project',
+      content:`<div class="pbn"><div class="pbl">🎯 Tier Project — Legend</div><div class="pbt">Mini Web Framework</div><div class="pbd">Buat mini framework mirip Flask menggunakan decorator untuk register route handler.</div></div>`,
+      ex:{ task:'Buat class App dengan @app.route(path) decorator dan method run(path). Route yang tidak ada harus return 404.',
+        start:'class App:\n    def __init__(self):\n        self.routes = {}\n        self.middleware = []\n    \n    def route(self, path, methods=["GET"]):\n        def decorator(func):\n            self.routes[path] = {"handler": func, "methods": methods}\n            return func\n        return decorator\n    \n    def use(self, mw):\n        self.middleware.append(mw)\n    \n    def run(self, path, method="GET", **kw):\n        print(f"\\n[{method}] {path}")\n        for mw in self.middleware:\n            mw(path, method)\n        if path in self.routes:\n            r = self.routes[path]\n            if method in r["methods"]:\n                result = r["handler"](**kw)\n                print(f"200 OK: {result}")\n            else:\n                print(f"405 Method Not Allowed")\n        else:\n            print(f"404 Not Found")\n\napp = App()\n\ndef logger(path, method):\n    print(f"  LOG: {method} {path}")\n\napp.use(logger)\n\n@app.route("/")\ndef home():\n    return "Selamat datang di homepage!"\n\n@app.route("/about")\ndef about():\n    return "Halaman about - framework Python murni"\n\n@app.route("/hitung")\ndef hitung(a=0, b=0):\n    return f"{a} + {b} = {a+b}"\n\napp.run("/")\napp.run("/about")\napp.run("/hitung", a=15, b=25)\napp.run("/kontak")  # 404\n\nprint("\\n=== Routes Terdaftar ===")\nfor r in app.routes: print(f"  GET {r}")',
+        hint:'Kode sudah lengkap! Jalankan untuk melihat mini framework bekerja.',
+        check:(c,o)=>o.includes('200 OK') && o.includes('404') } }
+  ]},
+
+  { id:'mystery', name:'Mystery', icon:'🔮', color:'#a78bfa', locked:true, lessons:[
+    { id:'mys1', title:'🔮 Python Internals', desc:'Hal tersembunyi yang jarang diketahui.', type:'lesson',
+      content:`<div class="cb"><h3>Selamat! Kamu Membuka Tier Mystery! 🔮</h3><p>Di tier ini kamu akan belajar hal-hal yang jarang diketahui developer Python biasa — dari cara Python bekerja di balik layar sampai fitur advanced yang powerful.</p></div>
+      <div class="cb"><h3>Context Manager dengan __enter__ dan __exit__</h3>
+      <div class="ce"><div class="ceh">python</div><pre><span class="kw">import</span> time
+
+<span class="kw">class</span> <span class="fn">Timer</span>:
+    <span class="kw">def</span> <span class="fn">__enter__</span>(<span class="kw">self</span>):
+        <span class="kw">self</span>.<span class="vr">start</span> = <span class="vr">time</span>.<span class="fn">time</span>()
+        <span class="fn">print</span>(<span class="str">"Timer mulai..."</span>)
+        <span class="kw">return</span> <span class="kw">self</span>
     
-    <span class="kw">def</span> <span class="fn">__call__</span>(<span class="kw">cls</span>, *<span class="var">args</span>, **<span class="var">kwargs</span>):
-        <span class="kw">if</span> <span class="kw">cls</span> <span class="kw">not in</span> <span class="kw">cls</span>.<span class="var">_instances</span>:
-            <span class="kw">cls</span>.<span class="var">_instances</span>[<span class="kw">cls</span>] = <span class="fn">super</span>().<span class="fn">__call__</span>(*<span class="var">args</span>, **<span class="var">kwargs</span>)
-        <span class="kw">return</span> <span class="kw">cls</span>.<span class="var">_instances</span>[<span class="kw">cls</span>]
+    <span class="kw">def</span> <span class="fn">__exit__</span>(<span class="kw">self</span>, *<span class="vr">args</span>):
+        <span class="kw">self</span>.<span class="vr">elapsed</span> = <span class="vr">time</span>.<span class="fn">time</span>() - <span class="kw">self</span>.<span class="vr">start</span>
+        <span class="fn">print</span>(<span class="str">f"Selesai: </span><span class="vr">{self.elapsed:.4f}</span><span class="str">s"</span>)
 
-<span class="kw">class</span> <span class="fn">Database</span>(metaclass=<span class="fn">SingletonMeta</span>):
-    <span class="kw">def</span> <span class="fn">__init__</span>(<span class="kw">self</span>):
-        <span class="kw">self</span>.<span class="var">connection</span> = <span class="str">"Connected!"</span>
+<span class="kw">with</span> <span class="fn">Timer</span>():
+    <span class="vr">total</span> = <span class="fn">sum</span>(<span class="fn">range</span>(<span class="num">1_000_000</span>))
+    <span class="fn">print</span>(<span class="str">f"Sum: </span><span class="vr">{total:,}</span><span class="str">"</span>)</pre></div></div>`,
+      ex:{ task:'Implementasikan Context Manager DatabaseConnection yang simulate koneksi DB (print "Connecting..." saat masuk, "Disconnecting..." saat keluar). Gunakan dengan "with".',
+        start:'class DatabaseConnection:\n    def __init__(self, host):\n        self.host = host\n        self.connected = False\n    \n    def __enter__(self):\n        print(f"Connecting to {self.host}...")\n        self.connected = True\n        return self\n    \n    def __exit__(self, *args):\n        print(f"Disconnecting from {self.host}")\n        self.connected = False\n    \n    def query(self, sql):\n        if not self.connected:\n            raise RuntimeError("Not connected!")\n        print(f"Executing: {sql}")\n        return [{"id":1,"name":"Budi"},{"id":2,"name":"Ani"}]\n\nwith DatabaseConnection("localhost:5432") as db:\n    rows = db.query("SELECT * FROM users")\n    for row in rows:\n        print(f"  User: {row}")\n\nprint("Connection closed automatically!")',
+        hint:'Kode sudah lengkap! Ini adalah cara Python mengimplementasikan resource management.',
+        check:(c,o)=>o.includes('Connecting') && o.includes('Disconnecting') } },
 
-<span class="comment"># Selalu instance yang sama</span>
-<span class="var">db1</span> = <span class="fn">Database</span>()
-<span class="var">db2</span> = <span class="fn">Database</span>()
-<span class="fn">print</span>(<span class="var">db1</span> <span class="kw">is</span> <span class="var">db2</span>)  <span class="comment"># True!</span></pre>
-            </div>
-          </div>
-        `,
-        exercise: {
-          task: 'Implementasikan Context Manager untuk mengukur waktu eksekusi kode. Gunakan class dengan __enter__ dan __exit__, sehingga bisa dipakai dengan "with Timer() as t:".',
-          starter: 'import time\n\nclass Timer:\n    def __enter__(self):\n        self.start = time.time()\n        print("⏱️ Timer dimulai...")\n        return self\n    \n    def __exit__(self, exc_type, exc_val, exc_tb):\n        self.elapsed = time.time() - self.start\n        print(f"⏱️ Selesai! Waktu: {self.elapsed:.4f} detik")\n        return False  # Jangan suppress exception\n\n# Test\nwith Timer() as t:\n    total = sum(range(1_000_000))\n    print(f"Sum: {total:,}")\n\nwith Timer():\n    data = [x**2 for x in range(100_000)]\n    print(f"List length: {len(data):,}")',
-          hint: 'Kode sudah lengkap! Context Manager adalah cara Python mengimplementasikan resource management.',
-          check: (code, output) => output.includes('Timer') && output.includes('Selesai')
-        }
-      },
-      {
-        id: 'project-mystery',
-        title: '🔮 Final Project: Python Interpreter',
-        desc: 'Buat mini Python interpreter!',
-        type: 'project',
-        content: `
-          <div class="project-banner" style="background:linear-gradient(135deg, #1a0533, #0a0e1a)">
-            <div class="project-label" style="color:#a78bfa">🔮 FINAL MYSTERY PROJECT</div>
-            <div class="project-title">Mini Python Interpreter</div>
-            <div class="project-desc">Buat interpreter sederhana yang bisa menjalankan subset Python: assignment, print, kondisi, dan loop dasar.</div>
-          </div>
-          <div class="content-block">
-            <h3>Ini adalah pencapaian tertinggi!</h3>
-            <p>Kalau kamu bisa membuat sebuah bahasa menginterpretasikan bahasa lain, artinya kamu benar-benar mengerti bagaimana programming language bekerja dari dalam.</p>
-          </div>
-        `,
-        exercise: {
-          task: 'Implementasikan mini interpreter yang paling tidak bisa menangani: variabel assignment, print, dan operasi aritmatika sederhana.',
-          starter: '# Mini Python Expression Evaluator\nclass MiniInterpreter:\n    def __init__(self):\n        self.env = {}  # Variabel environment\n    \n    def execute(self, code):\n        lines = code.strip().split("\\n")\n        for line in lines:\n            line = line.strip()\n            if not line or line.startswith("#"):\n                continue\n            self.execute_line(line)\n    \n    def execute_line(self, line):\n        if "=" in line and not line.startswith("print"):\n            # Assignment\n            parts = line.split("=", 1)\n            var_name = parts[0].strip()\n            value = self.evaluate(parts[1].strip())\n            self.env[var_name] = value\n            print(f"  [assign] {var_name} = {value}")\n        elif line.startswith("print("):\n            # Print\n            expr = line[6:-1]  # Extract content\n            if expr.startswith("f\\"") or expr.startswith("f\'"):\n                # Simple f-string (just replace {var})\n                template = expr[2:-1]\n                for key, val in self.env.items():\n                    template = template.replace(f"{{{key}}}", str(val))\n                print(f"  [output] {template}")\n            else:\n                val = self.evaluate(expr.strip(\'\\"\\\''))\n                print(f"  [output] {val}")\n    \n    def evaluate(self, expr):\n        expr = expr.strip()\n        # Replace variable names\n        for key in sorted(self.env.keys(), key=len, reverse=True):\n            expr = expr.replace(key, str(self.env[key]))\n        # Evaluate math\n        try:\n            return eval(expr)  # Safe for simple math\n        except:\n            return expr.strip(\'\\"\\\'\')\n\n# Test interpreter\ninterp = MiniInterpreter()\n\ncode = """\n# Program sederhana\nx = 10\ny = 20\nz = x + y\nprint(f"x + y = {z}")\na = x * y\nprint(f"x * y = {a}")\n"""\n\nprint("=== Menjalankan kode ===")\ninterp.execute(code)\nprint(f"\\n=== Environment Variabel ===")\nfor k, v in interp.env.items():\n    print(f"  {k} = {v}")',
-          hint: 'Kode sudah lengkap! Ini adalah implementasi mini interpreter yang benar-benar bekerja.',
-          check: (code, output) => output.includes('Environment') || output.includes('output')
-        }
-      }
-    ]
-  }
+    { id:'proj-mys', title:'🔮 Final Project: Mini Interpreter', desc:'Buat interpreter ekspresi Python sederhana!', type:'project',
+      content:`<div class="pbn" style="background:linear-gradient(135deg,#1a0533,#0a0e1a)"><div class="pbl" style="color:#a78bfa">🔮 FINAL MYSTERY PROJECT</div><div class="pbt">Mini Python Interpreter</div><div class="pbd">Buat interpreter yang bisa evaluate ekspresi aritmatika, assignment variabel, dan print. Ini adalah test tertinggi pemahaman kamu!</div></div>`,
+      ex:{ task:'Buat class MiniPython yang bisa jalankan kode sederhana: assignment (x=5), operasi aritmatika, dan print.',
+        start:'class MiniPython:\n    def __init__(self):\n        self.env = {}\n    \n    def run(self, code):\n        for line in code.strip().split("\\n"):\n            line = line.strip()\n            if not line or line.startswith("#"): continue\n            self._exec_line(line)\n    \n    def _exec_line(self, line):\n        if line.startswith("print("):\n            content = line[6:-1].strip()\n            if content.startswith(\'f"\') or content.startswith("f\'"):\n                tmpl = content[2:-1]\n                for k,v in self.env.items():\n                    tmpl = tmpl.replace("{"+k+"}", str(v))\n                print(f">>> {tmpl}")\n            elif content in self.env:\n                print(f">>> {self.env[content]}")\n            else:\n                print(f">>> {content.strip(chr(34)).strip(chr(39))}")\n        elif "=" in line:\n            k, expr = line.split("=", 1)\n            k = k.strip()\n            self.env[k] = self._eval(expr.strip())\n    \n    def _eval(self, expr):\n        for k in sorted(self.env, key=len, reverse=True):\n            expr = expr.replace(k, str(self.env[k]))\n        try: return eval(expr)\n        except: return expr.strip(chr(34)).strip(chr(39))\n\npy = MiniPython()\npy.run("""\n# Test mini interpreter\nx = 10\ny = 20\nz = x + y\nprint(f"x={x}, y={y}, z={z}")\nhasil = x * y\nprint(hasil)\n""")\nprint("\\nVariabel tersimpan:", py.env)',
+        hint:'Kode sudah lengkap! Kamu baru saja membuat interpreter Python dalam Python.',
+        check:(c,o)=>o.includes('>>>') && o.includes('Variabel') } }
+  ]}
 ];
 
-// ==================== STATE ====================
-let state = {
-  currentTierIdx: 0,
-  currentLessonIdx: 0,
-  progress: {},
-  pyodide: null,
-  pyodideReady: false
-};
+// ===== STATE =====
+let ST = { ti:0, li:0, prog:{}, running:false };
 
-function saveState() {
-  localStorage.setItem('pypath_progress', JSON.stringify(state.progress));
-  localStorage.setItem('pypath_current', JSON.stringify({ t: state.currentTierIdx, l: state.currentLessonIdx }));
+function save() {
+  try { localStorage.setItem('pp_p', JSON.stringify(ST.prog)); localStorage.setItem('pp_c', JSON.stringify({t:ST.ti,l:ST.li})); } catch(e){}
 }
-
-function loadState() {
+function load() {
   try {
-    const prog = localStorage.getItem('pypath_progress');
-    const cur = localStorage.getItem('pypath_current');
-    if (prog) state.progress = JSON.parse(prog);
-    if (cur) {
-      const c = JSON.parse(cur);
-      state.currentTierIdx = c.t || 0;
-      state.currentLessonIdx = c.l || 0;
-    }
-  } catch(e) {}
+    const p = localStorage.getItem('pp_p'), c = localStorage.getItem('pp_c');
+    if(p) ST.prog = JSON.parse(p);
+    if(c) { const x=JSON.parse(c); ST.ti=x.t||0; ST.li=x.l||0; }
+  } catch(e){}
 }
-
-function isLessonDone(tierId, lessonId) {
-  return !!(state.progress[tierId] && state.progress[tierId][lessonId]);
-}
-
-function markDone(tierId, lessonId) {
-  if (!state.progress[tierId]) state.progress[tierId] = {};
-  state.progress[tierId][lessonId] = true;
-  saveState();
-}
-
-function getTotalProgress() {
-  let total = 0, done = 0;
-  TIERS.forEach(tier => {
-    if (tier.locked) return;
-    tier.lessons.forEach(lesson => {
-      total++;
-      if (isLessonDone(tier.id, lesson.id)) done++;
-    });
-  });
-  return { total, done };
-}
-
-function isTierUnlocked(tierIdx) {
-  if (tierIdx === 0) return true;
-  if (TIERS[tierIdx].id === 'mystery') {
-    // Unlock mystery if all other tiers complete
-    for (let i = 0; i < TIERS.length - 1; i++) {
-      const tier = TIERS[i];
-      if (tier.lessons.some(l => !isLessonDone(tier.id, l.id))) return false;
-    }
+function isDone(tid,lid) { return !!(ST.prog[tid]&&ST.prog[tid][lid]); }
+function markDone(tid,lid) { if(!ST.prog[tid]) ST.prog[tid]={}; ST.prog[tid][lid]=true; save(); }
+function isUnlocked(i) {
+  if(i===0) return true;
+  const t = T[i];
+  if(t.id==='mystery') {
+    for(let j=0;j<T.length-1;j++) if(T[j].lessons.some(l=>!isDone(T[j].id,l.id))) return false;
     return true;
   }
-  // Unlock next tier if previous tier's first lesson is done
-  const prevTier = TIERS[tierIdx - 1];
-  return prevTier.lessons.some(l => isLessonDone(prevTier.id, l.id));
+  const prev=T[i-1];
+  return prev.lessons.some(l=>isDone(prev.id,l.id));
 }
 
-// ==================== PYODIDE ====================
-async function loadPyodide() {
-  if (state.pyodideReady) return;
-  document.getElementById('py-loading').classList.remove('hidden');
-  try {
-    state.pyodide = await loadPyodide({ indexURL: "https://cdn.jsdelivr.net/pyodide/v0.25.0/full/" });
-    state.pyodideReady = true;
-  } catch(e) {
-    console.error('Pyodide load error:', e);
-  }
-  document.getElementById('py-loading').classList.add('hidden');
-}
+// ===== SCREENS =====
+function show(id) { document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active')); document.getElementById(id).classList.add('active'); }
 
+// ===== PYTHON RUNNER via Anthropic API =====
 async function runPython(code) {
-  if (!state.pyodideReady) await loadPyodide();
+  const payload = {
+    model: "claude-sonnet-4-20250514",
+    max_tokens: 1000,
+    system: "You are a Python code executor. When given Python code, execute it mentally and return ONLY the exact stdout output. No explanation, no markdown, no extra text. If there's an error, start your response with 'ERROR:' followed by the error message. For input() calls, simulate with empty string ''. For random, use deterministic values.",
+    messages: [{ role:"user", content:`Execute this Python code and return only the stdout output:\n\n${code}` }]
+  };
   
-  let output = '';
-  const captureOutput = (text) => { output += text; };
+  const res = await fetch("https://api.anthropic.com/v1/messages", {
+    method:"POST",
+    headers:{"Content-Type":"application/json"},
+    body: JSON.stringify(payload)
+  });
   
-  state.pyodide.setStdout({ batched: captureOutput });
-  state.pyodide.setStderr({ batched: captureOutput });
-  
-  // Override input() to avoid blocking
-  await state.pyodide.runPythonAsync(`
-import sys
-import io
-import builtins
+  if(!res.ok) throw new Error(`API error: ${res.status}`);
+  const data = await res.json();
+  const text = data.content.filter(x=>x.type==='text').map(x=>x.text).join('');
+  return text;
+}
 
-_input_values = []
-_input_idx = [0]
-
-def mock_input(prompt=''):
-    print(prompt, end='')
-    return ''
-builtins.input = mock_input
-`);
+// ===== EDITOR =====
+async function runEditor() {
+  if(ST.running) return;
+  ST.running = true;
+  const code = document.getElementById('ci').value;
+  const out = document.getElementById('oa');
+  const btn = document.getElementById('runBtn');
+  btn.innerHTML = '<span class="spin"></span> Running...';
+  btn.disabled = true;
+  out.innerHTML = '<span class="oi">// Running Python...</span>';
   
   try {
-    await state.pyodide.runPythonAsync(code);
-    return { success: true, output };
+    const result = await runPython(code);
+    if(result.startsWith('ERROR:')) {
+      out.innerHTML = '<span class="oe">' + esc(result) + '</span>';
+    } else {
+      out.innerHTML = '<span class="os">' + esc(result || '(no output)') + '</span>';
+    }
   } catch(e) {
-    return { success: false, output: output + e.message };
-  }
-}
-
-// ==================== SCREENS ====================
-function showScreen(id) {
-  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-  document.getElementById(id).classList.add('active');
-}
-
-function goToHome() { showScreen('home-screen'); }
-
-async function goToEditor() {
-  showScreen('editor-screen');
-  if (!state.pyodideReady) loadPyodide();
-}
-
-function goToLearn() {
-  showScreen('learn-screen');
-  renderSidebar();
-  renderLesson();
-  if (!state.pyodideReady) loadPyodide();
-}
-
-// ==================== EDITOR ====================
-async function runEditorCode() {
-  const code = document.getElementById('code-input').value;
-  const btn = document.getElementById('run-btn');
-  const out = document.getElementById('output-area');
-  
-  btn.disabled = true;
-  btn.innerHTML = '<div class="spinner" style="width:16px;height:16px;border-width:2px"></div> Running...';
-  out.innerHTML = '<span class="output-info">// Running...</span>';
-  
-  if (!state.pyodideReady) await loadPyodide();
-  
-  const result = await runPython(code);
-  
-  if (result.success) {
-    out.innerHTML = result.output ? 
-      `<span class="output-success">${escapeHtml(result.output)}</span>` :
-      `<span class="output-info">// No output</span>`;
-  } else {
-    out.innerHTML = `<span class="output-error">Traceback:\n${escapeHtml(result.output)}</span>`;
+    out.innerHTML = '<span class="oe">// Network error: ' + esc(e.message) + '</span>';
   }
   
+  ST.running = false;
+  btn.innerHTML = '▶ Run Code';
   btn.disabled = false;
-  btn.innerHTML = '<span>▶</span> Run Code';
 }
 
-function clearOutput() {
-  document.getElementById('output-area').innerHTML = '<span class="output-info">// Output cleared</span>';
-}
-
-// ==================== SIDEBAR ====================
+// ===== LEARN =====
 function renderSidebar() {
-  const container = document.getElementById('tier-list');
+  const container = document.getElementById('tl');
   container.innerHTML = '';
+  let total=0, done=0;
+  T.forEach(t=>{ if(!t.locked) t.lessons.forEach(l=>{ total++; if(isDone(t.id,l.id)) done++; }); });
+  const pct = total ? (done/total)*100 : 0;
+  document.getElementById('prfill').style.width = pct+'%';
+  document.getElementById('prtxt').textContent = done+' / '+total+' lessons';
   
-  const { total, done } = getTotalProgress();
-  document.getElementById('overall-progress').style.width = total ? `${(done/total)*100}%` : '0%';
-  document.getElementById('progress-text').textContent = `${done} / ${total} lessons`;
-  
-  TIERS.forEach((tier, tIdx) => {
-    const unlocked = isTierUnlocked(tIdx);
-    const tierDone = tier.lessons.every(l => isLessonDone(tier.id, l.id));
-    const isActive = state.currentTierIdx === tIdx;
-    
-    const item = document.createElement('div');
-    item.className = 'tier-item';
-    
-    const lessonCount = tier.lessons.length;
-    const doneLessons = tier.lessons.filter(l => isLessonDone(tier.id, l.id)).length;
-    
-    item.innerHTML = `
-      <div class="tier-header ${isActive ? 'active open' : ''}" onclick="toggleTier(${tIdx}, this)">
-        <div class="tier-icon" style="background:${tier.color}22;color:${tier.color}">
-          ${unlocked ? tier.icon : '🔒'}
-        </div>
-        <div class="tier-info">
-          <div class="tier-name" style="color:${unlocked ? 'var(--text)' : 'var(--muted)'}">${tier.name}</div>
-          <div class="tier-count">${doneLessons}/${lessonCount} selesai</div>
-        </div>
-        <div class="tier-chevron">▶</div>
+  T.forEach((tier,ti)=>{
+    const unl = isUnlocked(ti);
+    const doneL = tier.lessons.filter(l=>isDone(tier.id,l.id)).length;
+    const isOpen = ST.ti===ti;
+    const div = document.createElement('div');
+    div.className = 'ti';
+    div.innerHTML = `
+      <div class="tih ${isOpen?'active open':''}" onclick="toggleT(${ti},this)">
+        <div class="tico" style="background:${tier.color}22;color:${tier.color}">${unl?tier.icon:'🔒'}</div>
+        <div class="tinf"><div class="tin" style="color:${unl?'var(--t)':'var(--m)'}">${tier.name}</div><div class="tic">${doneL}/${tier.lessons.length} selesai</div></div>
+        <div class="tichev">▶</div>
       </div>
-      <div class="lesson-list ${isActive ? 'open' : ''}" id="lessons-${tIdx}">
-        ${tier.lessons.map((lesson, lIdx) => `
-          <div class="lesson-item ${isLessonDone(tier.id, lesson.id) ? 'done' : ''} ${state.currentTierIdx === tIdx && state.currentLessonIdx === lIdx ? 'active' : ''}"
-               onclick="${unlocked ? `selectLesson(${tIdx}, ${lIdx})` : ''}"
-               style="${unlocked ? '' : 'opacity:0.4;cursor:not-allowed'}">
-            <div class="lesson-dot"></div>
-            ${lesson.title}
-          </div>
-        `).join('')}
-      </div>
-    `;
-    
-    container.appendChild(item);
+      <div class="ll ${isOpen?'open':''}" id="ll${ti}">
+        ${tier.lessons.map((l,li)=>`
+          <div class="li ${isDone(tier.id,l.id)?'done':''} ${ST.ti===ti&&ST.li===li?'active':''}"
+               onclick="${unl?`selLesson(${ti},${li})`:''}"
+               style="${unl?'':'opacity:.4;cursor:not-allowed'}">
+            <div class="ldot"></div>${l.title}
+          </div>`).join('')}
+      </div>`;
+    container.appendChild(div);
   });
 }
 
-function toggleTier(tIdx, headerEl) {
-  const lessonList = document.getElementById(`lessons-${tIdx}`);
-  headerEl.classList.toggle('open');
-  lessonList.classList.toggle('open');
+function toggleT(ti, el) {
+  const ll = document.getElementById('ll'+ti);
+  el.classList.toggle('open');
+  ll.classList.toggle('open');
 }
 
-function selectLesson(tIdx, lIdx) {
-  state.currentTierIdx = tIdx;
-  state.currentLessonIdx = lIdx;
-  saveState();
+function selLesson(ti, li) {
+  ST.ti=ti; ST.li=li; save();
   renderSidebar();
   renderLesson();
-  document.getElementById('lesson-content').scrollTop = 0;
+  document.getElementById('lc').scrollTop=0;
 }
 
-// ==================== LESSON RENDERER ====================
 function renderLesson() {
-  const tier = TIERS[state.currentTierIdx];
-  const lesson = tier.lessons[state.currentLessonIdx];
-  const container = document.getElementById('lesson-content');
-  
-  const isProject = lesson.type === 'project';
-  
+  const tier = T[ST.ti], lesson = tier.lessons[ST.li];
+  const container = document.getElementById('lc');
+  const isproj = lesson.type==='project';
+  const alreadyDone = isDone(tier.id, lesson.id);
+
   container.innerHTML = `
-    <div class="lesson-breadcrumb">
-      ${tier.icon} ${tier.name} <span style="color:var(--muted)">›</span> <span>${lesson.title}</span>
-    </div>
-    <div class="lesson-tier-badge" style="background:${tier.color}22;color:${tier.color}">
-      ${isProject ? '🎯 Project' : tier.name}
-    </div>
-    <h1 class="lesson-title">${lesson.title}</h1>
-    <p class="lesson-desc">${lesson.desc}</p>
-    
+    <div class="lbc">${tier.icon} ${tier.name} <span>›</span> <span>${lesson.title}</span></div>
+    <div class="ltbadge" style="background:${tier.color}22;color:${tier.color}">${isproj?'🎯 Project':tier.name}</div>
+    <h1 class="ltitle">${lesson.title}</h1>
+    <p class="ldesc">${lesson.desc}</p>
     ${lesson.content}
-    
-    <div class="exercise-box">
-      <div class="exercise-header">
-        <span class="exercise-badge">${isProject ? 'PROJECT' : 'LATIHAN'}</span>
-        <span class="exercise-title">${isProject ? 'Project Challenge' : 'Coba Sendiri!'}</span>
+    <div class="exbox">
+      <div class="exh">
+        <span class="exbadge">${isproj?'PROJECT':'LATIHAN'}</span>
+        <span class="extitle">${isproj?'Project Challenge':'Coba Sendiri!'}</span>
+        ${alreadyDone?'<span style="color:var(--g);margin-left:auto;font-size:.8rem">✅ Selesai</span>':''}
       </div>
-      <div class="exercise-body">
-        <div class="exercise-task">${lesson.exercise.task}</div>
-        <div class="exercise-editor">
-          <textarea id="ex-code-${state.currentTierIdx}-${state.currentLessonIdx}" spellcheck="false">${lesson.exercise.starter}</textarea>
-          <div class="exercise-footer">
-            <button class="btn-run-exercise" id="ex-run-btn" onclick="runExercise()">▶ Jalankan</button>
-            <button class="btn-check" onclick="checkExercise()">✓ Selesai</button>
+      <div class="exbody">
+        <div class="extask">${lesson.ex.task}</div>
+        <div class="exeditor">
+          <textarea id="excode" spellcheck="false">${lesson.ex.start}</textarea>
+          <div class="exfoot">
+            <button class="brun" id="exrun" onclick="runEx()">▶ Jalankan</button>
+            <button class="bcheck" id="excheck" onclick="checkEx()">✓ Selesai</button>
+            ${alreadyDone?'<span style="color:var(--g);font-size:.75rem;margin-left:4px">Sudah selesai!</span>':''}
           </div>
-          <div class="exercise-output" id="ex-output">// Klik ▶ Jalankan untuk melihat output</div>
+          <div class="exout" id="exout">// Klik ▶ Jalankan untuk melihat output</div>
         </div>
-        <div class="feedback-box" id="ex-feedback"></div>
+        <div class="fb" id="exfb"></div>
       </div>
-    </div>
-  `;
-  
-  // Update nav
+    </div>`;
   updateNav();
 }
 
-async function runExercise() {
-  const tier = TIERS[state.currentTierIdx];
-  const lesson = tier.lessons[state.currentLessonIdx];
-  const code = document.getElementById(`ex-code-${state.currentTierIdx}-${state.currentLessonIdx}`).value;
-  const output = document.getElementById('ex-output');
-  const btn = document.getElementById('ex-run-btn');
+async function runEx() {
+  if(ST.running) return;
+  ST.running=true;
+  const code = document.getElementById('excode').value;
+  const out = document.getElementById('exout');
+  const btn = document.getElementById('exrun');
+  btn.innerHTML='<span class="spin"></span>'; btn.disabled=true;
+  out.innerHTML='// Running...';
   
-  btn.disabled = true;
-  btn.innerHTML = '⏳ Running...';
-  output.innerHTML = '// Running...';
-  
-  if (!state.pyodideReady) await loadPyodide();
-  
-  const result = await runPython(code);
-  
-  if (result.success) {
-    output.innerHTML = `<span style="color:var(--green)">${escapeHtml(result.output || '(no output)')}</span>`;
-  } else {
-    output.innerHTML = `<span style="color:var(--red)">${escapeHtml(result.output)}</span>`;
+  try {
+    const result = await runPython(code);
+    if(result.startsWith('ERROR:')) {
+      out.innerHTML='<span style="color:var(--r)">'+esc(result)+'</span>';
+    } else {
+      out.innerHTML='<span style="color:var(--g)">'+esc(result||'(no output)')+'</span>';
+    }
+  } catch(e) {
+    out.innerHTML='<span style="color:var(--r)">Network error: '+esc(e.message)+'</span>';
   }
   
-  btn.disabled = false;
-  btn.innerHTML = '▶ Jalankan';
+  ST.running=false;
+  btn.innerHTML='▶ Jalankan'; btn.disabled=false;
 }
 
-async function checkExercise() {
-  const tier = TIERS[state.currentTierIdx];
-  const lesson = tier.lessons[state.currentLessonIdx];
-  const code = document.getElementById(`ex-code-${state.currentTierIdx}-${state.currentLessonIdx}`).value;
-  const feedbackEl = document.getElementById('ex-feedback');
+async function checkEx() {
+  if(ST.running) return;
+  const tier=T[ST.ti], lesson=tier.lessons[ST.li];
+  const code=document.getElementById('excode').value;
+  const fb=document.getElementById('exfb');
+  const btn=document.getElementById('excheck');
+  btn.disabled=true;
   
-  if (!state.pyodideReady) await loadPyodide();
-  const result = await runPython(code);
-  
-  const passed = result.success && lesson.exercise.check(code, result.output);
-  
-  feedbackEl.className = 'feedback-box show ' + (passed ? 'success' : 'error');
-  
-  if (passed) {
-    feedbackEl.innerHTML = `✅ <strong>Bagus sekali!</strong> Kode kamu benar dan berjalan dengan baik. Lanjut ke pelajaran berikutnya!`;
-    markDone(tier.id, lesson.id);
-    renderSidebar();
-    updateNav();
-    showToast('✅ Pelajaran selesai!', 'success');
-  } else {
-    feedbackEl.innerHTML = `❌ <strong>Belum tepat.</strong><br><em>Hint: ${lesson.exercise.hint}</em>`;
+  try {
+    const out = await runPython(code);
+    const ok = !out.startsWith('ERROR:') && lesson.ex.check(code, out);
+    fb.className='fb show '+(ok?'ok':'err');
+    if(ok) {
+      fb.innerHTML='✅ <strong>Kode kamu benar!</strong> Lanjut ke pelajaran berikutnya.';
+      markDone(tier.id, lesson.id);
+      renderSidebar(); updateNav();
+      toast('✅ Pelajaran selesai!','ok');
+    } else {
+      fb.innerHTML='❌ <strong>Belum tepat.</strong><br><em>Hint: '+lesson.ex.hint+'</em>';
+    }
+  } catch(e) {
+    fb.className='fb show err';
+    fb.innerHTML='❌ Error koneksi: '+e.message;
   }
+  btn.disabled=false;
 }
 
 function updateNav() {
-  const tier = TIERS[state.currentTierIdx];
-  const lesson = tier.lessons[state.currentLessonIdx];
-  const isDone = isLessonDone(tier.id, lesson.id);
+  const tier=T[ST.ti], lesson=tier.lessons[ST.li];
+  const hasPrev = ST.li>0||ST.ti>0;
+  const bp=document.getElementById('bprev');
+  bp.style.visibility = hasPrev?'visible':'hidden';
   
-  const prevBtn = document.getElementById('btn-prev');
-  const nextBtn = document.getElementById('btn-next');
-  const indicator = document.getElementById('lesson-indicator');
+  const flat = T.slice(0,ST.ti).reduce((a,t)=>a+t.lessons.length,0)+ST.li;
+  const totalFlat = T.reduce((a,t)=>a+t.lessons.length,0);
+  const bn=document.getElementById('bnext');
+  bn.style.visibility = flat<totalFlat-1?'visible':'hidden';
+  bn.disabled = !isDone(tier.id,lesson.id);
   
-  // Prev
-  const hasPrev = state.currentLessonIdx > 0 || state.currentTierIdx > 0;
-  prevBtn.style.display = hasPrev ? '' : 'none';
-  
-  // Next
-  const allLessons = TIERS.flatMap(t => t.lessons);
-  const curFlat = TIERS.slice(0, state.currentTierIdx).reduce((a, t) => a + t.lessons.length, 0) + state.currentLessonIdx;
-  const hasNext = curFlat < allLessons.length - 1;
-  
-  nextBtn.disabled = !isDone && lesson.exercise !== undefined;
-  nextBtn.style.display = hasNext ? '' : 'none';
-  
-  const totalInTier = tier.lessons.length;
-  indicator.textContent = `${state.currentLessonIdx + 1} / ${totalInTier}`;
+  document.getElementById('lind').textContent = (ST.li+1)+' / '+tier.lessons.length;
 }
 
-function prevLesson() {
-  if (state.currentLessonIdx > 0) {
-    state.currentLessonIdx--;
-  } else if (state.currentTierIdx > 0) {
-    state.currentTierIdx--;
-    state.currentLessonIdx = TIERS[state.currentTierIdx].lessons.length - 1;
+document.getElementById('bprev').onclick = ()=>{
+  if(ST.li>0) ST.li--;
+  else if(ST.ti>0) { ST.ti--; ST.li=T[ST.ti].lessons.length-1; }
+  save(); renderSidebar(); renderLesson();
+  document.getElementById('lc').scrollTop=0;
+};
+document.getElementById('bnext').onclick = ()=>{
+  if(ST.li<T[ST.ti].lessons.length-1) ST.li++;
+  else if(ST.ti<T.length-1) { ST.ti++; ST.li=0; }
+  save(); renderSidebar(); renderLesson();
+  document.getElementById('lc').scrollTop=0;
+};
+
+// ===== TOAST =====
+function toast(txt,type='ok') {
+  const el=document.getElementById('toast');
+  document.getElementById('tt').textContent=txt;
+  el.className='toast show '+type;
+  setTimeout(()=>el.classList.remove('show'),3000);
+}
+
+// ===== UTILS =====
+function esc(t) { return String(t).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+// ===== INIT =====
+document.getElementById('btnLearn').onclick = ()=>{ show('ls'); renderSidebar(); renderLesson(); };
+document.getElementById('btnEditor').onclick = ()=>show('es');
+document.getElementById('edBack').onclick = ()=>show('hs');
+document.getElementById('learnBack').onclick = ()=>show('hs');
+document.getElementById('runBtn').onclick = runEditor;
+document.getElementById('clearBtn').onclick = ()=>{ document.getElementById('oa').innerHTML='<span class="oi">// Cleared</span>'; };
+
+document.addEventListener('keydown', e=>{
+  if((e.ctrlKey||e.metaKey)&&e.key==='Enter') {
+    if(document.getElementById('es').classList.contains('active')) runEditor();
   }
-  saveState();
-  renderSidebar();
-  renderLesson();
-  document.getElementById('lesson-content').scrollTop = 0;
-}
-
-function nextLesson() {
-  const tier = TIERS[state.currentTierIdx];
-  if (state.currentLessonIdx < tier.lessons.length - 1) {
-    state.currentLessonIdx++;
-  } else if (state.currentTierIdx < TIERS.length - 1) {
-    state.currentTierIdx++;
-    state.currentLessonIdx = 0;
-  }
-  saveState();
-  renderSidebar();
-  renderLesson();
-  document.getElementById('lesson-content').scrollTop = 0;
-}
-
-// ==================== HOME INIT ====================
-function initHome() {
-  const container = document.getElementById('tier-preview-dots');
-  container.innerHTML = TIERS.map(t => `
-    <div class="tier-dot">
-      <div class="tier-dot-circle" style="background:${t.color}"></div>
-      ${t.name}
-    </div>
-  `).join('');
-}
-
-function escapeHtml(text) {
-  return String(text)
-    .replace(/&/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;')
-    .replace(/"/g, '&quot;');
-}
-
-function showToast(text, type = 'success') {
-  const toast = document.getElementById('toast');
-  document.getElementById('toast-text').textContent = text;
-  toast.className = `toast show ${type}`;
-  setTimeout(() => toast.classList.remove('show'), 3000);
-}
-
-// Handle tab in textareas
-document.addEventListener('keydown', (e) => {
-  if (e.key === 'Tab' && (e.target.tagName === 'TEXTAREA')) {
+  if(e.key==='Tab'&&e.target.tagName==='TEXTAREA') {
     e.preventDefault();
-    const start = e.target.selectionStart;
-    const end = e.target.selectionEnd;
-    e.target.value = e.target.value.substring(0, start) + '    ' + e.target.value.substring(end);
-    e.target.selectionStart = e.target.selectionEnd = start + 4;
-  }
-  // Ctrl+Enter to run
-  if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
-    if (document.getElementById('editor-screen').classList.contains('active')) {
-      runEditorCode();
-    }
+    const s=e.target.selectionStart;
+    e.target.value=e.target.value.substring(0,s)+'    '+e.target.value.substring(e.target.selectionEnd);
+    e.target.selectionStart=e.target.selectionEnd=s+4;
   }
 });
 
-// ==================== INIT ====================
-loadState();
-initHome();
+// Init tier dots on home
+const tdots=document.getElementById('tdots');
+T.forEach(t=>{ const d=document.createElement('div'); d.className='tdot'; d.innerHTML=`<div class="tdc" style="background:${t.color}"></div>${t.name}`; tdots.appendChild(d); });
+
+load();
 </script>
 </body>
 </html>
