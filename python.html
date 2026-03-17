@@ -128,6 +128,35 @@ body{background:var(--bg);color:var(--t);font-family:'Outfit',sans-serif;min-hei
 @keyframes sp{to{transform:rotate(360deg)}}
 .toast{position:fixed;bottom:1.8rem;right:1.8rem;background:var(--s2);border:1px solid var(--b);border-radius:11px;padding:.9rem 1.4rem;display:flex;align-items:center;gap:9px;font-size:.88rem;z-index:1000;transform:translateY(100px);opacity:0;transition:all .3s ease}
 .toast.show{transform:translateY(0);opacity:1}
+/* MOBILE */
+@media(max-width:700px){
+  /* Editor: stack vertically */
+  #es{height:100dvh}
+  .em{grid-template-columns:1fr;grid-template-rows:1fr 1fr}
+  .ep{border-right:none;border-bottom:1px solid var(--b)}
+  /* Learn: sidebar becomes overlay */
+  #ls{flex-direction:column;height:100dvh}
+  .sb{position:fixed;top:0;left:0;width:80vw;max-width:320px;height:100dvh;z-index:200;transform:translateX(-100%);transition:transform .3s ease;box-shadow:4px 0 30px rgba(0,0,0,.5)}
+  .sb.open{transform:translateX(0)}
+  .sb-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:199}
+  .sb-overlay.open{display:block}
+  .lm{width:100%;overflow:hidden}
+  /* Mobile top bar */
+  .mob-bar{display:flex;align-items:center;gap:10px;padding:.8rem 1rem;background:var(--s);border-bottom:1px solid var(--b);flex-shrink:0}
+  .mob-menu{background:none;border:1px solid var(--b);color:var(--t);width:36px;height:36px;border-radius:8px;font-size:1.1rem;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+  .mob-title{font-size:.85rem;font-weight:700;color:var(--ac);font-family:'Space Mono',monospace;flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .mob-home{background:none;border:1px solid var(--b);color:var(--m);padding:5px 10px;border-radius:8px;font-size:.72rem;font-family:'Outfit',sans-serif;cursor:pointer}
+  .lc{padding:1.2rem 1rem}
+  .ltitle{font-size:1.4rem}
+  .ce pre{font-size:.75rem}
+  .exeditor textarea{font-size:.78rem}
+  .ln{padding:.9rem 1rem}
+  .bnav{padding:8px 14px;font-size:.82rem}
+}
+@media(min-width:701px){
+  .mob-bar{display:none}
+  .sb-overlay{display:none!important}
+}
 .toast.ok{border-color:rgba(52,211,153,.4)}
 ::-webkit-scrollbar{width:3px;height:3px}::-webkit-scrollbar-track{background:transparent}::-webkit-scrollbar-thumb{background:var(--b);border-radius:3px}
 code{color:var(--ac);font-family:'Space Mono',monospace;font-size:.85em}
@@ -197,7 +226,16 @@ for i, x in enumerate(buah, 1):
 
 <!-- LEARN -->
 <div class="screen" id="ls">
-  <div class="sb">
+  <!-- Mobile top bar -->
+  <div class="mob-bar">
+    <button class="mob-menu" id="mobMenu">☰</button>
+    <div class="mob-title" id="mobTitle">PyPath — Belajar Python</div>
+    <button class="mob-home" id="mobHome">⌂</button>
+  </div>
+  <!-- Sidebar overlay for mobile -->
+  <div class="sb-overlay" id="sbOverlay"></div>
+  <!-- Sidebar -->
+  <div class="sb" id="sb">
     <div class="sbh">
       <div class="sblogo"><span>Py</span>Path</div>
       <div class="sbsub">Python Learning Path</div>
@@ -210,6 +248,7 @@ for i, x in enumerate(buah, 1):
     </div>
     <div class="tl" id="tl"></div>
   </div>
+  <!-- Main content -->
   <div class="lm">
     <div class="lc" id="lc"></div>
     <div class="ln">
@@ -737,6 +776,7 @@ function toggleT(ti, el) {
 
 function selLesson(ti, li) {
   ST.ti=ti; ST.li=li; save();
+  closeSidebar();
   renderSidebar();
   renderLesson();
   document.getElementById('lc').scrollTop=0;
@@ -747,6 +787,9 @@ function renderLesson() {
   const container = document.getElementById('lc');
   const isproj = lesson.type==='project';
   const alreadyDone = isDone(tier.id, lesson.id);
+  // Update mobile title
+  const mt = document.getElementById('mobTitle');
+  if(mt) mt.textContent = tier.icon+' '+tier.name+' — '+lesson.title;
 
   container.innerHTML = `
     <div class="lbc">${tier.icon} ${tier.name} <span>›</span> <span>${lesson.title}</span></div>
@@ -867,11 +910,24 @@ function toast(txt,type='ok') {
 // ===== UTILS =====
 function esc(t) { return String(t).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
 
+// ===== MOBILE SIDEBAR =====
+function openSidebar() {
+  document.getElementById('sb').classList.add('open');
+  document.getElementById('sbOverlay').classList.add('open');
+}
+function closeSidebar() {
+  document.getElementById('sb').classList.remove('open');
+  document.getElementById('sbOverlay').classList.remove('open');
+}
+
 // ===== INIT =====
 document.getElementById('btnLearn').onclick = ()=>{ show('ls'); renderSidebar(); renderLesson(); };
 document.getElementById('btnEditor').onclick = ()=>show('es');
 document.getElementById('edBack').onclick = ()=>show('hs');
-document.getElementById('learnBack').onclick = ()=>show('hs');
+document.getElementById('learnBack').onclick = ()=>{ closeSidebar(); show('hs'); };
+document.getElementById('mobMenu').onclick = openSidebar;
+document.getElementById('mobHome').onclick = ()=>{ closeSidebar(); show('hs'); };
+document.getElementById('sbOverlay').onclick = closeSidebar;
 document.getElementById('runBtn').onclick = runEditor;
 document.getElementById('clearBtn').onclick = ()=>{ document.getElementById('oa').innerHTML='<span class="oi">// Cleared</span>'; };
 
