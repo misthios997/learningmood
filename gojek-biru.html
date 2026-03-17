@@ -2,1088 +2,706 @@
 <html lang="id">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
 <title>GoApp</title>
 <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
 <style>
-  * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-
-  :root {
-    --blue: #0080FF;
-    --blue-dark: #0060CC;
-    --blue-light: #4DA6FF;
-    --blue-pale: #E6F3FF;
-    --blue-mid: #0070DD;
-    --navy: #003380;
-    --white: #FFFFFF;
-    --gray-light: #F4F6FA;
-    --gray: #8896AB;
-    --text: #1A2B4A;
-    --text-soft: #5A6B82;
-  }
-
-  body {
-    font-family: 'Nunito', sans-serif;
-    background: #E8EEF8;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    min-height: 100vh;
-  }
-
-  .phone {
-    width: 390px;
-    height: 844px;
-    background: var(--gray-light);
-    border-radius: 44px;
-    overflow: hidden;
-    box-shadow: 0 40px 80px rgba(0,80,200,.3), 0 0 0 10px #1a1a2e;
-    position: relative;
-    display: flex;
-    flex-direction: column;
-  }
-
-  /* ====== STATUS BAR ====== */
-  .status-bar {
-    background: var(--blue-dark);
-    padding: 14px 24px 6px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    color: white;
-    font-size: 12px;
-    font-weight: 700;
-    flex-shrink: 0;
-  }
-  .status-icons { display: flex; gap: 6px; align-items: center; }
-  .notch {
-    width: 120px; height: 28px;
-    background: #111;
-    border-radius: 0 0 18px 18px;
-    position: absolute;
-    top: 0; left: 50%;
-    transform: translateX(-50%);
-  }
-
-  /* ====== SCREENS ====== */
-  .screen { display: none; flex: 1; overflow-y: auto; overflow-x: hidden; flex-direction: column; }
-  .screen.active { display: flex; }
-
-  /* ====== HOME SCREEN ====== */
-
-  /* Header */
-  .home-header {
-    background: linear-gradient(160deg, var(--blue-dark) 0%, var(--blue) 60%, var(--blue-light) 100%);
-    padding: 16px 20px 60px;
-    position: relative;
-    overflow: hidden;
-    flex-shrink: 0;
-  }
-  .home-header::before {
-    content: '';
-    position: absolute;
-    top: -40px; right: -40px;
-    width: 200px; height: 200px;
-    background: rgba(255,255,255,.07);
-    border-radius: 50%;
-  }
-  .home-header::after {
-    content: '';
-    position: absolute;
-    bottom: 10px; left: -60px;
-    width: 160px; height: 160px;
-    background: rgba(255,255,255,.05);
-    border-radius: 50%;
-  }
-  .header-top {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 16px;
-  }
-  .logo {
-    font-size: 26px;
-    font-weight: 900;
-    color: white;
-    letter-spacing: -1px;
-  }
-  .logo span { color: #AADDFF; }
-  .header-icons { display: flex; gap: 10px; }
-  .icon-btn {
-    width: 38px; height: 38px;
-    background: rgba(255,255,255,.15);
-    border-radius: 50%;
-    display: flex; align-items: center; justify-content: center;
-    font-size: 16px;
-    cursor: pointer;
-    border: none;
-    color: white;
-    transition: background .2s;
-  }
-  .icon-btn:active { background: rgba(255,255,255,.3); }
-
-  .greeting { color: rgba(255,255,255,.8); font-size: 13px; font-weight: 600; }
-  .user-name { color: white; font-size: 20px; font-weight: 800; margin-bottom: 16px; }
-
-  .search-bar {
-    background: white;
-    border-radius: 14px;
-    padding: 12px 16px;
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    box-shadow: 0 4px 20px rgba(0,0,0,.15);
-  }
-  .search-bar span { font-size: 18px; }
-  .search-bar input {
-    border: none; outline: none;
-    font-family: 'Nunito', sans-serif;
-    font-size: 14px; font-weight: 600;
-    color: var(--text-soft);
-    width: 100%;
-    background: transparent;
-  }
-
-  /* Balance Card */
-  .balance-wrap {
-    padding: 0 16px;
-    margin-top: -36px;
-    position: relative;
-    z-index: 2;
-    flex-shrink: 0;
-  }
-  .balance-card {
-    background: white;
-    border-radius: 20px;
-    padding: 16px 20px;
-    box-shadow: 0 8px 30px rgba(0,80,200,.12);
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-  }
-  .bal-item { text-align: center; flex: 1; }
-  .bal-divider { width: 1px; height: 40px; background: #E0E8F8; }
-  .bal-label { font-size: 11px; color: var(--gray); font-weight: 700; text-transform: uppercase; letter-spacing: .5px; }
-  .bal-value { font-size: 18px; font-weight: 900; color: var(--text); margin-top: 3px; }
-  .bal-value.blue { color: var(--blue); }
-  .bal-topup {
-    background: var(--blue-pale);
-    color: var(--blue);
-    border: none;
-    border-radius: 20px;
-    padding: 6px 14px;
-    font-size: 12px;
-    font-weight: 800;
-    cursor: pointer;
-    font-family: 'Nunito', sans-serif;
-  }
-
-  /* Services Grid */
-  .section { padding: 20px 16px 0; flex-shrink: 0; }
-  .section-title {
-    font-size: 16px;
-    font-weight: 800;
-    color: var(--text);
-    margin-bottom: 14px;
-  }
-  .services-grid {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 10px;
-  }
-  .service-item {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 7px;
-    cursor: pointer;
-    padding: 4px;
-    border-radius: 12px;
-    transition: background .15s;
-  }
-  .service-item:active { background: var(--blue-pale); }
-  .service-icon {
-    width: 56px; height: 56px;
-    border-radius: 16px;
-    display: flex; align-items: center; justify-content: center;
-    font-size: 24px;
-    position: relative;
-    overflow: hidden;
-  }
-  .service-icon::before {
-    content: '';
-    position: absolute; inset: 0;
-    background: inherit;
-    opacity: .15;
-    border-radius: 16px;
-  }
-  .si-ride { background: linear-gradient(135deg, #0070DD, #00AAFF); }
-  .si-food { background: linear-gradient(135deg, #FF6B00, #FFAA00); }
-  .si-shop { background: linear-gradient(135deg, #00C853, #00E676); }
-  .si-send { background: linear-gradient(135deg, #6200EA, #AB47BC); }
-  .si-pay { background: linear-gradient(135deg, #0060CC, #0099FF); }
-  .si-mart { background: linear-gradient(135deg, #F50057, #FF4081); }
-  .si-med { background: linear-gradient(135deg, #00897B, #4DB6AC); }
-  .si-more { background: linear-gradient(135deg, #546E7A, #90A4AE); }
-  .service-label { font-size: 11px; font-weight: 700; color: var(--text-soft); text-align: center; }
-
-  /* Promo Banner */
-  .promo-scroll {
-    display: flex;
-    gap: 12px;
-    overflow-x: auto;
-    padding-bottom: 4px;
-    scrollbar-width: none;
-  }
-  .promo-scroll::-webkit-scrollbar { display: none; }
-  .promo-card {
-    min-width: 260px;
-    height: 120px;
-    border-radius: 16px;
-    overflow: hidden;
-    position: relative;
-    flex-shrink: 0;
-    cursor: pointer;
-  }
-  .pc1 { background: linear-gradient(120deg, #003fa3, #0080FF); }
-  .pc2 { background: linear-gradient(120deg, #007a00, #00C853); }
-  .pc3 { background: linear-gradient(120deg, #b50000, #FF4444); }
-  .promo-text {
-    padding: 16px;
-    position: relative;
-    z-index: 1;
-  }
-  .promo-tag {
-    background: rgba(255,255,255,.25);
-    color: white;
-    font-size: 10px;
-    font-weight: 800;
-    padding: 3px 8px;
-    border-radius: 20px;
-    display: inline-block;
-    margin-bottom: 6px;
-    text-transform: uppercase;
-  }
-  .promo-title { color: white; font-size: 16px; font-weight: 900; line-height: 1.2; }
-  .promo-sub { color: rgba(255,255,255,.8); font-size: 11px; font-weight: 600; margin-top: 3px; }
-  .promo-emoji {
-    position: absolute;
-    right: 14px; top: 50%;
-    transform: translateY(-50%);
-    font-size: 48px;
-    opacity: .7;
-  }
-
-  /* Nearby */
-  .nearby-list { display: flex; flex-direction: column; gap: 10px; padding-bottom: 100px; }
-  .nearby-card {
-    background: white;
-    border-radius: 16px;
-    padding: 14px;
-    display: flex;
-    gap: 12px;
-    align-items: center;
-    box-shadow: 0 2px 10px rgba(0,0,0,.05);
-    cursor: pointer;
-    transition: transform .15s;
-  }
-  .nearby-card:active { transform: scale(.98); }
-  .nearby-img {
-    width: 60px; height: 60px;
-    border-radius: 12px;
-    object-fit: cover;
-    font-size: 32px;
-    display: flex; align-items: center; justify-content: center;
-    flex-shrink: 0;
-  }
-  .nb1 { background: #FFF3E0; }
-  .nb2 { background: #E8F5E9; }
-  .nb3 { background: #E3F2FD; }
-  .nearby-info { flex: 1; }
-  .nearby-name { font-size: 14px; font-weight: 800; color: var(--text); }
-  .nearby-cat { font-size: 12px; color: var(--gray); font-weight: 600; margin-top: 2px; }
-  .nearby-meta { display: flex; gap: 10px; margin-top: 6px; align-items: center; }
-  .tag-pill {
-    font-size: 10px; font-weight: 700;
-    padding: 3px 8px; border-radius: 20px;
-  }
-  .tag-blue { background: var(--blue-pale); color: var(--blue); }
-  .tag-green { background: #E8F5E9; color: #2E7D32; }
-  .tag-orange { background: #FFF3E0; color: #E65100; }
-  .rating { font-size: 12px; font-weight: 700; color: #FFB300; }
-  .nearby-price { font-size: 14px; font-weight: 800; color: var(--blue); }
-
-  /* ====== BOTTOM NAV ====== */
-  .bottom-nav {
-    position: absolute;
-    bottom: 0; left: 0; right: 0;
-    background: white;
-    border-top: 1px solid #E8EEF8;
-    padding: 10px 0 20px;
-    display: flex;
-    justify-content: space-around;
-    align-items: center;
-    z-index: 100;
-    flex-shrink: 0;
-  }
-  .nav-item {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 4px;
-    cursor: pointer;
-    padding: 6px 16px;
-    border-radius: 12px;
-    transition: background .15s;
-    border: none;
-    background: transparent;
-    font-family: 'Nunito', sans-serif;
-  }
-  .nav-item .nav-icon { font-size: 22px; transition: transform .2s; }
-  .nav-item .nav-label { font-size: 10px; font-weight: 700; color: var(--gray); }
-  .nav-item.active .nav-label { color: var(--blue); }
-  .nav-item.active .nav-icon { transform: scale(1.15); }
-  .nav-center {
-    width: 56px; height: 56px;
-    background: linear-gradient(135deg, var(--blue-dark), var(--blue-light));
-    border-radius: 50%;
-    display: flex; align-items: center; justify-content: center;
-    font-size: 26px;
-    margin-top: -24px;
-    box-shadow: 0 6px 20px rgba(0,100,255,.4);
-    cursor: pointer;
-    border: none;
-    transition: transform .2s, box-shadow .2s;
-  }
-  .nav-center:active { transform: scale(.93); box-shadow: 0 3px 10px rgba(0,100,255,.4); }
-
-  /* ====== ORDER SCREEN ====== */
-  .order-header {
-    background: linear-gradient(160deg, var(--blue-dark), var(--blue));
-    padding: 16px 20px 24px;
-    flex-shrink: 0;
-  }
-  .back-btn {
-    background: rgba(255,255,255,.15);
-    border: none; border-radius: 12px;
-    width: 38px; height: 38px;
-    color: white; font-size: 18px;
-    cursor: pointer; display: flex; align-items: center; justify-content: center;
-    margin-bottom: 14px;
-  }
-  .order-title { color: white; font-size: 22px; font-weight: 900; }
-  .order-sub { color: rgba(255,255,255,.7); font-size: 13px; font-weight: 600; margin-top: 4px; }
-
-  .map-preview {
-    background: #C8D8F0;
-    height: 180px;
-    position: relative;
-    overflow: hidden;
-    flex-shrink: 0;
-  }
-  .map-grid {
-    position: absolute; inset: 0;
-    background-image:
-      linear-gradient(rgba(255,255,255,.3) 1px, transparent 1px),
-      linear-gradient(90deg, rgba(255,255,255,.3) 1px, transparent 1px);
-    background-size: 30px 30px;
-  }
-  .map-road-h {
-    position: absolute;
-    height: 12px;
-    background: rgba(255,255,255,.7);
-    border-radius: 6px;
-    left: 0; right: 0;
-  }
-  .map-road-v {
-    position: absolute;
-    width: 12px;
-    background: rgba(255,255,255,.7);
-    border-radius: 6px;
-    top: 0; bottom: 0;
-  }
-  .map-pin {
-    position: absolute;
-    top: 50%; left: 50%;
-    transform: translate(-50%, -60%);
-    font-size: 36px;
-    filter: drop-shadow(0 4px 6px rgba(0,0,0,.3));
-    animation: bounce 1.5s ease-in-out infinite;
-  }
-  @keyframes bounce {
-    0%, 100% { transform: translate(-50%, -60%); }
-    50% { transform: translate(-50%, -75%); }
-  }
-  .map-car {
-    position: absolute;
-    bottom: 30%; left: 30%;
-    font-size: 28px;
-    animation: drive 3s ease-in-out infinite alternate;
-  }
-  @keyframes drive {
-    0% { left: 20%; bottom: 25%; }
-    100% { left: 50%; bottom: 40%; }
-  }
-
-  .location-form { padding: 16px; flex-shrink: 0; }
-  .loc-input {
-    background: white;
-    border-radius: 14px;
-    padding: 14px 16px;
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    margin-bottom: 10px;
-    box-shadow: 0 2px 10px rgba(0,0,0,.06);
-  }
-  .loc-dot {
-    width: 10px; height: 10px;
-    border-radius: 50%;
-    flex-shrink: 0;
-  }
-  .loc-dot.blue { background: var(--blue); }
-  .loc-dot.red { background: #FF4444; }
-  .loc-text { font-size: 14px; font-weight: 600; color: var(--text-soft); }
-
-  .driver-card {
-    background: white;
-    border-radius: 20px 20px 0 0;
-    padding: 20px;
-    box-shadow: 0 -4px 20px rgba(0,0,0,.08);
-    flex: 1;
-  }
-  .driver-drag { width: 40px; height: 4px; background: #E0E8F0; border-radius: 2px; margin: 0 auto 20px; }
-  .driver-info { display: flex; gap: 14px; align-items: center; margin-bottom: 20px; }
-  .driver-avatar {
-    width: 54px; height: 54px;
-    border-radius: 50%;
-    background: linear-gradient(135deg, var(--blue-light), var(--blue-dark));
-    display: flex; align-items: center; justify-content: center;
-    font-size: 26px;
-    flex-shrink: 0;
-  }
-  .driver-name { font-size: 16px; font-weight: 800; color: var(--text); }
-  .driver-plate {
-    background: var(--blue-pale);
-    color: var(--blue);
-    font-size: 13px; font-weight: 800;
-    padding: 4px 10px; border-radius: 8px;
-    display: inline-block; margin-top: 4px;
-  }
-  .driver-rating { font-size: 13px; color: #FFB300; font-weight: 700; }
-  .driver-stats {
-    display: flex;
-    justify-content: space-around;
-    background: var(--gray-light);
-    border-radius: 14px;
-    padding: 14px;
-    margin-bottom: 20px;
-  }
-  .dstat { text-align: center; }
-  .dstat-val { font-size: 18px; font-weight: 900; color: var(--text); }
-  .dstat-val.blue { color: var(--blue); }
-  .dstat-label { font-size: 11px; color: var(--gray); font-weight: 700; margin-top: 2px; }
-  .order-btn {
-    background: linear-gradient(135deg, var(--blue-dark), var(--blue-light));
-    color: white;
-    border: none;
-    border-radius: 16px;
-    padding: 16px;
-    width: 100%;
-    font-family: 'Nunito', sans-serif;
-    font-size: 16px;
-    font-weight: 800;
-    cursor: pointer;
-    box-shadow: 0 6px 20px rgba(0,100,255,.4);
-    letter-spacing: .3px;
-    transition: transform .15s, box-shadow .15s;
-  }
-  .order-btn:active { transform: scale(.98); box-shadow: 0 3px 10px rgba(0,100,255,.3); }
-
-  /* ====== PROMO SCREEN ====== */
-  .promo-header {
-    background: linear-gradient(160deg, var(--blue-dark), var(--blue));
-    padding: 20px 20px 30px;
-    flex-shrink: 0;
-  }
-  .promo-header-title { color: white; font-size: 22px; font-weight: 900; margin-bottom: 4px; }
-  .promo-header-sub { color: rgba(255,255,255,.7); font-size: 13px; font-weight: 600; }
-  .promo-cats {
-    display: flex;
-    gap: 10px;
-    padding: 16px 16px 0;
-    overflow-x: auto;
-    scrollbar-width: none;
-    flex-shrink: 0;
-  }
-  .promo-cats::-webkit-scrollbar { display: none; }
-  .cat-pill {
-    padding: 8px 16px;
-    border-radius: 20px;
-    font-size: 13px;
-    font-weight: 700;
-    white-space: nowrap;
-    cursor: pointer;
-    border: 2px solid transparent;
-    transition: all .15s;
-    font-family: 'Nunito', sans-serif;
-  }
-  .cat-pill.active { background: var(--blue); color: white; border-color: var(--blue); }
-  .cat-pill:not(.active) { background: white; color: var(--text-soft); border-color: #E0E8F8; }
-  .promo-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 12px;
-    padding: 16px;
-    padding-bottom: 100px;
-  }
-  .promo-big-card {
-    border-radius: 16px;
-    overflow: hidden;
-    cursor: pointer;
-    box-shadow: 0 4px 15px rgba(0,0,0,.1);
-    transition: transform .15s;
-  }
-  .promo-big-card:active { transform: scale(.97); }
-  .pbc-img {
-    height: 90px;
-    display: flex; align-items: center; justify-content: center;
-    font-size: 40px;
-  }
-  .pbc-body { background: white; padding: 10px; }
-  .pbc-title { font-size: 13px; font-weight: 800; color: var(--text); }
-  .pbc-disc { font-size: 11px; font-weight: 700; color: var(--blue); margin-top: 3px; }
-  .pbc-exp { font-size: 10px; color: var(--gray); font-weight: 600; margin-top: 4px; }
-
-  /* ====== PROFILE SCREEN ====== */
-  .profile-header {
-    background: linear-gradient(160deg, var(--blue-dark), var(--blue));
-    padding: 24px 20px 50px;
-    position: relative;
-    overflow: hidden;
-    flex-shrink: 0;
-  }
-  .profile-header::before {
-    content: ''; position: absolute;
-    top: -50px; right: -50px;
-    width: 200px; height: 200px;
-    background: rgba(255,255,255,.07);
-    border-radius: 50%;
-  }
-  .profile-avatar-wrap {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 10px;
-    position: relative;
-  }
-  .profile-avatar {
-    width: 80px; height: 80px;
-    border-radius: 50%;
-    background: white;
-    display: flex; align-items: center; justify-content: center;
-    font-size: 40px;
-    border: 3px solid rgba(255,255,255,.5);
-  }
-  .profile-uname { color: white; font-size: 20px; font-weight: 900; }
-  .profile-phone { color: rgba(255,255,255,.7); font-size: 13px; font-weight: 600; }
-  .profile-badges { display: flex; gap: 8px; margin-top: 6px; }
-  .pbadge {
-    background: rgba(255,255,255,.2);
-    color: white; font-size: 11px; font-weight: 700;
-    padding: 4px 10px; border-radius: 20px;
-  }
-  .profile-body {
-    margin-top: -24px;
-    padding: 0 16px;
-    flex: 1;
-    overflow-y: auto;
-    padding-bottom: 100px;
-  }
-  .profile-card {
-    background: white;
-    border-radius: 20px;
-    overflow: hidden;
-    box-shadow: 0 4px 20px rgba(0,80,200,.1);
-    margin-bottom: 16px;
-  }
-  .profile-section-title {
-    font-size: 12px; font-weight: 800;
-    color: var(--gray);
-    text-transform: uppercase;
-    letter-spacing: .8px;
-    padding: 14px 16px 6px;
-    background: var(--gray-light);
-    border-bottom: 1px solid #EEF2FA;
-  }
-  .profile-row {
-    display: flex;
-    align-items: center;
-    padding: 14px 16px;
-    border-bottom: 1px solid #F0F4FA;
-    cursor: pointer;
-    transition: background .15s;
-  }
-  .profile-row:last-child { border-bottom: none; }
-  .profile-row:active { background: var(--blue-pale); }
-  .pr-icon {
-    width: 36px; height: 36px;
-    border-radius: 10px;
-    display: flex; align-items: center; justify-content: center;
-    font-size: 18px;
-    margin-right: 12px;
-    flex-shrink: 0;
-  }
-  .pr-icon.blue { background: var(--blue-pale); }
-  .pr-icon.green { background: #E8F5E9; }
-  .pr-icon.orange { background: #FFF3E0; }
-  .pr-icon.purple { background: #F3E5F5; }
-  .pr-label { font-size: 14px; font-weight: 700; color: var(--text); flex: 1; }
-  .pr-arrow { color: var(--gray); font-size: 16px; }
-  .pr-badge {
-    background: var(--blue);
-    color: white; font-size: 10px; font-weight: 800;
-    padding: 2px 7px; border-radius: 20px;
-    margin-right: 8px;
-  }
-
-  /* ====== SCROLL PADDING ====== */
-  .pb-safe { padding-bottom: 90px; }
-
-  /* ====== ANIMATED DOTS ====== */
-  @keyframes fadeSlideUp {
-    from { opacity: 0; transform: translateY(20px); }
-    to { opacity: 1; transform: translateY(0); }
-  }
-  .animate-in {
-    animation: fadeSlideUp .4s ease forwards;
-  }
-  .animate-in:nth-child(2) { animation-delay: .05s; opacity: 0; }
-  .animate-in:nth-child(3) { animation-delay: .1s; opacity: 0; }
-  .animate-in:nth-child(4) { animation-delay: .15s; opacity: 0; }
-
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;font-family:'Nunito',sans-serif}
+:root{
+  --blue:#0070FF;--bd:#0050CC;--bl:#4DA8FF;--bp:#E8F2FF;
+  --bg:#F0F4FB;--white:#fff;--text:#1A2B4A;--soft:#5A6B82;--gray:#8896AB;
+}
+body{background:#1a2040;display:flex;justify-content:center;align-items:center;min-height:100vh}
+.phone{width:390px;height:844px;background:var(--bg);border-radius:44px;overflow:hidden;
+  box-shadow:0 40px 80px rgba(0,30,100,.5),0 0 0 10px #111;
+  position:relative;display:flex;flex-direction:column}
+.notch{width:120px;height:30px;background:#111;border-radius:0 0 18px 18px;
+  position:absolute;top:0;left:50%;transform:translateX(-50%);z-index:999}
+.sbar{background:var(--bd);padding:12px 22px 6px;display:flex;justify-content:space-between;
+  align-items:center;color:#fff;font-size:12px;font-weight:700;flex-shrink:0;position:relative;z-index:50}
+.screen{display:none;flex:1;overflow:hidden;flex-direction:column}
+.screen.active{display:flex}
+.scroll{flex:1;overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch}
+.scroll::-webkit-scrollbar{display:none}
+.bnav{position:absolute;bottom:0;left:0;right:0;background:#fff;
+  border-top:1px solid #E0E8F8;padding:8px 0 18px;
+  display:flex;justify-content:space-around;align-items:center;z-index:100}
+.nitem{display:flex;flex-direction:column;align-items:center;gap:3px;
+  cursor:pointer;padding:4px 14px;border:none;background:transparent}
+.nitem .ni{font-size:22px}.nitem .nl{font-size:10px;font-weight:700;color:var(--gray)}
+.nitem.on .nl{color:var(--blue)}
+.ncenter{width:52px;height:52px;background:linear-gradient(135deg,var(--bd),var(--bl));
+  border-radius:50%;display:flex;align-items:center;justify-content:center;
+  font-size:24px;margin-top:-22px;box-shadow:0 6px 18px rgba(0,100,255,.4);cursor:pointer;border:none}
+.hdr{background:linear-gradient(150deg,var(--bd),var(--blue) 60%,var(--bl));
+  padding:14px 18px 55px;position:relative;overflow:hidden;flex-shrink:0}
+.hdr::before{content:'';position:absolute;top:-40px;right:-40px;width:180px;height:180px;background:rgba(255,255,255,.07);border-radius:50%}
+.hdr::after{content:'';position:absolute;bottom:10px;left:-50px;width:140px;height:140px;background:rgba(255,255,255,.05);border-radius:50%}
+.hdr2{background:linear-gradient(150deg,var(--bd),var(--blue));padding:14px 18px 22px;flex-shrink:0}
+.back{background:rgba(255,255,255,.15);border:none;border-radius:10px;
+  width:36px;height:36px;color:#fff;font-size:18px;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;margin-bottom:12px}
+.htitle{color:#fff;font-size:22px;font-weight:900}
+.hsub{color:rgba(255,255,255,.7);font-size:13px;font-weight:600;margin-top:3px}
+.card{background:#fff;border-radius:16px;box-shadow:0 2px 10px rgba(0,0,0,.06)}
+.card-lg{background:#fff;border-radius:20px;box-shadow:0 6px 24px rgba(0,80,200,.1)}
+.balwrap{padding:0 14px;margin-top:-34px;position:relative;z-index:2;flex-shrink:0}
+.balcard{background:#fff;border-radius:18px;padding:14px 18px;
+  box-shadow:0 6px 24px rgba(0,80,200,.12);display:flex;align-items:center;justify-content:space-between}
+.bal-item{text-align:center;flex:1}
+.bal-div{width:1px;height:38px;background:#E0E8F8}
+.bal-label{font-size:10px;color:var(--gray);font-weight:700;text-transform:uppercase;letter-spacing:.5px}
+.bal-val{font-size:18px;font-weight:900;color:var(--text);margin-top:2px}
+.bal-val.blue{color:var(--blue)}
+.topup-btn{background:var(--bp);color:var(--blue);border:none;border-radius:20px;padding:6px 14px;font-size:12px;font-weight:800;cursor:pointer}
+.svc-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+.svc-item{display:flex;flex-direction:column;align-items:center;gap:6px;cursor:pointer;padding:4px;border-radius:12px}
+.svc-icon{width:54px;height:54px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:22px;box-shadow:0 3px 10px rgba(0,80,200,.2)}
+.svc-label{font-size:10px;font-weight:700;color:var(--soft);text-align:center}
+.pscroll{display:flex;gap:12px;overflow-x:auto;padding-bottom:4px;scrollbar-width:none}
+.pscroll::-webkit-scrollbar{display:none}
+.pbanner{min-width:240px;height:110px;border-radius:16px;overflow:hidden;position:relative;flex-shrink:0;cursor:pointer}
+.pbanner-text{padding:14px 16px;position:relative;z-index:1}
+.ptag{background:rgba(255,255,255,.22);color:#fff;font-size:10px;font-weight:800;padding:2px 8px;border-radius:20px;display:inline-block;margin-bottom:5px;text-transform:uppercase}
+.ptitle{color:#fff;font-size:15px;font-weight:900;line-height:1.2}
+.psub{color:rgba(255,255,255,.8);font-size:11px;font-weight:600;margin-top:3px}
+.pemoji{position:absolute;right:12px;top:50%;transform:translateY(-50%);font-size:44px;opacity:.7}
+.nb-card{background:#fff;border-radius:16px;padding:12px;display:flex;gap:12px;align-items:center;box-shadow:0 2px 10px rgba(0,0,0,.05);cursor:pointer}
+.nb-img{width:56px;height:56px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:28px;flex-shrink:0}
+.nb-name{font-size:14px;font-weight:800;color:var(--text)}
+.nb-cat{font-size:12px;color:var(--gray);font-weight:600;margin-top:2px}
+.nb-meta{display:flex;gap:6px;margin-top:5px;align-items:center}
+.pill{font-size:10px;font-weight:700;padding:2px 7px;border-radius:20px}
+.pill-b{background:var(--bp);color:var(--blue)}
+.pill-g{background:#E8F5E9;color:#2E7D32}
+.pill-o{background:#FFF3E0;color:#E65100}
+.nb-price{font-size:14px;font-weight:800;color:var(--blue)}
+#mapCanvas{display:block;width:100%}
+.loc-input{background:#fff;border-radius:14px;padding:12px 14px;display:flex;align-items:center;gap:10px;margin-bottom:10px;box-shadow:0 2px 8px rgba(0,0,0,.05)}
+.loc-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0}
+.loc-input input{border:none;outline:none;font-size:14px;font-weight:600;color:var(--text);width:100%;background:transparent}
+.drv-avatar{width:52px;height:52px;border-radius:50%;background:linear-gradient(135deg,var(--bl),var(--bd));display:flex;align-items:center;justify-content:center;font-size:26px;flex-shrink:0}
+.plate{background:var(--bp);color:var(--blue);font-size:13px;font-weight:800;padding:3px 10px;border-radius:8px;display:inline-block;margin-top:4px}
+.dstats{display:flex;justify-content:space-around;background:var(--bg);border-radius:14px;padding:12px;margin:14px 0}
+.ds-val{font-size:17px;font-weight:900;color:var(--text);text-align:center}
+.ds-val.blue{color:var(--blue)}
+.ds-lbl{font-size:11px;color:var(--gray);font-weight:700;margin-top:2px;text-align:center}
+.btn-main{background:linear-gradient(135deg,var(--bd),var(--bl));color:#fff;border:none;border-radius:16px;padding:15px;width:100%;font-size:16px;font-weight:800;cursor:pointer;box-shadow:0 6px 18px rgba(0,100,255,.35)}
+.btn-out{background:#fff;color:var(--blue);border:2px solid var(--blue);border-radius:14px;padding:11px;flex:1;font-size:13px;font-weight:800;cursor:pointer}
+.food-row{background:#fff;border-radius:16px;padding:12px 14px;display:flex;align-items:center;gap:12px;box-shadow:0 2px 8px rgba(0,0,0,.05)}
+.food-icon{width:50px;height:50px;border-radius:12px;background:var(--bg);display:flex;align-items:center;justify-content:center;font-size:26px;flex-shrink:0}
+.qty-btn{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:800;cursor:pointer;border:none;flex-shrink:0}
+.qty-add{background:var(--blue);color:#fff}
+.qty-rem{background:#fff;color:var(--blue);border:2px solid var(--blue)!important}
+.cartbar{position:sticky;bottom:90px;margin:10px 14px;background:linear-gradient(135deg,var(--bd),var(--bl));border-radius:16px;padding:13px 18px;display:flex;justify-content:space-between;align-items:center;box-shadow:0 6px 18px rgba(0,100,255,.35);cursor:pointer}
+.cart-badge{background:rgba(255,255,255,.25);border-radius:50%;width:28px;height:28px;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:900;font-size:14px}
+.cat-row{display:flex;gap:8px;padding:14px 14px 0;overflow-x:auto;scrollbar-width:none;flex-shrink:0}
+.cat-row::-webkit-scrollbar{display:none}
+.cpill{padding:7px 14px;border-radius:20px;border:2px solid #E0E8F8;background:#fff;color:var(--soft);font-weight:700;font-size:12px;cursor:pointer;white-space:nowrap}
+.cpill.on{background:var(--blue);color:#fff;border-color:var(--blue)}
+.pgrid{display:grid;grid-template-columns:1fr 1fr;gap:12px;padding:14px}
+.pcard{border-radius:16px;overflow:hidden;box-shadow:0 4px 14px rgba(0,0,0,.1);cursor:pointer}
+.pcard-img{height:80px;display:flex;align-items:center;justify-content:center;font-size:36px}
+.pcard-body{background:#fff;padding:10px}
+.pcard-title{font-size:13px;font-weight:800;color:var(--text)}
+.pcard-disc{font-size:11px;font-weight:700;color:var(--blue);margin-top:3px}
+.pcard-exp{font-size:10px;color:var(--gray);font-weight:600;margin-top:4px}
+.hrow{background:#fff;border-radius:16px;padding:14px;box-shadow:0 2px 8px rgba(0,0,0,.05);display:flex;gap:12px;align-items:center}
+.hrow-icon{width:46px;height:46px;border-radius:12px;background:var(--bp);display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0}
+.pcard2{background:#fff;border-radius:18px;overflow:hidden;box-shadow:0 2px 10px rgba(0,80,200,.08);margin-bottom:14px}
+.psec-title{font-size:11px;font-weight:800;color:var(--gray);text-transform:uppercase;letter-spacing:.8px;padding:12px 16px 8px;background:var(--bg);border-bottom:1px solid #EEF2FA}
+.prow{display:flex;align-items:center;padding:13px 16px;border-bottom:1px solid #F0F4FA;cursor:pointer}
+.prow:last-child{border-bottom:none}
+.prow-icon{width:34px;height:34px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:17px;margin-right:12px;flex-shrink:0}
+.pbadge{background:var(--blue);color:#fff;font-size:10px;font-weight:800;padding:2px 7px;border-radius:20px;margin-right:8px}
+.amt-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px}
+.amt-btn{padding:14px;border-radius:14px;border:2px solid #E0E8F8;background:#fff;color:var(--text);font-weight:800;font-size:14px;cursor:pointer}
+.amt-btn.on{border-color:var(--blue);background:var(--bp);color:var(--blue)}
+.success-wrap{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:30px;gap:16px;padding-bottom:90px}
+.section{padding:18px 14px 0}
+.sec-title{font-size:16px;font-weight:800;color:var(--text);margin-bottom:12px}
+.row-between{display:flex;justify-content:space-between;align-items:center}
+.flex{display:flex}.flex-c{align-items:center}.gap8{gap:8px}.gap12{gap:12px}
+.mb10{margin-bottom:10px}.mb14{margin-bottom:14px}.p14{padding:14px}.pb90{padding-bottom:90px}
+.rating{font-size:12px;font-weight:700;color:#FFB300}
+.green-box{background:#E8F5E9;border-radius:12px;padding:10px 14px;margin-bottom:14px;text-align:center}
+.dots{display:flex;gap:8px;justify-content:center;margin:12px 0}
+.dot{width:10px;height:10px;border-radius:50%;background:var(--blue)}
+@keyframes dotpulse{0%,100%{transform:scale(1);opacity:.5}50%{transform:scale(1.4);opacity:1}}
+.dot:nth-child(1){animation:dotpulse 1.2s ease-in-out infinite}
+.dot:nth-child(2){animation:dotpulse 1.2s ease-in-out .2s infinite}
+.dot:nth-child(3){animation:dotpulse 1.2s ease-in-out .4s infinite}
+input[type=number]::-webkit-inner-spin-button{-webkit-appearance:none}
 </style>
 </head>
 <body>
-
 <div class="phone">
   <div class="notch"></div>
-  <!-- Status Bar -->
-  <div class="status-bar">
-    <span>9:41</span>
-    <div class="status-icons">
-      <span>▊▊▊</span>
-      <span>WiFi</span>
-      <span>🔋</span>
-    </div>
-  </div>
 
-  <!-- ======= HOME SCREEN ======= -->
-  <div class="screen active" id="screen-home">
-    <div class="home-header">
-      <div class="header-top">
-        <div class="logo">Go<span>App</span></div>
-        <div class="header-icons">
-          <button class="icon-btn">🔔</button>
-          <button class="icon-btn">💬</button>
+  <!-- STATUS BAR -->
+  <div class="sbar"><span id="clock">09:41</span><div>▊▊▊ WiFi 🔋</div></div>
+
+  <!-- ══ HOME ══ -->
+  <div class="screen active" id="s-home">
+    <div class="scroll pb90">
+      <div class="hdr">
+        <div class="row-between" style="margin-bottom:14px;position:relative">
+          <div style="font-size:26px;font-weight:900;color:#fff;letter-spacing:-1px">Go<span style="color:#AADDFF">App</span></div>
+          <div class="flex gap8">
+            <button style="width:36px;height:36px;background:rgba(255,255,255,.15);border:none;color:#fff;font-size:16px;cursor:pointer;border-radius:50%;position:relative" onclick="goTo('s-notif')">
+              🔔<span id="notif-badge" style="position:absolute;top:-3px;right:-3px;background:#FF4444;color:#fff;border-radius:50%;width:16px;height:16px;font-size:9px;font-weight:800;display:flex;align-items:center;justify-content:center">3</span>
+            </button>
+            <button style="width:36px;height:36px;background:rgba(255,255,255,.15);border:none;color:#fff;font-size:16px;cursor:pointer;border-radius:50%">💬</button>
+          </div>
+        </div>
+        <div style="color:rgba(255,255,255,.8);font-size:13px;font-weight:600;position:relative">Selamat datang,</div>
+        <div style="color:#fff;font-size:20px;font-weight:900;margin-bottom:14px;position:relative">MehanGG 👋</div>
+        <div style="background:#fff;border-radius:14px;padding:11px 14px;display:flex;align-items:center;gap:10px;box-shadow:0 4px 18px rgba(0,0,0,.15);position:relative">
+          <span style="font-size:18px">🔍</span><span style="font-size:14px;font-weight:600;color:var(--soft)">Mau pesan apa hari ini?</span>
         </div>
       </div>
-      <div class="greeting">Selamat datang,</div>
-      <div class="user-name">MehanGG 👋</div>
-      <div class="search-bar">
-        <span>🔍</span>
-        <input type="text" placeholder="Mau pesan apa hari ini?" readonly>
-      </div>
-    </div>
-
-    <div class="balance-wrap animate-in">
-      <div class="balance-card">
-        <div class="bal-item">
-          <div class="bal-label">GoPay</div>
-          <div class="bal-value blue">Rp 150K</div>
-        </div>
-        <div class="bal-divider"></div>
-        <div class="bal-item">
-          <div class="bal-label">GoPoints</div>
-          <div class="bal-value">2.340</div>
-        </div>
-        <div class="bal-divider"></div>
-        <div class="bal-item">
-          <button class="bal-topup">+ Top Up</button>
+      <div class="balwrap">
+        <div class="balcard">
+          <div class="bal-item"><div class="bal-label">GoPay</div><div class="bal-val blue" id="home-bal">Rp 150.000</div></div>
+          <div class="bal-div"></div>
+          <div class="bal-item"><div class="bal-label">GoPoints</div><div class="bal-val" id="home-pts">2.340</div></div>
+          <div class="bal-div"></div>
+          <div class="bal-item"><button class="topup-btn" onclick="goTo('s-topup')">+ Top Up</button></div>
         </div>
       </div>
-    </div>
-
-    <div class="section animate-in">
-      <div class="section-title">Layanan</div>
-      <div class="services-grid">
-        <div class="service-item" onclick="showScreen('screen-order')">
-          <div class="service-icon si-ride">🛵</div>
-          <div class="service-label">GoRide</div>
-        </div>
-        <div class="service-item" onclick="showScreen('screen-order')">
-          <div class="service-icon si-ride">🚗</div>
-          <div class="service-label">GoCar</div>
-        </div>
-        <div class="service-item">
-          <div class="service-icon si-food">🍔</div>
-          <div class="service-label">GoFood</div>
-        </div>
-        <div class="service-item">
-          <div class="service-icon si-shop">🛍️</div>
-          <div class="service-label">GoShop</div>
-        </div>
-        <div class="service-item">
-          <div class="service-icon si-send">📦</div>
-          <div class="service-label">GoSend</div>
-        </div>
-        <div class="service-item">
-          <div class="service-icon si-pay">💳</div>
-          <div class="service-label">GoPay</div>
-        </div>
-        <div class="service-item">
-          <div class="service-icon si-med">💊</div>
-          <div class="service-label">GoMed</div>
-        </div>
-        <div class="service-item">
-          <div class="service-icon si-more">⋯</div>
-          <div class="service-label">Lainnya</div>
+      <div class="section">
+        <div class="sec-title">Layanan</div>
+        <div class="svc-grid">
+          <div class="svc-item" onclick="setOT('GoRide');goTo('s-order')"><div class="svc-icon" style="background:linear-gradient(135deg,#0050CC,#4DA8FF)">🛵</div><div class="svc-label">GoRide</div></div>
+          <div class="svc-item" onclick="setOT('GoCar');goTo('s-order')"><div class="svc-icon" style="background:linear-gradient(135deg,#0060DD,#55AAFF)">🚗</div><div class="svc-label">GoCar</div></div>
+          <div class="svc-item" onclick="goTo('s-food')"><div class="svc-icon" style="background:linear-gradient(135deg,#FF6B00,#FFAA00)">🍔</div><div class="svc-label">GoFood</div></div>
+          <div class="svc-item" onclick="goTo('s-soon')"><div class="svc-icon" style="background:linear-gradient(135deg,#00C853,#00E676)">🛍️</div><div class="svc-label">GoShop</div></div>
+          <div class="svc-item" onclick="goTo('s-soon')"><div class="svc-icon" style="background:linear-gradient(135deg,#6200EA,#AB47BC)">📦</div><div class="svc-label">GoSend</div></div>
+          <div class="svc-item" onclick="goTo('s-topup')"><div class="svc-icon" style="background:linear-gradient(135deg,#0060CC,#0099FF)">💳</div><div class="svc-label">GoPay</div></div>
+          <div class="svc-item" onclick="goTo('s-soon')"><div class="svc-icon" style="background:linear-gradient(135deg,#00897B,#4DB6AC)">💊</div><div class="svc-label">GoMed</div></div>
+          <div class="svc-item" onclick="goTo('s-soon')"><div class="svc-icon" style="background:linear-gradient(135deg,#546E7A,#90A4AE)">⋯</div><div class="svc-label">Lainnya</div></div>
         </div>
       </div>
-    </div>
-
-    <div class="section animate-in">
-      <div class="section-title">Promo Hari Ini</div>
-      <div class="promo-scroll">
-        <div class="promo-card pc1" onclick="showScreen('screen-promo')">
-          <div class="promo-text">
-            <div class="promo-tag">GoRide</div>
-            <div class="promo-title">Diskon 50%<br>Perjalanan Pertama</div>
-            <div class="promo-sub">Berlaku s.d. 31 Mar</div>
-          </div>
-          <div class="promo-emoji">🛵</div>
-        </div>
-        <div class="promo-card pc2" onclick="showScreen('screen-promo')">
-          <div class="promo-text">
-            <div class="promo-tag">GoFood</div>
-            <div class="promo-title">Gratis Ongkir<br>Min. Order 30rb</div>
-            <div class="promo-sub">Berlaku s.d. 25 Mar</div>
-          </div>
-          <div class="promo-emoji">🍔</div>
-        </div>
-        <div class="promo-card pc3" onclick="showScreen('screen-promo')">
-          <div class="promo-text">
-            <div class="promo-tag">GoPay</div>
-            <div class="promo-title">Cashback 20%<br>Semua Pembayaran</div>
-            <div class="promo-sub">Berlaku s.d. 20 Mar</div>
-          </div>
-          <div class="promo-emoji">💳</div>
+      <div class="section">
+        <div class="sec-title">Promo Hari Ini</div>
+        <div class="pscroll">
+          <div class="pbanner" style="background:linear-gradient(120deg,#003fa3,#0080FF)" onclick="goTo('s-promo')"><div class="pbanner-text"><div class="ptag">GoRide</div><div class="ptitle">Diskon 50%<br>Perjalanan</div><div class="psub">s.d. 31 Mar</div></div><div class="pemoji">🛵</div></div>
+          <div class="pbanner" style="background:linear-gradient(120deg,#007a00,#00C853)" onclick="goTo('s-promo')"><div class="pbanner-text"><div class="ptag">GoFood</div><div class="ptitle">Gratis Ongkir<br>Min. Rp 30rb</div><div class="psub">s.d. 25 Mar</div></div><div class="pemoji">🍔</div></div>
+          <div class="pbanner" style="background:linear-gradient(120deg,#b50000,#FF4444)" onclick="goTo('s-promo')"><div class="pbanner-text"><div class="ptag">GoPay</div><div class="ptitle">Cashback 20%<br>Semua Bayar</div><div class="psub">s.d. 20 Mar</div></div><div class="pemoji">💳</div></div>
         </div>
       </div>
-    </div>
-
-    <div class="section animate-in" style="padding-bottom: 0;">
-      <div class="section-title">Rekomendasi Terdekat</div>
-      <div class="nearby-list">
-        <div class="nearby-card">
-          <div class="nearby-img nb1">🍜</div>
-          <div class="nearby-info">
-            <div class="nearby-name">Warung Bu Sari</div>
-            <div class="nearby-cat">Masakan Jawa • 1.2 km</div>
-            <div class="nearby-meta">
-              <div class="rating">⭐ 4.8</div>
-              <div class="tag-pill tag-green">Buka</div>
-              <div class="tag-pill tag-blue">Free Ongkir</div>
-            </div>
-          </div>
-          <div class="nearby-price">Rp 15K</div>
-        </div>
-        <div class="nearby-card">
-          <div class="nearby-img nb2">🥤</div>
-          <div class="nearby-info">
-            <div class="nearby-name">Kopi Kekinian 2.0</div>
-            <div class="nearby-cat">Minuman • 0.8 km</div>
-            <div class="nearby-meta">
-              <div class="rating">⭐ 4.6</div>
-              <div class="tag-pill tag-green">Buka</div>
-              <div class="tag-pill tag-orange">Promo</div>
-            </div>
-          </div>
-          <div class="nearby-price">Rp 20K</div>
-        </div>
-        <div class="nearby-card">
-          <div class="nearby-img nb3">🍗</div>
-          <div class="nearby-info">
-            <div class="nearby-name">Ayam Geprek Om Budi</div>
-            <div class="nearby-cat">Ayam & Bebek • 2.1 km</div>
-            <div class="nearby-meta">
-              <div class="rating">⭐ 4.7</div>
-              <div class="tag-pill tag-green">Buka</div>
-              <div class="tag-pill tag-blue">Terlaris</div>
-            </div>
-          </div>
-          <div class="nearby-price">Rp 18K</div>
+      <div class="section" style="padding-bottom:0">
+        <div class="sec-title">Rekomendasi Terdekat</div>
+        <div style="display:flex;flex-direction:column;gap:10px">
+          <div class="nb-card" onclick="goTo('s-food')"><div class="nb-img" style="background:#FFF3E0">🍜</div><div style="flex:1"><div class="nb-name">Warung Bu Sari</div><div class="nb-cat">Masakan Jawa · 1.2 km</div><div class="nb-meta"><span class="rating">⭐ 4.8</span><span class="pill pill-g">Buka</span><span class="pill pill-b">Free Ongkir</span></div></div><div class="nb-price">Rp 15K</div></div>
+          <div class="nb-card" onclick="goTo('s-food')"><div class="nb-img" style="background:#E8F5E9">🥤</div><div style="flex:1"><div class="nb-name">Kopi Kekinian 2.0</div><div class="nb-cat">Minuman · 0.8 km</div><div class="nb-meta"><span class="rating">⭐ 4.6</span><span class="pill pill-g">Buka</span><span class="pill pill-o">Promo</span></div></div><div class="nb-price">Rp 20K</div></div>
+          <div class="nb-card" onclick="goTo('s-food')"><div class="nb-img" style="background:#E3F2FD">🍗</div><div style="flex:1"><div class="nb-name">Ayam Geprek Om Budi</div><div class="nb-cat">Ayam & Bebek · 2.1 km</div><div class="nb-meta"><span class="rating">⭐ 4.7</span><span class="pill pill-g">Buka</span><span class="pill pill-b">Terlaris</span></div></div><div class="nb-price">Rp 18K</div></div>
+          <div class="nb-card" onclick="goTo('s-food')"><div class="nb-img" style="background:#FCE4EC">🍲</div><div style="flex:1"><div class="nb-name">Bakso Pak Kumis</div><div class="nb-cat">Bakso & Mie · 0.5 km</div><div class="nb-meta"><span class="rating">⭐ 4.9</span><span class="pill pill-g">Buka</span><span class="pill pill-b">Free Ongkir</span></div></div><div class="nb-price">Rp 12K</div></div>
         </div>
       </div>
     </div>
   </div>
 
-  <!-- ======= ORDER SCREEN ======= -->
-  <div class="screen" id="screen-order">
-    <div class="order-header">
-      <button class="back-btn" onclick="showScreen('screen-home')">←</button>
-      <div class="order-title">GoRide</div>
-      <div class="order-sub">Driver siap menjemput kamu 🛵</div>
+  <!-- ══ ORDER ══ -->
+  <div class="screen" id="s-order">
+    <div class="hdr2">
+      <button class="back" onclick="goTo('s-home')">←</button>
+      <div class="htitle" id="order-title">GoRide</div>
+      <div class="hsub">Pesan kendaraanmu sekarang</div>
     </div>
-
-    <div class="map-preview">
-      <div class="map-grid"></div>
-      <div class="map-road-h" style="top:30%;"></div>
-      <div class="map-road-h" style="top:60%;"></div>
-      <div class="map-road-v" style="left:35%;"></div>
-      <div class="map-road-v" style="left:65%;"></div>
-      <div class="map-pin">📍</div>
-      <div class="map-car">🛵</div>
+    <div style="display:flex;gap:10px;padding:12px 14px 0;flex-shrink:0">
+      <button id="btn-ride" onclick="setOT('GoRide')" style="flex:1;padding:10px;font-size:13px;border-radius:14px;border:2px solid var(--blue);background:var(--bp);color:var(--blue);font-weight:800;cursor:pointer">🛵 GoRide</button>
+      <button id="btn-car"  onclick="setOT('GoCar')"  style="flex:1;padding:10px;font-size:13px;border-radius:14px;border:2px solid #E0E8F8;background:#fff;color:var(--soft);font-weight:800;cursor:pointer">🚗 GoCar</button>
     </div>
-
-    <div class="location-form">
-      <div class="loc-input">
-        <div class="loc-dot blue"></div>
-        <div class="loc-text">📍 Lokasi kamu saat ini</div>
-      </div>
-      <div class="loc-input">
-        <div class="loc-dot red"></div>
-        <div class="loc-text">🏠 Tujuan kamu...</div>
-      </div>
+    <!-- CANVAS MAP -->
+    <div style="position:relative;flex-shrink:0;margin-top:10px">
+      <canvas id="mapCanvas" height="180" style="display:block;width:100%"></canvas>
+      <div id="eta-badge" style="position:absolute;top:10px;right:10px;background:rgba(0,50,160,.85);color:#fff;border-radius:12px;padding:6px 12px;font-size:12px;font-weight:800">📍 3 menit lagi</div>
     </div>
-
-    <div class="driver-card">
-      <div class="driver-drag"></div>
-      <div class="driver-info">
-        <div class="driver-avatar">🧔</div>
-        <div>
-          <div class="driver-name">Budi Santoso</div>
-          <div class="driver-rating">⭐ 4.95 • 1.240 perjalanan</div>
-          <div class="driver-plate">B 4829 ZXQ</div>
+    <div class="scroll" style="padding:12px 14px 0;padding-bottom:100px">
+      <div class="loc-input"><div class="loc-dot" style="background:var(--blue)"></div><input id="inp-origin" type="text" value="Lokasi kamu saat ini" placeholder="Lokasi penjemputan..."></div>
+      <div class="loc-input"><div class="loc-dot" style="background:#FF4444"></div><input id="inp-dest" type="text" placeholder="Tujuan kamu..."></div>
+      <div class="card" style="padding:14px 16px;margin-bottom:14px;display:flex;justify-content:space-between;align-items:center">
+        <div><div style="font-size:12px;color:var(--gray);font-weight:700">Estimasi Harga</div><div style="font-size:20px;font-weight:900;color:var(--blue);margin-top:2px" id="order-price">Rp 18.000</div></div>
+        <div style="text-align:right"><div style="font-size:12px;color:var(--gray);font-weight:700">Estimasi Waktu</div><div style="font-size:16px;font-weight:800;color:var(--text);margin-top:2px" id="order-eta">~3 menit</div></div>
+      </div>
+      <div id="step-order"><button class="btn-main" onclick="startOrder()">🛵 Pesan Sekarang</button></div>
+      <div id="step-search" style="display:none;text-align:center;padding:20px 0">
+        <div style="font-size:50px;margin-bottom:10px">🔍</div>
+        <div style="font-size:16px;font-weight:800;color:var(--text)">Mencari Driver...</div>
+        <div class="dots"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>
+      </div>
+      <div id="step-driver" style="display:none">
+        <div class="green-box"><span style="font-size:13px;font-weight:700;color:#2E7D32">✅ Driver ditemukan!</span></div>
+        <div class="flex gap12 flex-c mb14">
+          <div class="drv-avatar">🧔</div>
+          <div><div style="font-size:16px;font-weight:800;color:var(--text)">Budi Santoso</div><div class="rating">⭐ 4.95 · 1.240 perjalanan</div><div class="plate">B 4829 ZXQ</div></div>
+        </div>
+        <div class="dstats">
+          <div><div class="ds-val blue" id="drv-eta">3 mnt</div><div class="ds-lbl">Tiba</div></div>
+          <div><div class="ds-val">5.2 km</div><div class="ds-lbl">Jarak</div></div>
+          <div><div class="ds-val blue" id="drv-price">Rp 18K</div><div class="ds-lbl">Dibayar</div></div>
+        </div>
+        <div class="flex gap8">
+          <button class="btn-out" onclick="alert('Menghubungi driver...')">📞 Hubungi</button>
+          <button class="btn-main" style="flex:1" onclick="finishOrder()">✅ Selesai</button>
         </div>
       </div>
-      <div class="driver-stats">
-        <div class="dstat">
-          <div class="dstat-val blue">3 mnt</div>
-          <div class="dstat-label">Tiba</div>
-        </div>
-        <div class="dstat">
-          <div class="dstat-val">5.2 km</div>
-          <div class="dstat-label">Jarak</div>
-        </div>
-        <div class="dstat">
-          <div class="dstat-val blue">Rp 18K</div>
-          <div class="dstat-label">Estimasi</div>
-        </div>
-      </div>
-      <button class="order-btn" onclick="pesan()">🛵 Pesan Sekarang</button>
-    </div>
-  </div>
-
-  <!-- ======= PROMO SCREEN ======= -->
-  <div class="screen" id="screen-promo">
-    <div class="promo-header">
-      <div class="promo-header-title">🎁 Promo & Voucher</div>
-      <div class="promo-header-sub">Hemat lebih banyak setiap hari</div>
-    </div>
-    <div class="promo-cats">
-      <button class="cat-pill active">Semua</button>
-      <button class="cat-pill">GoRide</button>
-      <button class="cat-pill">GoCar</button>
-      <button class="cat-pill">GoFood</button>
-      <button class="cat-pill">GoPay</button>
-    </div>
-    <div class="promo-grid pb-safe">
-      <div class="promo-big-card">
-        <div class="pbc-img" style="background:linear-gradient(135deg,#003fa3,#0080FF);">🛵</div>
-        <div class="pbc-body">
-          <div class="pbc-title">Diskon 50% GoRide</div>
-          <div class="pbc-disc">Hemat s.d. Rp 25.000</div>
-          <div class="pbc-exp">Exp. 31 Mar 2026</div>
-        </div>
-      </div>
-      <div class="promo-big-card">
-        <div class="pbc-img" style="background:linear-gradient(135deg,#007a00,#00C853);">🍔</div>
-        <div class="pbc-body">
-          <div class="pbc-title">Gratis Ongkir GoFood</div>
-          <div class="pbc-disc">Min. order Rp 30.000</div>
-          <div class="pbc-exp">Exp. 25 Mar 2026</div>
-        </div>
-      </div>
-      <div class="promo-big-card">
-        <div class="pbc-img" style="background:linear-gradient(135deg,#FF6B00,#FFAA00);">💳</div>
-        <div class="pbc-body">
-          <div class="pbc-title">Cashback GoPay 20%</div>
-          <div class="pbc-disc">Maks. Rp 10.000</div>
-          <div class="pbc-exp">Exp. 20 Mar 2026</div>
-        </div>
-      </div>
-      <div class="promo-big-card">
-        <div class="pbc-img" style="background:linear-gradient(135deg,#6200EA,#AB47BC);">📦</div>
-        <div class="pbc-body">
-          <div class="pbc-title">GoSend Kilat 30%</div>
-          <div class="pbc-disc">Hemat s.d. Rp 15.000</div>
-          <div class="pbc-exp">Exp. 28 Mar 2026</div>
-        </div>
-      </div>
-      <div class="promo-big-card">
-        <div class="pbc-img" style="background:linear-gradient(135deg,#b50000,#FF4444);">🏪</div>
-        <div class="pbc-body">
-          <div class="pbc-title">GoMart 25% OFF</div>
-          <div class="pbc-disc">Semua produk segar</div>
-          <div class="pbc-exp">Exp. 22 Mar 2026</div>
-        </div>
-      </div>
-      <div class="promo-big-card">
-        <div class="pbc-img" style="background:linear-gradient(135deg,#00897B,#4DB6AC);">💊</div>
-        <div class="pbc-body">
-          <div class="pbc-title">GoMed Diskon 15%</div>
-          <div class="pbc-disc">Vitamin & Suplemen</div>
-          <div class="pbc-exp">Exp. 30 Mar 2026</div>
-        </div>
+      <div id="step-done" style="display:none;text-align:center;padding:10px 0">
+        <div style="font-size:60px;margin-bottom:10px">🎉</div>
+        <div style="font-size:18px;font-weight:900;color:var(--text);margin-bottom:6px">Perjalanan Selesai!</div>
+        <div style="font-size:14px;color:var(--soft);margin-bottom:14px">Beri rating driver kamu</div>
+        <div id="star-row" style="margin-bottom:16px;font-size:30px;cursor:pointer"></div>
+        <button class="btn-main" onclick="goTo('s-home')">Kembali ke Beranda</button>
       </div>
     </div>
   </div>
 
-  <!-- ======= PROFILE SCREEN ======= -->
-  <div class="screen" id="screen-profile">
-    <div class="profile-header">
-      <div class="profile-avatar-wrap">
-        <div class="profile-avatar">😎</div>
-        <div class="profile-uname">MehanGG</div>
-        <div class="profile-phone">+62 812-xxxx-xxxx</div>
-        <div class="profile-badges">
-          <div class="pbadge">GoClub Gold 🥇</div>
-          <div class="pbadge">2.340 pts</div>
+  <!-- ══ FOOD ══ -->
+  <div class="screen" id="s-food">
+    <div class="hdr2"><button class="back" onclick="goTo('s-home')">←</button><div class="htitle">GoFood</div><div class="hsub">Warung Bu Sari · 1.2 km</div></div>
+    <div class="scroll" style="padding:14px 14px 160px" id="food-list"></div>
+  </div>
+
+  <!-- ══ CHECKOUT ══ -->
+  <div class="screen" id="s-checkout">
+    <div class="hdr2"><button class="back" onclick="goTo('s-food')">←</button><div class="htitle">Checkout</div></div>
+    <div class="scroll" style="padding:14px;padding-bottom:90px" id="checkout-body"></div>
+  </div>
+
+  <!-- ══ TOPUP ══ -->
+  <div class="screen" id="s-topup">
+    <div class="hdr2"><button class="back" onclick="goTo('s-home')">←</button><div class="htitle">Top Up GoPay</div><div class="hsub" id="topup-bal">Saldo: Rp 150.000</div></div>
+    <div class="scroll" style="padding:14px;padding-bottom:90px">
+      <div style="font-size:14px;font-weight:800;color:var(--text);margin-bottom:12px">Pilih Nominal</div>
+      <div class="amt-grid" id="amt-grid"></div>
+      <div class="card" style="padding:12px 14px;display:flex;align-items:center;gap:10px;margin-bottom:14px">
+        <span style="font-size:14px;font-weight:700;color:var(--gray)">Rp</span>
+        <input id="custom-amt" type="number" placeholder="Nominal lain..." style="border:none;outline:none;font-size:14px;font-weight:700;color:var(--text);width:100%;background:transparent">
+      </div>
+      <button class="btn-main" onclick="doTopUp()">💳 Top Up Sekarang</button>
+    </div>
+  </div>
+
+  <!-- ══ PROMO ══ -->
+  <div class="screen" id="s-promo">
+    <div style="background:linear-gradient(150deg,var(--bd),var(--blue));padding:16px 18px 26px;flex-shrink:0"><div class="htitle">🎁 Promo & Voucher</div><div class="hsub">Hemat lebih banyak setiap hari</div></div>
+    <div class="cat-row" id="promo-cats"></div>
+    <div class="scroll"><div class="pgrid" id="promo-grid" style="padding-bottom:90px"></div></div>
+  </div>
+
+  <!-- ══ HISTORY ══ -->
+  <div class="screen" id="s-history">
+    <div style="background:linear-gradient(150deg,var(--bd),var(--blue));padding:16px 18px 26px;flex-shrink:0"><div class="htitle">📋 Riwayat Pesanan</div><div class="hsub">Semua transaksimu ada di sini</div></div>
+    <div class="scroll"><div style="padding:14px;display:flex;flex-direction:column;gap:10px;padding-bottom:90px" id="history-list"></div></div>
+  </div>
+
+  <!-- ══ NOTIF ══ -->
+  <div class="screen" id="s-notif">
+    <div class="hdr2"><button class="back" onclick="goTo('s-home')">←</button><div class="htitle">Notifikasi</div></div>
+    <div class="scroll" style="padding:14px;display:flex;flex-direction:column;gap:10px;padding-bottom:90px">
+      <div class="card" style="padding:14px;display:flex;gap:12px;align-items:flex-start"><div style="font-size:28px">🎁</div><div><div style="font-size:14px;font-weight:800;color:var(--text)">Promo GoRide 50%</div><div style="font-size:12px;color:var(--soft);margin-top:3px">Dapatkan diskon 50% untuk perjalanan pertamamu hari ini!</div><div style="font-size:11px;color:var(--gray);margin-top:4px">5 menit lalu</div></div></div>
+      <div class="card" style="padding:14px;display:flex;gap:12px;align-items:flex-start"><div style="font-size:28px">💳</div><div><div style="font-size:14px;font-weight:800;color:var(--text)">Top Up Berhasil</div><div style="font-size:12px;color:var(--soft);margin-top:3px">Saldo GoPay kamu sudah ditambahkan.</div><div style="font-size:11px;color:var(--gray);margin-top:4px">1 jam lalu</div></div></div>
+      <div class="card" style="padding:14px;display:flex;gap:12px;align-items:flex-start"><div style="font-size:28px">⭐</div><div><div style="font-size:14px;font-weight:800;color:var(--text)">GoPoints Bertambah!</div><div style="font-size:12px;color:var(--soft);margin-top:3px">Kamu mendapat 120 GoPoints dari pesanan terakhir.</div><div style="font-size:11px;color:var(--gray);margin-top:4px">2 jam lalu</div></div></div>
+    </div>
+  </div>
+
+  <!-- ══ PROFILE ══ -->
+  <div class="screen" id="s-profile">
+    <div style="background:linear-gradient(150deg,var(--bd),var(--blue));padding:24px 18px 50px;position:relative;overflow:hidden;flex-shrink:0">
+      <div style="position:absolute;top:-50px;right:-50px;width:200px;height:200px;background:rgba(255,255,255,.07);border-radius:50%"></div>
+      <div style="display:flex;flex-direction:column;align-items:center;gap:8px;position:relative">
+        <div style="width:76px;height:76px;border-radius:50%;background:#fff;display:flex;align-items:center;justify-content:center;font-size:38px;border:3px solid rgba(255,255,255,.5)">😎</div>
+        <div style="color:#fff;font-size:20px;font-weight:900">MehanGG</div>
+        <div style="color:rgba(255,255,255,.7);font-size:13px;font-weight:600">+62 812-xxxx-xxxx</div>
+        <div style="display:flex;gap:8px;margin-top:4px">
+          <div style="background:rgba(255,255,255,.2);color:#fff;font-size:11px;font-weight:700;padding:4px 10px;border-radius:20px">GoClub Gold 🥇</div>
+          <div style="background:rgba(255,255,255,.2);color:#fff;font-size:11px;font-weight:700;padding:4px 10px;border-radius:20px" id="prof-pts">2.340 pts</div>
         </div>
       </div>
     </div>
-    <div class="profile-body">
-      <div style="height:16px;"></div>
-      <div class="profile-card">
-        <div class="profile-section-title">Akun Saya</div>
-        <div class="profile-row">
-          <div class="pr-icon blue">👤</div>
-          <div class="pr-label">Data Diri</div>
-          <div class="pr-arrow">›</div>
-        </div>
-        <div class="profile-row">
-          <div class="pr-icon blue">📍</div>
-          <div class="pr-label">Alamat Tersimpan</div>
-          <div class="pr-badge">3</div>
-          <div class="pr-arrow">›</div>
-        </div>
-        <div class="profile-row">
-          <div class="pr-icon blue">💳</div>
-          <div class="pr-label">Metode Pembayaran</div>
-          <div class="pr-arrow">›</div>
-        </div>
+    <div class="scroll" style="margin-top:-24px;padding:0 14px;padding-bottom:90px;position:relative;z-index:2">
+      <div class="balcard card-lg" style="margin-bottom:14px;padding:14px 18px">
+        <div class="bal-item"><div class="bal-label">GoPay</div><div class="bal-val blue" id="prof-bal">Rp 150.000</div></div>
+        <div class="bal-div"></div>
+        <div class="bal-item"><button class="topup-btn" onclick="goTo('s-topup')">+ Top Up</button></div>
       </div>
-      <div class="profile-card">
-        <div class="profile-section-title">Aktivitas</div>
-        <div class="profile-row">
-          <div class="pr-icon green">📋</div>
-          <div class="pr-label">Riwayat Pesanan</div>
-          <div class="pr-arrow">›</div>
-        </div>
-        <div class="profile-row">
-          <div class="pr-icon orange">🎁</div>
-          <div class="pr-label">Voucher Saya</div>
-          <div class="pr-badge">2</div>
-          <div class="pr-arrow">›</div>
-        </div>
-        <div class="profile-row">
-          <div class="pr-icon green">⭐</div>
-          <div class="pr-label">GoClub Rewards</div>
-          <div class="pr-arrow">›</div>
-        </div>
+      <div class="pcard2">
+        <div class="psec-title">Akun Saya</div>
+        <div class="prow"><div class="prow-icon" style="background:var(--bp)">👤</div><span style="flex:1;font-size:14px;font-weight:700;color:var(--text)">Data Diri</span><span style="color:var(--gray)">›</span></div>
+        <div class="prow"><div class="prow-icon" style="background:var(--bp)">📍</div><span style="flex:1;font-size:14px;font-weight:700;color:var(--text)">Alamat Tersimpan</span><span class="pbadge">3</span><span style="color:var(--gray)">›</span></div>
+        <div class="prow"><div class="prow-icon" style="background:var(--bp)">💳</div><span style="flex:1;font-size:14px;font-weight:700;color:var(--text)">Metode Pembayaran</span><span style="color:var(--gray)">›</span></div>
       </div>
-      <div class="profile-card">
-        <div class="profile-section-title">Pengaturan</div>
-        <div class="profile-row">
-          <div class="pr-icon blue">🔔</div>
-          <div class="pr-label">Notifikasi</div>
-          <div class="pr-arrow">›</div>
-        </div>
-        <div class="profile-row">
-          <div class="pr-icon purple">🔒</div>
-          <div class="pr-label">Keamanan Akun</div>
-          <div class="pr-arrow">›</div>
-        </div>
-        <div class="profile-row">
-          <div class="pr-icon blue">❓</div>
-          <div class="pr-label">Bantuan</div>
-          <div class="pr-arrow">›</div>
-        </div>
-        <div class="profile-row" style="color:red;">
-          <div class="pr-icon" style="background:#FFEBEE;">🚪</div>
-          <div class="pr-label" style="color:#D32F2F;">Keluar</div>
-          <div class="pr-arrow" style="color:#D32F2F;">›</div>
-        </div>
+      <div class="pcard2">
+        <div class="psec-title">Aktivitas</div>
+        <div class="prow" onclick="goTo('s-history')"><div class="prow-icon" style="background:#E8F5E9">📋</div><span style="flex:1;font-size:14px;font-weight:700;color:var(--text)">Riwayat Pesanan</span><span style="color:var(--gray)">›</span></div>
+        <div class="prow" onclick="goTo('s-promo')"><div class="prow-icon" style="background:#FFF3E0">🎁</div><span style="flex:1;font-size:14px;font-weight:700;color:var(--text)">Voucher Saya</span><span class="pbadge">2</span><span style="color:var(--gray)">›</span></div>
+        <div class="prow"><div class="prow-icon" style="background:#E8F5E9">⭐</div><span style="flex:1;font-size:14px;font-weight:700;color:var(--text)">GoClub Rewards</span><span style="color:var(--gray)">›</span></div>
+      </div>
+      <div class="pcard2">
+        <div class="psec-title">Pengaturan</div>
+        <div class="prow" onclick="goTo('s-notif')"><div class="prow-icon" style="background:var(--bp)">🔔</div><span style="flex:1;font-size:14px;font-weight:700;color:var(--text)">Notifikasi</span><span style="color:var(--gray)">›</span></div>
+        <div class="prow"><div class="prow-icon" style="background:#F3E5F5">🔒</div><span style="flex:1;font-size:14px;font-weight:700;color:var(--text)">Keamanan Akun</span><span style="color:var(--gray)">›</span></div>
+        <div class="prow"><div class="prow-icon" style="background:var(--bp)">❓</div><span style="flex:1;font-size:14px;font-weight:700;color:var(--text)">Bantuan</span><span style="color:var(--gray)">›</span></div>
+        <div class="prow" onclick="alert('Sampai jumpa, MehanGG! 👋')"><div class="prow-icon" style="background:#FFEBEE">🚪</div><span style="flex:1;font-size:14px;font-weight:700;color:#D32F2F">Keluar</span><span style="color:#D32F2F">›</span></div>
       </div>
     </div>
   </div>
 
-  <!-- ======= BOTTOM NAV ======= -->
-  <div class="bottom-nav">
-    <button class="nav-item active" id="nav-home" onclick="showScreen('screen-home')">
-      <span class="nav-icon">🏠</span>
-      <span class="nav-label">Beranda</span>
-    </button>
-    <button class="nav-item" id="nav-order" onclick="showScreen('screen-order')">
-      <span class="nav-icon">🛵</span>
-      <span class="nav-label">Pesan</span>
-    </button>
-    <button class="nav-center" onclick="showScreen('screen-home')">💙</button>
-    <button class="nav-item" id="nav-promo" onclick="showScreen('screen-promo')">
-      <span class="nav-icon">🎁</span>
-      <span class="nav-label">Promo</span>
-    </button>
-    <button class="nav-item" id="nav-profile" onclick="showScreen('screen-profile')">
-      <span class="nav-icon">👤</span>
-      <span class="nav-label">Profil</span>
-    </button>
+  <!-- ══ SOON ══ -->
+  <div class="screen" id="s-soon">
+    <div class="hdr2"><button class="back" onclick="goTo('s-home')">←</button><div class="htitle">Segera Hadir</div></div>
+    <div class="success-wrap"><div style="font-size:70px">🚧</div><div style="font-size:20px;font-weight:900;color:var(--text)">Dalam Pengembangan</div><div style="font-size:14px;color:var(--soft);text-align:center">Fitur ini segera hadir!</div><button class="btn-main" style="width:auto;padding:14px 40px" onclick="goTo('s-home')">Kembali</button></div>
+  </div>
+
+  <!-- ══ BOTTOM NAV ══ -->
+  <div class="bnav">
+    <button class="nitem on" id="nav-home" onclick="goTo('s-home')"><span class="ni">🏠</span><span class="nl">Beranda</span></button>
+    <button class="nitem" id="nav-history" onclick="goTo('s-history')"><span class="ni">📋</span><span class="nl">Riwayat</span></button>
+    <button class="ncenter" onclick="goTo('s-home')">💙</button>
+    <button class="nitem" id="nav-promo" onclick="goTo('s-promo')"><span class="ni">🎁</span><span class="nl">Promo</span></button>
+    <button class="nitem" id="nav-profile" onclick="goTo('s-profile')"><span class="ni">👤</span><span class="nl">Profil</span></button>
   </div>
 </div>
 
 <script>
-  const screens = {
-    'screen-home': 'nav-home',
-    'screen-order': 'nav-order',
-    'screen-promo': 'nav-promo',
-    'screen-profile': 'nav-profile',
-  };
+// ── STATE
+let balance = 150000, points = 2340, cart = {}, orderType = 'GoRide', selAmt = null, promoFilter = 'Semua';
+let mapAnim = null, motoX, motoY, motoTX, motoTY, destX, destY, pinPulse = 0, particles = [];
 
-  function showScreen(id) {
-    document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-    document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-    document.getElementById(id).classList.add('active');
-    const navId = screens[id];
-    if (navId) document.getElementById(navId).classList.add('active');
-  }
+const PRICES   = {GoRide:18000,GoCar:45000};
+const ETA_TEXT = {GoRide:'~3 menit',GoCar:'~8 menit'};
+const ETA_DRV  = {GoRide:'3 mnt',GoCar:'8 mnt'};
 
-  function pesan() {
-    const btn = document.querySelector('.order-btn');
-    btn.textContent = '✅ Driver Ditemukan! Menuju kamu...';
-    btn.style.background = 'linear-gradient(135deg,#007a00,#00C853)';
-    setTimeout(() => {
-      btn.textContent = '🛵 Pesan Sekarang';
-      btn.style.background = '';
-    }, 3000);
-  }
+const FOOD_MENU = [
+  {id:1,name:'Nasi Goreng Special',price:18000,emoji:'🍳',rating:4.8},
+  {id:2,name:'Ayam Geprek',        price:22000,emoji:'🍗',rating:4.7},
+  {id:3,name:'Mie Goreng',         price:15000,emoji:'🍜',rating:4.6},
+  {id:4,name:'Es Teh Manis',       price:5000, emoji:'🥤',rating:4.9},
+  {id:5,name:'Bakso Urat',         price:20000,emoji:'🍲',rating:4.8},
+  {id:6,name:'Soto Ayam',          price:17000,emoji:'🥘',rating:4.7},
+];
 
-  // Cat pills interaction
-  document.querySelectorAll('.cat-pill').forEach(p => {
-    p.addEventListener('click', function() {
-      document.querySelectorAll('.cat-pill').forEach(x => x.classList.remove('active'));
-      this.classList.add('active');
-    });
+const PROMOS = [
+  {id:1,cat:'GoRide',bg:['#003fa3','#0080FF'],emoji:'🛵',title:'Diskon 50% GoRide',  disc:'Hemat s.d. Rp 25.000',exp:'31 Mar 2026'},
+  {id:2,cat:'GoFood',bg:['#007a00','#00C853'],emoji:'🍔',title:'Gratis Ongkir GoFood',disc:'Free ongkir',          exp:'25 Mar 2026'},
+  {id:3,cat:'GoPay', bg:['#b50000','#FF4444'],emoji:'💳',title:'Cashback GoPay 20%', disc:'Maks. Rp 10.000',      exp:'20 Mar 2026'},
+  {id:4,cat:'GoSend',bg:['#6200EA','#AB47BC'],emoji:'📦',title:'GoSend Kilat 30%',   disc:'Hemat s.d. Rp 15.000', exp:'28 Mar 2026'},
+  {id:5,cat:'GoMart',bg:['#b57a00','#FFAA00'],emoji:'🏪',title:'GoMart 25% OFF',     disc:'Min. belanja Rp 50K',  exp:'22 Mar 2026'},
+  {id:6,cat:'GoMed', bg:['#00897B','#4DB6AC'],emoji:'💊',title:'GoMed Diskon 15%',   disc:'Min. Rp 80.000',       exp:'30 Mar 2026'},
+];
+
+const HISTORY_DATA = [
+  {type:'GoRide',desc:'Ke Alfamart Jl. Sudirman',  date:'16 Mar 2026',price:'Rp 12.000', status:'Selesai',   icon:'🛵'},
+  {type:'GoFood',desc:'Warung Bu Sari × 2 item',   date:'15 Mar 2026',price:'Rp 45.000', status:'Selesai',   icon:'🍔'},
+  {type:'GoCar', desc:'Ke Bandara Soekarno-Hatta', date:'12 Mar 2026',price:'Rp 180.000',status:'Selesai',   icon:'🚗'},
+  {type:'GoSend',desc:'Kirim paket ke Bekasi',      date:'10 Mar 2026',price:'Rp 28.000', status:'Selesai',   icon:'📦'},
+  {type:'GoFood',desc:'Kopi Kekinian × 3 item',    date:'9 Mar 2026', price:'Rp 62.000', status:'Dibatalkan',icon:'🍔'},
+];
+
+const TOPUP_PRESETS = [20000,50000,100000,200000,500000,1000000];
+const NAV_MAP = {'s-home':'nav-home','s-history':'nav-history','s-promo':'nav-promo','s-profile':'nav-profile'};
+
+function fmt(n){ return 'Rp '+n.toLocaleString('id-ID'); }
+
+function updateUI(){
+  document.getElementById('home-bal').textContent  = fmt(balance);
+  document.getElementById('home-pts').textContent  = points.toLocaleString('id-ID');
+  document.getElementById('prof-bal').textContent  = fmt(balance);
+  document.getElementById('prof-pts').textContent  = points.toLocaleString('id-ID')+' pts';
+  document.getElementById('topup-bal').textContent = 'Saldo: '+fmt(balance);
+}
+
+// Clock
+function tickClock(){
+  const d=new Date(), h=String(d.getHours()).padStart(2,'0'), m=String(d.getMinutes()).padStart(2,'0');
+  document.getElementById('clock').textContent=h+':'+m;
+}
+tickClock(); setInterval(tickClock,1000);
+
+// Navigation
+function goTo(id){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  document.querySelectorAll('.nitem').forEach(n=>n.classList.remove('on'));
+  document.getElementById(id).classList.add('active');
+  if(NAV_MAP[id]) document.getElementById(NAV_MAP[id]).classList.add('on');
+  if(id==='s-food')     renderFood();
+  if(id==='s-promo')    renderPromo();
+  if(id==='s-history')  renderHistory();
+  if(id==='s-topup')    renderTopup();
+  if(id==='s-checkout') renderCheckout();
+  if(id==='s-order'){ resetSteps(); startMap(); }
+  else stopMap();
+}
+
+// ── CANVAS MAP ──────────────────────────────────────────────────────────────
+function startMap(){
+  const canvas = document.getElementById('mapCanvas');
+  const w = canvas.offsetWidth; const h = 180;
+  canvas.width = w; canvas.height = h;
+  motoX=w*.12; motoY=h*.8;
+  motoTX=w*.5; motoTY=h*.45;
+  destX=w*.72;  destY=h*.25;
+  pinPulse=0;
+  particles=[];
+  for(let i=0;i<20;i++) particles.push({x:Math.random()*w,y:Math.random()*h,r:Math.random()*2+.5,a:Math.random()*.5+.1,blink:Math.random()*Math.PI*2});
+  if(mapAnim) cancelAnimationFrame(mapAnim);
+  drawMap();
+}
+
+function stopMap(){ if(mapAnim){cancelAnimationFrame(mapAnim);mapAnim=null;} }
+
+function drawMap(){
+  const canvas=document.getElementById('mapCanvas');
+  if(!canvas) return;
+  const c=canvas.getContext('2d');
+  const w=canvas.width, h=canvas.height;
+  pinPulse+=0.055;
+
+  // BG
+  const bg=c.createLinearGradient(0,0,w,h);
+  bg.addColorStop(0,'#07122B'); bg.addColorStop(1,'#0A1E40');
+  c.fillStyle=bg; c.fillRect(0,0,w,h);
+
+  // Grid
+  c.strokeStyle='rgba(0,100,255,.1)'; c.lineWidth=1;
+  for(let x=0;x<w;x+=28){c.beginPath();c.moveTo(x,0);c.lineTo(x,h);c.stroke();}
+  for(let y=0;y<h;y+=28){c.beginPath();c.moveTo(0,y);c.lineTo(w,y);c.stroke();}
+
+  // Roads
+  const roads=[
+    [0,h*.38,w,h*.38],[0,h*.68,w,h*.68],
+    [w*.32,0,w*.32,h],[w*.65,0,w*.65,h],
+    [0,h*.9,w*.55,h*.2],[w*.2,h,w*.85,h*.05]
+  ];
+  roads.forEach(([x1,y1,x2,y2])=>{
+    c.strokeStyle='rgba(180,200,255,.18)'; c.lineWidth=9; c.lineCap='round';
+    c.beginPath(); c.moveTo(x1,y1); c.lineTo(x2,y2); c.stroke();
+    c.strokeStyle='rgba(255,255,255,.07)'; c.lineWidth=1; c.setLineDash([10,9]);
+    c.beginPath(); c.moveTo(x1,y1); c.lineTo(x2,y2); c.stroke();
+    c.setLineDash([]);
   });
+
+  // City particles (blinking lights)
+  const t=Date.now()/1000;
+  particles.forEach(p=>{
+    const alpha=p.a*(0.6+0.4*Math.sin(t*1.5+p.blink));
+    c.fillStyle=`rgba(120,190,255,${alpha})`;
+    c.beginPath(); c.arc(p.x,p.y,p.r,0,Math.PI*2); c.fill();
+  });
+
+  // Route line
+  const rg=c.createLinearGradient(motoX,motoY,destX,destY);
+  rg.addColorStop(0,'rgba(0,200,255,.9)'); rg.addColorStop(1,'rgba(0,100,255,.2)');
+  c.strokeStyle=rg; c.lineWidth=2.5; c.setLineDash([7,5]);
+  c.beginPath(); c.moveTo(motoX,motoY); c.lineTo(destX,destY); c.stroke();
+  c.setLineDash([]);
+
+  // Destination pulse rings
+  for(let i=0;i<3;i++){
+    const r=12+i*8+Math.sin(pinPulse+i)*5;
+    const a=Math.max(0,0.25-i*0.07);
+    c.fillStyle=`rgba(255,60,60,${a})`;
+    c.beginPath(); c.arc(destX,destY,r,0,Math.PI*2); c.fill();
+  }
+  // Dest pin
+  c.font='22px serif'; c.textAlign='center'; c.textBaseline='middle';
+  c.fillText('📍',destX,destY+2);
+
+  // Moto movement
+  const dx=motoTX-motoX, dy=motoTY-motoY, dist=Math.sqrt(dx*dx+dy*dy);
+  if(dist>2){ motoX+=dx*.02; motoY+=dy*.02; }
+  else { motoTX=Math.random()*w*.6+w*.08; motoTY=Math.random()*h*.55+h*.1; }
+
+  // Moto glow
+  const mg=c.createRadialGradient(motoX,motoY,0,motoX,motoY,22);
+  mg.addColorStop(0,'rgba(0,160,255,.4)'); mg.addColorStop(1,'rgba(0,160,255,0)');
+  c.fillStyle=mg; c.beginPath(); c.arc(motoX,motoY,22,0,Math.PI*2); c.fill();
+
+  // Moto icon
+  c.font=orderType==='GoRide'?'22px serif':'20px serif';
+  c.fillText(orderType==='GoRide'?'🛵':'🚗',motoX,motoY+2);
+  c.textAlign='left'; c.textBaseline='alphabetic';
+
+  mapAnim=requestAnimationFrame(drawMap);
+}
+
+// ── ORDER ───────────────────────────────────────────────────────────────────
+function setOT(type){
+  orderType=type;
+  document.getElementById('order-title').textContent=type;
+  document.getElementById('order-price').textContent=fmt(PRICES[type]);
+  document.getElementById('order-eta').textContent=ETA_TEXT[type];
+  document.getElementById('drv-eta').textContent=ETA_DRV[type];
+  document.getElementById('drv-price').textContent=type==='GoRide'?'Rp 18K':'Rp 45K';
+  document.getElementById('eta-badge').textContent='📍 '+(type==='GoRide'?'3':'8')+' menit lagi';
+  const bR=document.getElementById('btn-ride'), bC=document.getElementById('btn-car');
+  if(type==='GoRide'){
+    bR.style.cssText='flex:1;padding:10px;font-size:13px;border-radius:14px;border:2px solid var(--blue);background:var(--bp);color:var(--blue);font-weight:800;cursor:pointer';
+    bC.style.cssText='flex:1;padding:10px;font-size:13px;border-radius:14px;border:2px solid #E0E8F8;background:#fff;color:var(--soft);font-weight:800;cursor:pointer';
+  } else {
+    bC.style.cssText='flex:1;padding:10px;font-size:13px;border-radius:14px;border:2px solid var(--blue);background:var(--bp);color:var(--blue);font-weight:800;cursor:pointer';
+    bR.style.cssText='flex:1;padding:10px;font-size:13px;border-radius:14px;border:2px solid #E0E8F8;background:#fff;color:var(--soft);font-weight:800;cursor:pointer';
+  }
+}
+
+function resetSteps(){
+  ['step-order','step-search','step-driver','step-done'].forEach((id,i)=>document.getElementById(id).style.display=i===0?'':'none');
+  setOT(orderType);
+}
+
+function startOrder(){
+  const dest=document.getElementById('inp-dest').value.trim();
+  if(!dest){alert('Isi tujuan kamu dulu!');return;}
+  if(balance<PRICES[orderType]){alert('Saldo GoPay tidak cukup!\nSilakan top up dulu.');return;}
+  document.getElementById('step-order').style.display='none';
+  document.getElementById('step-search').style.display='';
+  setTimeout(()=>{
+    balance-=PRICES[orderType]; updateUI();
+    document.getElementById('step-search').style.display='none';
+    document.getElementById('step-driver').style.display='';
+  },2800);
+}
+
+function finishOrder(){
+  document.getElementById('step-driver').style.display='none';
+  document.getElementById('step-done').style.display='';
+  const row=document.getElementById('star-row'); row.innerHTML='';
+  let sel=0;
+  for(let i=1;i<=5;i++){
+    const s=document.createElement('span'); s.textContent='⭐';
+    s.style.cssText='font-size:30px;cursor:pointer;margin-right:4px;opacity:.4';
+    s.onclick=(v=>{return()=>{sel=v;[...row.children].forEach((c,idx)=>c.style.opacity=idx<v?'1':'.4');}})(i);
+    row.appendChild(s);
+  }
+  HISTORY_DATA.unshift({type:orderType,desc:'Ke '+(document.getElementById('inp-dest').value||'Tujuan'),date:'17 Mar 2026',price:fmt(PRICES[orderType]),status:'Selesai',icon:orderType==='GoRide'?'🛵':'🚗'});
+}
+
+// ── FOOD ────────────────────────────────────────────────────────────────────
+function renderFood(){
+  const el=document.getElementById('food-list');
+  el.innerHTML='<div style="font-size:15px;font-weight:800;color:var(--text);margin-bottom:12px">Menu Pilihan</div>';
+  FOOD_MENU.forEach(m=>{
+    const qty=cart[m.id]||0;
+    const d=document.createElement('div'); d.className='food-row mb10';
+    d.innerHTML=`<div class="food-icon">${m.emoji}</div>
+      <div style="flex:1"><div style="font-size:14px;font-weight:800;color:var(--text)">${m.name}</div>
+        <div style="font-size:12px;color:#FFB300;font-weight:700;margin-top:2px">⭐ ${m.rating}</div>
+        <div style="font-size:14px;font-weight:900;color:var(--blue);margin-top:3px">${fmt(m.price)}</div></div>
+      <div style="display:flex;align-items:center;gap:8px">
+        ${qty>0?`<button class="qty-btn qty-rem" onclick="adj(${m.id},-1)">−</button><span style="font-size:15px;font-weight:900;color:var(--text);min-width:18px;text-align:center">${qty}</span>`:''}
+        <button class="qty-btn qty-add" onclick="adj(${m.id},1)">+</button>
+      </div>`;
+    el.appendChild(d);
+  });
+  // cart bar
+  const old=document.getElementById('cart-bar'); if(old) old.remove();
+  const total=FOOD_MENU.reduce((a,m)=>a+(cart[m.id]||0)*m.price,0);
+  const count=Object.values(cart).reduce((a,b)=>a+b,0);
+  if(!count) return;
+  const bar=document.createElement('div'); bar.id='cart-bar'; bar.className='cartbar';
+  bar.innerHTML=`<div class="cart-badge">${count}</div><span style="color:#fff;font-weight:800;font-size:15px">Lihat Keranjang</span><span style="color:#fff;font-weight:900;font-size:15px">${fmt(total)}</span>`;
+  bar.onclick=()=>goTo('s-checkout');
+  el.parentNode.appendChild(bar);
+}
+
+function adj(id,d){ cart[id]=(cart[id]||0)+d; if(cart[id]<=0)delete cart[id]; renderFood(); }
+
+// ── CHECKOUT ────────────────────────────────────────────────────────────────
+function renderCheckout(){
+  const el=document.getElementById('checkout-body');
+  const items=FOOD_MENU.filter(m=>cart[m.id]);
+  if(!items.length){el.innerHTML='<div style="text-align:center;padding:30px;color:var(--soft)">Keranjang kosong</div>';return;}
+  const sub=items.reduce((a,m)=>a+cart[m.id]*m.price,0), ongkir=5000, total=sub+ongkir;
+  el.innerHTML=`
+    <div class="card p14 mb14">
+      <div style="font-size:13px;font-weight:800;color:var(--text);margin-bottom:10px">Pesananmu</div>
+      ${items.map(m=>`<div style="display:flex;justify-content:space-between;margin-bottom:8px"><span style="font-size:14px;font-weight:600;color:var(--text)">${m.emoji} ${m.name} ×${cart[m.id]}</span><span style="font-size:14px;font-weight:700;color:var(--text)">${fmt(m.price*cart[m.id])}</span></div>`).join('')}
+      <div style="border-top:1px solid #EEF2FA;margin-top:10px;padding-top:10px">
+        <div style="display:flex;justify-content:space-between;margin-bottom:6px"><span style="font-size:13px;color:var(--soft);font-weight:600">Subtotal</span><span style="font-size:13px;font-weight:700">${fmt(sub)}</span></div>
+        <div style="display:flex;justify-content:space-between;margin-bottom:6px"><span style="font-size:13px;color:var(--soft);font-weight:600">Ongkos kirim</span><span style="font-size:13px;font-weight:700">${fmt(ongkir)}</span></div>
+        <div style="display:flex;justify-content:space-between;margin-top:8px"><span style="font-size:15px;font-weight:800;color:var(--text)">Total</span><span style="font-size:15px;font-weight:900;color:var(--blue)">${fmt(total)}</span></div>
+      </div>
+    </div>
+    <div class="card p14 mb14"><div style="font-size:13px;font-weight:800;color:var(--text);margin-bottom:8px">Pembayaran</div>
+      <div style="display:flex;align-items:center;gap:10px"><span style="font-size:20px">💳</span><span style="font-size:14px;font-weight:700;color:var(--text)">GoPay</span><span style="margin-left:auto;font-size:14px;font-weight:800;color:var(--blue)">${fmt(balance)}</span></div>
+    </div>
+    <button class="btn-main" onclick="doBayar(${total})">💳 Bayar ${fmt(total)}</button>`;
+}
+
+function doBayar(total){
+  if(balance<total){alert('Saldo GoPay tidak cukup!\nSilakan top up dulu.');return;}
+  balance-=total; cart={};
+  HISTORY_DATA.unshift({type:'GoFood',desc:'Warung Bu Sari × pesanan',date:'17 Mar 2026',price:fmt(total),status:'Selesai',icon:'🍔'});
+  updateUI();
+  document.getElementById('checkout-body').innerHTML=`
+    <div class="success-wrap"><div style="font-size:70px">🎉</div>
+      <div style="font-size:20px;font-weight:900;color:var(--text)">Pesanan Dikonfirmasi!</div>
+      <div style="font-size:14px;color:var(--soft);text-align:center">Pesananmu sedang disiapkan. Driver segera mengantar.</div>
+      <div style="background:var(--bp);border-radius:16px;padding:16px 24px;text-align:center">
+        <div style="font-size:12px;color:var(--gray);font-weight:700">Total Pembayaran</div>
+        <div style="font-size:24px;font-weight:900;color:var(--blue);margin-top:4px">${fmt(total)}</div>
+      </div>
+      <button class="btn-main" style="width:auto;padding:14px 40px" onclick="goTo('s-home')">Kembali ke Beranda</button>
+    </div>`;
+}
+
+// ── TOP UP ──────────────────────────────────────────────────────────────────
+function renderTopup(){
+  const g=document.getElementById('amt-grid'); g.innerHTML='';
+  TOPUP_PRESETS.forEach(p=>{
+    const b=document.createElement('button'); b.className='amt-btn'+(selAmt===p?' on':'');
+    b.textContent=fmt(p);
+    b.onclick=()=>{selAmt=p;document.getElementById('custom-amt').value='';renderTopup();};
+    g.appendChild(b);
+  });
+  document.getElementById('topup-bal').textContent='Saldo: '+fmt(balance);
+}
+
+function doTopUp(){
+  let val=selAmt||parseInt((document.getElementById('custom-amt').value||'0').replace(/\D/g,''));
+  if(!val||val<10000){alert('Nominal minimal Rp 10.000');return;}
+  balance+=val; selAmt=null; updateUI(); renderTopup();
+  const sc=document.querySelector('#s-topup .scroll');
+  sc.innerHTML=`<div class="success-wrap"><div style="font-size:70px">💙</div>
+    <div style="font-size:20px;font-weight:900;color:var(--text)">Top Up Berhasil!</div>
+    <div style="background:var(--bp);border-radius:16px;padding:16px 24px;text-align:center">
+      <div style="font-size:12px;color:var(--gray);font-weight:700">Saldo GoPay sekarang</div>
+      <div style="font-size:24px;font-weight:900;color:var(--blue);margin-top:4px">${fmt(balance)}</div>
+    </div>
+    <button class="btn-main" style="width:auto;padding:14px 40px" onclick="goTo('s-home')">Oke</button>
+  </div>`;
+}
+
+// ── PROMO ───────────────────────────────────────────────────────────────────
+function renderPromo(){
+  const cats=['Semua','GoRide','GoCar','GoFood','GoPay','GoSend','GoMed'];
+  const cr=document.getElementById('promo-cats'); cr.innerHTML='';
+  cats.forEach(c=>{
+    const b=document.createElement('button'); b.className='cpill'+(promoFilter===c?' on':'');
+    b.textContent=c; b.onclick=()=>{promoFilter=c;renderPromo();}; cr.appendChild(b);
+  });
+  const filtered=promoFilter==='Semua'?PROMOS:PROMOS.filter(p=>p.cat===promoFilter);
+  document.getElementById('promo-grid').innerHTML=filtered.map(p=>`
+    <div class="pcard"><div class="pcard-img" style="background:linear-gradient(135deg,${p.bg[0]},${p.bg[1]})">${p.emoji}</div>
+      <div class="pcard-body"><div class="pcard-title">${p.title}</div><div class="pcard-disc">${p.disc}</div><div class="pcard-exp">Exp. ${p.exp}</div></div>
+    </div>`).join('');
+}
+
+// ── HISTORY ─────────────────────────────────────────────────────────────────
+function renderHistory(){
+  document.getElementById('history-list').innerHTML=HISTORY_DATA.map(h=>`
+    <div class="hrow"><div class="hrow-icon">${h.icon}</div>
+      <div style="flex:1"><div style="font-size:14px;font-weight:800;color:var(--text)">${h.type}</div>
+        <div style="font-size:12px;color:var(--soft);font-weight:600;margin-top:2px">${h.desc}</div>
+        <div style="font-size:11px;color:var(--gray);font-weight:600;margin-top:3px">${h.date}</div></div>
+      <div style="text-align:right"><div style="font-size:14px;font-weight:900;color:var(--text)">${h.price}</div>
+        <div style="font-size:11px;font-weight:700;margin-top:4px;color:${h.status==='Selesai'?'#2E7D32':'#D32F2F'};background:${h.status==='Selesai'?'#E8F5E9':'#FFEBEE'};padding:2px 8px;border-radius:20px;display:inline-block">${h.status}</div>
+      </div></div>`).join('');
+}
+
+// ── INIT ─────────────────────────────────────────────────────────────────────
+updateUI();
 </script>
 </body>
 </html>
