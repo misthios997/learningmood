@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quiz Mandarin Ujian Praktek</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f4f7f6;
+            color: #333;
+            line-height: 1.6;
+            margin: 0;
+            padding: 20px;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: #ffffff;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        h1, h2 {
+            text-align: center;
+            color: #d32f2f;
+            border-bottom: 2px solid #ffcdd2;
+            padding-bottom: 15px;
+            margin-bottom: 25px;
+        }
+        
+        /* Form Styles */
+        .form-group {
+            margin-bottom: 15px;
+        }
+        .form-group label {
+            display: block;
+            font-weight: bold;
+            margin-bottom: 5px;
+            color: #2c3e50;
+        }
+        .form-group input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 16px;
+            box-sizing: border-box;
+        }
+        button {
+            display: block;
+            width: 100%;
+            padding: 12px;
+            background-color: #d32f2f;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 20px;
+            transition: background 0.3s;
+        }
+        button:hover {
+            background-color: #b71c1c;
+        }
+        button:disabled {
+            background-color: #ccc;
+            cursor: not-allowed;
+        }
+
+        /* Quiz Styles */
+        #quiz-header {
+            display: flex;
+            justify-content: space-between;
+            font-weight: bold;
+            color: #555;
+            margin-bottom: 20px;
+        }
+        #question-text {
+            font-size: 1.3em;
+            text-align: center;
+            margin-bottom: 30px;
+            color: #2c3e50;
+            padding: 20px;
+            background-color: #e3f2fd;
+            border-radius: 8px;
+            border-left: 5px solid #1976d2;
+        }
+        .option-btn {
+            background-color: #fafafa;
+            color: #333;
+            border: 2px solid #e0e0e0;
+            text-align: left;
+            margin-bottom: 10px;
+            padding: 15px;
+            font-weight: normal;
+        }
+        .option-btn:hover:not(:disabled) {
+            background-color: #f5f5f5;
+            border-color: #bdbdbd;
+        }
+        .option-btn.correct {
+            background-color: #c8e6c9 !important;
+            border-color: #4caf50 !important;
+            color: #2e7d32;
+        }
+        .option-btn.wrong {
+            background-color: #ffcdd2 !important;
+            border-color: #f44336 !important;
+            color: #c62828;
+        }
+        .hanzi-text {
+            font-size: 1.4em;
+            font-weight: bold;
+            display: block;
+            margin-bottom: 5px;
+        }
+        .pinyin-text {
+            font-size: 1.1em;
+            font-style: italic;
+            color: #555;
+        }
+        
+        /* Result Styles */
+        #score-display {
+            font-size: 4em;
+            text-align: center;
+            color: #d32f2f;
+            font-weight: bold;
+            margin: 20px 0;
+        }
+        #feedback-text {
+            text-align: center;
+            font-size: 1.2em;
+            margin-bottom: 30px;
+        }
+    </style>
+</head>
+<body>
+
+<div id="form-screen" class="container">
+    <h2>Lengkapi Data untuk Kuis</h2>
+    <div class="form-group">
+        <label for="input-nama">Nama:</label>
+        <input type="text" id="input-nama" placeholder="Masukkan nama kamu" autocomplete="off">
+    </div>
+    <div class="form-group">
+        <label for="input-tempat">Tempat Tinggal:</label>
+        <input type="text" id="input-tempat" placeholder="Contoh: Jakarta" autocomplete="off">
+    </div>
+    <div class="form-group">
+        <label for="input-hp">Nomor HP:</label>
+        <input type="number" id="input-hp" placeholder="Contoh: 0812345678" autocomplete="off">
+    </div>
+    <div class="form-group">
+        <label for="input-anak">Anak ke- (Angka):</label>
+        <input type="number" id="input-anak" placeholder="Contoh: 2" autocomplete="off">
+    </div>
+    <button onclick="startQuiz()">Mulai Kuis</button>
+</div>
+
+<div id="quiz-screen" class="container" style="display: none;">
+    <div id="quiz-header">
+        <span id="progress-text">Soal: 1 / 10</span>
+        <span id="score-text">Skor: 0</span>
+    </div>
+    
+    <div id="question-text">Apa bahasa Mandarin dari...</div>
+    
+    <div id="options-container">
+        </div>
+</div>
+
+<div id="result-screen" class="container" style="display: none;">
+    <h2>Kuis Selesai!</h2>
+    <div id="score-display">100</div>
+    <div id="feedback-text">Luar biasa!</div>
+    <button onclick="resetApp()">Kembali ke Awal</button>
+</div>
+
+<script>
+    // Dictionary & Translator Logic
+    const numDict = {
+        '0': { hanzi: '零', pinyin: 'líng' },
+        '1': { hanzi: '一', pinyin: 'yī' },
+        '2': { hanzi: '二', pinyin: 'èr' },
+        '3': { hanzi: '三', pinyin: 'sān' },
+        '4': { hanzi: '四', pinyin: 'sì' },
+        '5': { hanzi: '五', pinyin: 'wǔ' },
+        '6': { hanzi: '六', pinyin: 'liù' },
+        '7': { hanzi: '七', pinyin: 'qī' },
+        '8': { hanzi: '八', pinyin: 'bā' },
+        '9': { hanzi: '九', pinyin: 'jiǔ' }
+    };
+
+    function translatePhone(numberStr) {
+        let hanzi = '';
+        let pinyin = '';
+        for (let i = 0; i < numberStr.length; i++) {
+            let char = numberStr[i];
+            if (numDict[char]) {
+                hanzi += numDict[char].hanzi;
+                pinyin += numDict[char].pinyin + ' ';
+            }
+        }
+        return { hanzi: hanzi, pinyin: pinyin.trim() };
+    }
+
+    function translateBirthOrder(orderStr) {
+        let num = parseInt(orderStr);
+        if (isNaN(num)) return { hanzi: '___', pinyin: '___' };
+        if (num === 1) return { hanzi: '老大', pinyin: 'lǎo dà' };
+        let translated = translatePhone(orderStr);
+        return { hanzi: '老' + translated.hanzi, pinyin: 'lǎo ' + translated.pinyin };
+    }
+
+    // Quiz Variables
+    let quizData = [];
+    let currentQuestionIndex = 0;
+    let score = 0;
+
+    function startQuiz() {
+        const nama = document.getElementById('input-nama').value || '___';
+        const tempat = document.getElementById('input-tempat').value || '___';
+        const hp = document.getElementById('input-hp').value || '';
+        const anak = document.getElementById('input-anak').value || '';
+
+        const phoneData = hp ? translatePhone(hp) : { hanzi: '___', pinyin: '___' };
+        const anakData = anak ? translateBirthOrder(anak) : { hanzi: '___', pinyin: '___' };
+        const hpAngka = hp || '___';
+        const anakAngka = anak || '___';
+
+        // Base Data Pool
+        quizData = [
+            { id: 1, arti: "Siapa nama kamu?", hanzi: "你叫什么名？", pinyin: "Nǐ jiào shénme míng?" },
+            { id: 2, arti: `Nama saya ${nama}`, hanzi: `我叫${nama}`, pinyin: `Wǒ jiào ${nama}` },
+            { id: 3, arti: "Kamu tinggal dimana?", hanzi: "你住在哪里？", pinyin: "Nǐ zhù zài nàli?" },
+            { id: 4, arti: `Saya tinggal di ${tempat}`, hanzi: `我住在${tempat}。`, pinyin: `Wǒ zhùzài ${tempat}.` },
+            { id: 5, arti: "Hp kamu nomer berapa?", hanzi: "你的手机几号？", pinyin: "Nǐ de shǒujī jǐ hào?" },
+            { id: 6, arti: `Hp saya nomer ${hpAngka}`, hanzi: `我的手机${phoneData.hanzi}`, pinyin: `Wǒ de shǒujī ${phoneData.pinyin}` },
+            { id: 7, arti: "Di rumah kamu anak ke berapa?", hanzi: "在家里你是老几？", pinyin: "Zài jiā lǐ nǐ shì lǎojǐ?" },
+            { id: 8, arti: `Saya anak ke ${anakAngka}`, hanzi: `我是${anakData.hanzi}`, pinyin: `Wǒ shì ${anakData.pinyin}` },
+            { id: 9, arti: "Kamu sekolah dimana?", hanzi: "你在哪里读书？", pinyin: "Nǐ zài nǎli dúshū?" },
+            { id: 10, arti: "Saya sekolah di Sekolah Bethel.", hanzi: "我在伯特利学校读书。", pinyin: "Wǒ zài Bótèlì xuéxiào dúshū." }
+        ];
+
+        // Shuffle Questions
+        quizData = quizData.sort(() => Math.random() - 0.5);
+        
+        currentQuestionIndex = 0;
+        score = 0;
+
+        document.getElementById('form-screen').style.display = 'none';
+        document.getElementById('quiz-screen').style.display = 'block';
+        
+        loadQuestion();
+    }
+
+    function loadQuestion() {
+        const currentQ = quizData[currentQuestionIndex];
+        
+        // Update Header
+        document.getElementById('progress-text').innerText = `Soal: ${currentQuestionIndex + 1} / 10`;
+        document.getElementById('score-text').innerText = `Skor: ${score}`;
+        
+        // Set Question
+        document.getElementById('question-text').innerHTML = `Apa bahasa Mandarin dari:<br><strong>"${currentQ.arti}"</strong>`;
+
+        // Generate Options (1 Correct, 3 Wrong)
+        let options = [currentQ];
+        let availableDistractors = quizData.filter(q => q.id !== currentQ.id);
+        availableDistractors = availableDistractors.sort(() => Math.random() - 0.5); // Shuffle
+        
+        options.push(availableDistractors[0]);
+        options.push(availableDistractors[1]);
+        options.push(availableDistractors[2]);
+
+        // Shuffle Options
+        options = options.sort(() => Math.random() - 0.5);
+
+        // Render Options
+        const optionsContainer = document.getElementById('options-container');
+        optionsContainer.innerHTML = '';
+
+        options.forEach(opt => {
+            const btn = document.createElement('button');
+            btn.className = 'option-btn';
+            btn.innerHTML = `
+                <span class="hanzi-text">${opt.hanzi}</span>
+                <span class="pinyin-text">${opt.pinyin}</span>
+            `;
+            btn.onclick = () => checkAnswer(btn, opt.id === currentQ.id);
+            optionsContainer.appendChild(btn);
+        });
+    }
+
+    function checkAnswer(selectedBtn, isCorrect) {
+        // Disable all buttons to prevent multiple clicks
+        const allBtns = document.querySelectorAll('.option-btn');
+        allBtns.forEach(btn => btn.disabled = true);
+
+        if (isCorrect) {
+            selectedBtn.classList.add('correct');
+            score += 10;
+            document.getElementById('score-text').innerText = `Skor: ${score}`;
+        } else {
+            selectedBtn.classList.add('wrong');
+            // Find and highlight correct answer
+            const currentQ = quizData[currentQuestionIndex];
+            allBtns.forEach(btn => {
+                if (btn.innerHTML.includes(currentQ.hanzi)) {
+                    btn.classList.add('correct');
+                }
+            });
+        }
+
+        // Wait 1.5 seconds then next question
+        setTimeout(() => {
+            currentQuestionIndex++;
+            if (currentQuestionIndex < quizData.length) {
+                loadQuestion();
+            } else {
+                showResult();
+            }
+        }, 1500);
+    }
+
+    function showResult() {
+        document.getElementById('quiz-screen').style.display = 'none';
+        document.getElementById('result-screen').style.display = 'block';
+        
+        document.getElementById('score-display').innerText = score;
+        
+        let feedback = "";
+        if (score === 100) feedback = "Luar biasa! Hafalanmu sempurna! 🌟";
+        else if (score >= 80) feedback = "Bagus sekali! Sedikit lagi sempurna! 👍";
+        else if (score >= 50) feedback = "Cukup bagus, tapi terus berlatih ya! 📚";
+        else feedback = "Jangan menyerah! Ayo hafalkan lagi pelan-pelan. 💪";
+        
+        document.getElementById('feedback-text').innerText = feedback;
+    }
+
+    function resetApp() {
+        document.getElementById('result-screen').style.display = 'none';
+        document.getElementById('form-screen').style.display = 'block';
+        // Reset inputs
+        document.getElementById('input-nama').value = '';
+        document.getElementById('input-tempat').value = '';
+        document.getElementById('input-hp').value = '';
+        document.getElementById('input-anak').value = '';
+        window.scrollTo(0,0);
+    }
+</script>
+
+</body>
+</html>
