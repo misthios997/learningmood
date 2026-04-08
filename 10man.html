@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Materi Ujian Praktek Mandarin - Auto Fill</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f4f7f6;
+            color: #333;
+            line-height: 1.6;
+            margin: 0;
+            padding: 20px;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: #ffffff;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        h1, h2 {
+            text-align: center;
+            color: #d32f2f;
+            border-bottom: 2px solid #ffcdd2;
+            padding-bottom: 15px;
+            margin-bottom: 25px;
+        }
+        
+        /* Form Styles */
+        .form-group {
+            margin-bottom: 15px;
+        }
+        .form-group label {
+            display: block;
+            font-weight: bold;
+            margin-bottom: 5px;
+            color: #2c3e50;
+        }
+        .form-group input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 16px;
+            box-sizing: border-box;
+        }
+        button {
+            display: block;
+            width: 100%;
+            padding: 12px;
+            background-color: #d32f2f;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 20px;
+            transition: background 0.3s;
+        }
+        button:hover {
+            background-color: #b71c1c;
+        }
+
+        /* Result Styles */
+        .item-list {
+            list-style-type: none;
+            padding: 0;
+            margin: 0;
+        }
+        .item-list li {
+            background: #fafafa;
+            margin-bottom: 15px;
+            padding: 15px 20px;
+            border-left: 5px solid #d32f2f;
+            border-radius: 4px;
+        }
+        .hanzi {
+            font-size: 1.4em;
+            font-weight: bold;
+            color: #2c3e50;
+            margin-bottom: 5px;
+        }
+        .pinyin {
+            font-size: 1.1em;
+            font-style: italic;
+            color: #1976d2;
+            margin-bottom: 5px;
+        }
+        .arti {
+            font-size: 1.05em;
+            color: #555;
+        }
+        .number {
+            font-weight: bold;
+            color: #d32f2f;
+            margin-right: 10px;
+        }
+        .highlight {
+            color: #d32f2f;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+
+<div id="form-screen" class="container">
+    <h2>Lengkapi Data Diri</h2>
+    <div class="form-group">
+        <label for="input-nama">Nama:</label>
+        <input type="text" id="input-nama" placeholder="Masukkan nama kamu" autocomplete="off">
+    </div>
+    <div class="form-group">
+        <label for="input-tempat">Tempat Tinggal:</label>
+        <input type="text" id="input-tempat" placeholder="Contoh: Jakarta" autocomplete="off">
+    </div>
+    <div class="form-group">
+        <label for="input-hp">Nomor HP:</label>
+        <input type="number" id="input-hp" placeholder="Contoh: 0812345678" autocomplete="off">
+    </div>
+    <div class="form-group">
+        <label for="input-anak">Anak ke- (Angka):</label>
+        <input type="number" id="input-anak" placeholder="Contoh: 2" autocomplete="off">
+    </div>
+    <button onclick="generateMateri()">Buat Materi</button>
+</div>
+
+<div id="result-screen" class="container" style="display: none;">
+    <h1>Materi 10 Kalimat Ujian Praktek</h1>
+    <ul class="item-list" id="materi-list">
+        </ul>
+    <button onclick="kembali()">Buat Ulang</button>
+</div>
+
+<script>
+    // Dictionary untuk konversi angka ke Hanzi dan Pinyin
+    const numDict = {
+        '0': { hanzi: '零', pinyin: 'líng' },
+        '1': { hanzi: '一', pinyin: 'yī' },
+        '2': { hanzi: '二', pinyin: 'èr' },
+        '3': { hanzi: '三', pinyin: 'sān' },
+        '4': { hanzi: '四', pinyin: 'sì' },
+        '5': { hanzi: '五', pinyin: 'wǔ' },
+        '6': { hanzi: '六', pinyin: 'liù' },
+        '7': { hanzi: '七', pinyin: 'qī' },
+        '8': { hanzi: '八', pinyin: 'bā' },
+        '9': { hanzi: '九', pinyin: 'jiǔ' }
+    };
+
+    function translatePhone(numberStr) {
+        let hanzi = '';
+        let pinyin = '';
+        for (let i = 0; i < numberStr.length; i++) {
+            let char = numberStr[i];
+            if (numDict[char]) {
+                hanzi += numDict[char].hanzi;
+                pinyin += numDict[char].pinyin + ' ';
+            }
+        }
+        return { hanzi: hanzi, pinyin: pinyin.trim() };
+    }
+
+    function translateBirthOrder(orderStr) {
+        let num = parseInt(orderStr);
+        if (isNaN(num)) return { hanzi: '___', pinyin: '___' };
+        
+        // Dalam bahasa Mandarin, anak ke-1 sering disebut 老大 (lǎo dà), anak ke-2 老二 (lǎo èr), dst.
+        if (num === 1) return { hanzi: '老大', pinyin: 'lǎo dà' };
+        
+        let translated = translatePhone(orderStr); // Reuse logic for single/double digits
+        return { hanzi: '老' + translated.hanzi, pinyin: 'lǎo ' + translated.pinyin };
+    }
+
+    function generateMateri() {
+        // Ambil nilai dari input
+        const nama = document.getElementById('input-nama').value || '___';
+        const tempat = document.getElementById('input-tempat').value || '___';
+        const hp = document.getElementById('input-hp').value || '';
+        const anak = document.getElementById('input-anak').value || '';
+
+        // Proses auto-translate untuk nomor
+        const phoneData = hp ? translatePhone(hp) : { hanzi: '___', pinyin: '___' };
+        const anakData = anak ? translateBirthOrder(anak) : { hanzi: '___', pinyin: '___' };
+        const hpAngka = hp || '___';
+        const anakAngka = anak || '___';
+
+        // Template kalimat
+        const materi = [
+            {
+                hanzi: "你叫什么名？",
+                pinyin: "Nǐ jiào shénme míng?",
+                arti: "Siapa nama kamu?"
+            },
+            {
+                hanzi: `我叫<span class="highlight">${nama}</span>`,
+                pinyin: `Wǒ jiào <span class="highlight">${nama}</span>`,
+                arti: `Nama saya <span class="highlight">${nama}</span>`
+            },
+            {
+                hanzi: "你住在哪里？",
+                pinyin: "Nǐ zhù zài nàli?",
+                arti: "Kamu tinggal dimana?"
+            },
+            {
+                hanzi: `我住在<span class="highlight">${tempat}</span>。`,
+                pinyin: `Wǒ zhùzài <span class="highlight">${tempat}</span>.`,
+                arti: `Saya tinggal di <span class="highlight">${tempat}</span>.`
+            },
+            {
+                hanzi: "你的手机几号？",
+                pinyin: "Nǐ de shǒujī jǐ hào?",
+                arti: "Hp kamu nomer berapa?"
+            },
+            {
+                hanzi: `我的手机<span class="highlight">${phoneData.hanzi}</span>`,
+                pinyin: `Wǒ de shǒujī <span class="highlight">${phoneData.pinyin}</span>`,
+                arti: `Hp saya nomer <span class="highlight">${hpAngka}</span>`
+            },
+            {
+                hanzi: "在家里你是老几？",
+                pinyin: "Zài jiā lǐ nǐ shì lǎojǐ?",
+                arti: "Di rumah kamu anak ke berapa?"
+            },
+            {
+                hanzi: `我是<span class="highlight">${anakData.hanzi}</span>`,
+                pinyin: `Wǒ shì <span class="highlight">${anakData.pinyin}</span>`,
+                arti: `Saya anak ke <span class="highlight">${anakAngka}</span>`
+            },
+            {
+                hanzi: "你在哪里读书？",
+                pinyin: "Nǐ zài nǎli dúshū?",
+                arti: "Kamu sekolah dimana?"
+            },
+            {
+                hanzi: "我在伯特利学校读书。",
+                pinyin: "Wǒ zài Bótèlì xuéxiào dúshū.",
+                arti: "Saya sekolah di Sekolah Bethel."
+            }
+        ];
+
+        // Render ke HTML
+        const listContainer = document.getElementById('materi-list');
+        listContainer.innerHTML = ''; // Kosongkan list sebelumnya
+
+        materi.forEach((item, index) => {
+            const li = document.createElement('li');
+            li.innerHTML = `
+                <div class="hanzi"><span class="number">${index + 1}.</span> ${item.hanzi}</div>
+                <div class="pinyin">${item.pinyin}</div>
+                <div class="arti">= ${item.arti}</div>
+            `;
+            listContainer.appendChild(li);
+        });
+
+        // Sembunyikan form, tampilkan hasil
+        document.getElementById('form-screen').style.display = 'none';
+        document.getElementById('result-screen').style.display = 'block';
+        window.scrollTo(0,0);
+    }
+
+    function kembali() {
+        document.getElementById('result-screen').style.display = 'none';
+        document.getElementById('form-screen').style.display = 'block';
+    }
+</script>
+
+</body>
+</html>
