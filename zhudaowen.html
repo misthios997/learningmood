@@ -37,24 +37,10 @@
             width: 100%;
             max-width: 500px;
         }
-        .time-tracker {
-            font-size: 1.2em;
-            font-weight: bold;
-            color: #e74c3c;
-            margin-top: 15px;
-            padding: 10px;
-            background-color: #fff;
-            border: 1px dashed #e74c3c;
-            border-radius: 5px;
-            display: inline-block;
-        }
         .line-item {
             margin-bottom: 20px;
-            padding: 15px;
+            padding-bottom: 15px;
             border-bottom: 1px solid #eee;
-            border-left: 5px solid transparent;
-            border-radius: 5px;
-            transition: all 0.3s ease;
         }
         .indonesian {
             font-weight: bold;
@@ -71,14 +57,6 @@
             color: #2980b9;
             font-size: 1.1em;
         }
-        
-        /* Efek nyala saat audio berjalan */
-        .highlight {
-            background-color: #fffacd; /* Warna kuning pucat */
-            border-left: 5px solid #f1c40f; /* Garis pinggir kuning tegas */
-            box-shadow: 0 0 15px rgba(241, 196, 15, 0.4); /* Efek glow */
-            transform: scale(1.02);
-        }
     </style>
 </head>
 <body>
@@ -88,132 +66,102 @@
 
     <div class="audio-player">
         <p><strong>Putar Audio:</strong></p>
-        <audio id="doaAudio" controls>
+        <audio controls>
             <source src="https://raw.githubusercontent.com/misthios997/learningmood/41cc5ed275f2c1ac0ddc8f0469842ce2c353e2a4/AudioLaoshiZhuDaoWen.opus" type="audio/ogg; codecs=opus">
             Browser Anda tidak mendukung elemen audio.
         </audio>
-        <br>
-        <div class="time-tracker" id="timeDisplay">Waktu: 0.00 detik</div>
-        <p style="font-size: 0.8em; color: #7f8c8d; margin-top: 10px;">*Lihat detik di atas, lalu ubah <b>data-start</b> dan <b>data-end</b> di kode HTML agar pas dengan nyalanya.</p>
     </div>
 
     <div class="content">
-        <div class="line-item" data-start="19.6" data-end="22.0">
+        <div class="line-item">
             <div class="indonesian">037. Doa Bapa kami</div>
             <div class="hanzi">主祷文。</div>
             <div class="pinyin">Zhǔ Dǎo Wén .</div>
         </div>
 
-        <div class="line-item" data-start="22.0" data-end="25.0">
+        <div class="line-item">
             <div class="indonesian">038. Bapa kami yang di sorga,</div>
             <div class="hanzi">我们在天上的父，</div>
             <div class="pinyin">Wǒmen zài tiānshàng de Fù ,</div>
         </div>
 
-        <div class="line-item" data-start="25.0" data-end="28.0">
+        <div class="line-item">
             <div class="indonesian">039. Dikuduskanlah nama-Mu.</div>
             <div class="hanzi">愿人都尊你的名为圣。</div>
             <div class="pinyin">Yuàn rén dōu zūn Nǐde míng wéi shèng .</div>
         </div>
 
-        <div class="line-item" data-start="28.0" data-end="31.0">
+        <div class="line-item">
             <div class="indonesian">040. Datanglah Kerajaan-Mu.</div>
             <div class="hanzi">愿你的国降临。</div>
             <div class="pinyin">Yuàn Nǐde guó jiànglín .</div>
         </div>
 
-        <div class="line-item" data-start="31.0" data-end="34.0">
+        <div class="line-item">
             <div class="indonesian">041. Jadilah kehendak-Mu di bumi,</div>
             <div class="hanzi">愿你的旨意行在地上，</div>
             <div class="pinyin">Yuàn Nǐde zhǐyì xíng zài dìshang ,</div>
         </div>
 
-        <div class="line-item" data-start="34.0" data-end="36.0">
+        <div class="line-item">
             <div class="indonesian">042. Seperti di sorga.</div>
             <div class="hanzi">如同行在天上。</div>
             <div class="pinyin">Rú tóng xíng zài tiānshang .</div>
         </div>
 
-        <div class="line-item" data-start="36.0" data-end="41.0">
+        <div class="line-item">
             <div class="indonesian">043. Berikanlah kami pada hari ini, makanan kami yang secukupnya,</div>
             <div class="hanzi">我们日用的饮食，今日赐给我们。</div>
             <div class="pinyin">Wǒmen rìyòngde yǐnshí , jīnrì cì gěi wǒmen .</div>
         </div>
 
-        <div class="line-item" data-start="41.0" data-end="43.5">
+        <div class="line-item">
             <div class="indonesian">044. dan ampunilah kami akan kesalahan kami,</div>
             <div class="hanzi">免我们的债，</div>
             <div class="pinyin">Mián wǒmende zhài ,</div>
         </div>
 
-        <div class="line-item" data-start="43.5" data-end="47.0">
+        <div class="line-item">
             <div class="indonesian">045. seperti kami juga mengampuni orang yang bersalah kepada kami.</div>
             <div class="hanzi">如同我们免了人的债。</div>
             <div class="pinyin">Rútóng wǒmen miánle rénde zhài .</div>
         </div>
 
-        <div class="line-item" data-start="47.0" data-end="50.5">
+        <div class="line-item">
             <div class="indonesian">046. Dan janganlah membawa kami ke dalam pencobaan,</div>
             <div class="hanzi">不叫我们遇见试探，</div>
             <div class="pinyin">Bú jiào wǒmen yùjiàn shìtan ,</div>
         </div>
 
-        <div class="line-item" data-start="50.5" data-end="53.5">
+        <div class="line-item">
             <div class="indonesian">047. tetapi lepaskanlah kami dari pada yang jahat.</div>
             <div class="hanzi">救我们脱离凶恶。</div>
             <div class="pinyin">Jiù wǒmen tuōlí xiōng'è .</div>
         </div>
 
-        <div class="line-item" data-start="53.5" data-end="56.0">
+        <div class="line-item">
             <div class="indonesian">048. Karena Engkaulah yang empunya Kerajaan</div>
             <div class="hanzi">因为国度、</div>
             <div class="pinyin">Yīnwèi guódù ,</div>
         </div>
 
-        <div class="line-item" data-start="56.0" data-end="59.0">
+        <div class="line-item">
             <div class="indonesian">049. dan kuasa dan kemuliaan ,</div>
             <div class="hanzi">权柄、荣耀，全是你的，</div>
             <div class="pinyin">Quánbǐng, róngyào, quán shì Nǐde ,</div>
         </div>
 
-        <div class="line-item" data-start="59.0" data-end="62.0">
+        <div class="line-item">
             <div class="indonesian">050. sampai selama-lamanya. Amin.</div>
             <div class="hanzi">直到永远 。阿门。</div>
             <div class="pinyin">Zhí dào yǒngyuǎn . Āmén.</div>
         </div>
         
-        <div class="line-item" data-start="62.0" data-end="64.0">
+        <div class="line-item">
             <div class="indonesian">051. Saya mau tanya kamu.</div>
         </div>
     </div>
 </div>
-
-<script>
-    document.addEventListener("DOMContentLoaded", function() {
-        const audio = document.getElementById("doaAudio");
-        const lines = document.querySelectorAll(".line-item");
-        const timeDisplay = document.getElementById("timeDisplay");
-
-        audio.addEventListener("timeupdate", function() {
-            const currentTime = audio.currentTime;
-            
-            // Update teks penunjuk waktu untuk kalibrasi manual
-            timeDisplay.textContent = "Waktu: " + currentTime.toFixed(2) + " detik";
-
-            lines.forEach(line => {
-                const start = parseFloat(line.getAttribute("data-start"));
-                const end = parseFloat(line.getAttribute("data-end"));
-
-                // Jika waktu audio saat ini berada di antara start dan end, tambahkan class highlight
-                if (currentTime >= start && currentTime < end) {
-                    line.classList.add("highlight");
-                } else {
-                    line.classList.remove("highlight");
-                }
-            });
-        });
-    });
-</script>
 
 </body>
 </html>
