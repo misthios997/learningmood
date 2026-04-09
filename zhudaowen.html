@@ -37,6 +37,17 @@
             width: 100%;
             max-width: 500px;
         }
+        .time-tracker {
+            font-size: 1.2em;
+            font-weight: bold;
+            color: #e74c3c;
+            margin-top: 15px;
+            padding: 10px;
+            background-color: #fff;
+            border: 1px dashed #e74c3c;
+            border-radius: 5px;
+            display: inline-block;
+        }
         .line-item {
             margin-bottom: 20px;
             padding: 15px;
@@ -81,7 +92,9 @@
             <source src="https://raw.githubusercontent.com/misthios997/learningmood/41cc5ed275f2c1ac0ddc8f0469842ce2c353e2a4/AudioLaoshiZhuDaoWen.opus" type="audio/ogg; codecs=opus">
             Browser Anda tidak mendukung elemen audio.
         </audio>
-        <p style="font-size: 0.8em; color: #7f8c8d; margin-top: 10px;">*Teks akan menyala sesuai dengan durasi perkiraan audio.</p>
+        <br>
+        <div class="time-tracker" id="timeDisplay">Waktu: 0.00 detik</div>
+        <p style="font-size: 0.8em; color: #7f8c8d; margin-top: 10px;">*Lihat detik di atas, lalu ubah <b>data-start</b> dan <b>data-end</b> di kode HTML agar pas dengan nyalanya.</p>
     </div>
 
     <div class="content">
@@ -179,9 +192,13 @@
     document.addEventListener("DOMContentLoaded", function() {
         const audio = document.getElementById("doaAudio");
         const lines = document.querySelectorAll(".line-item");
+        const timeDisplay = document.getElementById("timeDisplay");
 
         audio.addEventListener("timeupdate", function() {
             const currentTime = audio.currentTime;
+            
+            // Update teks penunjuk waktu untuk kalibrasi manual
+            timeDisplay.textContent = "Waktu: " + currentTime.toFixed(2) + " detik";
 
             lines.forEach(line => {
                 const start = parseFloat(line.getAttribute("data-start"));
@@ -196,9 +213,6 @@
             });
         });
     });
-    
-    // Note: Angka pada data-start dan data-end di atas adalah estimasi/perkiraan. 
-    // Jika ada yang kurang pas, angka-angkanya (dalam hitungan detik) bisa diubah sendiri di dalam HTML.
 </script>
 
 </body>
